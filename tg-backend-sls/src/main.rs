@@ -1,5 +1,7 @@
 mod model;
+use model::product;
 use model::user;
+use model::order;
 
 use std::env;
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
@@ -13,7 +15,20 @@ async fn json1() -> impl Responder {
         admin: false,
     };
 
-    HttpResponse::Ok().json(user)
+    let item = order::Item {
+        id: 123,
+        product_id: 512,
+        quantity: 124513,
+    };
+
+    let order = order::Order{
+        id: 12132,
+        user_id: 7345,
+        items: vec! [item,],
+        status: order::Status::Failed
+    };
+
+    HttpResponse::Ok().json(order)
 }
 
 #[get("/")]
