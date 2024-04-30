@@ -1,5 +1,21 @@
+mod model;
+use model::user;
+
 use std::env;
+use serde::Serialize;
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
+
+
+#[get("/json1")]
+async fn json1() -> impl Responder {
+    let user = user::User {
+        id: 123,
+        name: "vasya".to_string(),
+        admin: false,
+    };
+
+    HttpResponse::Ok().json(user)
+}
 
 #[get("/")]
 async fn hello() -> impl Responder {
@@ -26,6 +42,7 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .service(hello)
             .service(echo)
+            .service(json1)
             .route("/hey", web::get().to(manual_hello))
     })
     .bind(("127.0.0.1", 8080))?
