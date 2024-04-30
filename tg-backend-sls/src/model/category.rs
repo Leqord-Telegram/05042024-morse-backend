@@ -1,8 +1,7 @@
 use serde::Serialize;
 
 #[derive(Serialize)]
-pub struct User {
+pub struct Category {
     pub id: i64,
-    pub name: String,
-    pub admin: bool,
+    pub name: String
 }

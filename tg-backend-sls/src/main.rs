@@ -2,7 +2,6 @@ mod model;
 use model::user;
 
 use std::env;
-use serde::Serialize;
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 
 
