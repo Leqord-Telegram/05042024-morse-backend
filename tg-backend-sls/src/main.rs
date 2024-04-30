@@ -9,12 +9,6 @@ use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 
 #[get("/json1")]
 async fn json1() -> impl Responder {
-    let user = user::User {
-        id: 123,
-        name: "vasya".to_string(),
-        admin: false,
-    };
-
     let item = order::Item {
         id: 123,
         product_id: 512,
