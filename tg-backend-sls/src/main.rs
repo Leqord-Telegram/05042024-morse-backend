@@ -1,6 +1,4 @@
 mod model;
-use model::product;
-use model::user;
 use model::order;
 
 use std::env;
