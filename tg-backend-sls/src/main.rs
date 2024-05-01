@@ -1,6 +1,9 @@
 mod model;
 use model::order;
 
+mod storage;
+use storage::memory::*;
+
 use std::env;
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 
@@ -41,6 +44,7 @@ async fn manual_hello() -> impl Responder {
 async fn main() -> std::io::Result<()> {
     let host = env::var("HOST").unwrap_or_else(|_| "127.0.0.1".to_string());
     let port = env::var("PORT").unwrap_or_else(|_| "8080".to_string());
+    let mut storage = MemoryStorage::new();
 
     println!("Listening on {}:{}", host, port);
 
