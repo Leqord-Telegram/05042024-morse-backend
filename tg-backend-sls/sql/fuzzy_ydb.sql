@@ -1,31 +1,51 @@
 $sep = " ";
 $filtr = "()-+=,.\'/\\|[]{}`~?!<>:*&^%$#@";
+$wordLenThreshold = 1;
 
 $splitstr = ($str) -> {
-    return Unicode::SplitToList(Unicode::Fold(Unicode::RemoveAll($str, $filtr), "Russian" AS Language), $sep)
-};
+    return Unicode::SplitToList(Unicode::Fold(Unicode::RemoveAll($str, $filtr), "Russian" AS Language), $sep)};
 
-$SearchTable = select search_word from (select $splitstr("картошка шёл") as search_word) flatten by search_word where Unicode::GetLength(search_word) > 1; 
+$SearchTable = 
+    select 
+        search_word 
+    from 
+        (
+        select 
+            $splitstr("картошка шёл") as search_word
+        ) 
+    flatten by 
+        search_word 
+    where 
+        Unicode::GetLength(search_word) > $wordLenThreshold; 
+
+$RefTableList = 
+    select 
+        id,
+        $splitstr(text) as list_text
+    from 
+        `search-levenstein`;
+
+$RefTableLength = 
+    select
+        id,
+        ListLength(list_text) as words_count
+    from
+        $RefTableList;
 
 $RefTable = 
     select 
         id, 
-        list_text as source_word 
-    from 
-        (
-        select 
-            id, 
-            $splitstr(text) as list_text 
-            from `search-levenstein`
-        ) 
+        list_text as source_word
+    from
+        $RefTableList
     flatten by 
         list_text;
 
 $comptable = select 
         id, 
         Unicode::LevensteinDistance(search_word, source_word) as distance,
-        search_word,
-        source_word
+        search_word
+        -- source_word
     from 
         (
         select 
@@ -36,25 +56,24 @@ $comptable = select
             $RefTable as rt
         );
 
-select
-    id,
-    avg(min_distance) as avg_distance
-from
-    (
+$result = 
     select
-        id,
-        min(distance) as min_distance
+        id as id,
+        avg(min_distance) as avg_distance,
     from
-        $comptable
+        (
+        select
+            id,
+            min(distance) as min_distance
+        from
+            $comptable
+        group by
+            id, search_word
+        )
     group by
-        id, source_word
-    )
-group by
-    id
-order by
-    avg_distance asc
-;
-
+        id;
+        
+select * from $result;
 
 -- не та логика: среднее считается по всем комбинациям, но нужно выбрать пары слов запрос-источник с наименьшими дистанциями и по ним взять среднее
 -- мб и не надо или только для подсказок:
