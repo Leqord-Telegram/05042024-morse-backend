@@ -1,6 +1,7 @@
 $sep = " ";
+$res_limit = 10;
 $filtr = "()-+=,.\'/\\|[]{}`~?!<>:*&^%$#@";
-$wordLenThreshold = 1;
+$word_len_threshold = 1;
 
 $splitstr = ($str) -> {
     return Unicode::SplitToList(Unicode::Fold(Unicode::RemoveAll($str, $filtr), "Russian" AS Language), $sep)};
@@ -16,28 +17,28 @@ $SearchTable =
     flatten by 
         search_word 
     where 
-        Unicode::GetLength(search_word) > $wordLenThreshold; 
+        Unicode::GetLength(search_word) > $word_len_threshold; 
 
-$RefTableList = 
+$ref_table_list = 
     select 
         id,
         $splitstr(text) as list_text
     from 
         `search-levenstein`;
 
-$RefTableLength = 
+$ref_table_len = 
     select
         id,
         ListLength(list_text) as words_count
     from
-        $RefTableList;
+        $ref_table_list;
 
-$RefTable = 
+$ref_table = 
     select 
         id, 
         list_text as source_word
     from
-        $RefTableList
+        $ref_table_list
     flatten by 
         list_text;
 
@@ -53,7 +54,7 @@ $comptable = select
         from 
             $SearchTable as st 
         cross join 
-            $RefTable as rt
+            $ref_table as rt
         );
 
 $result = 
@@ -80,14 +81,15 @@ select
 from 
     $result as rs
 inner join
-    $RefTableLength as ln
+    $ref_table_len as ln
 on
     ln.id = rs.id
 order by
     avg_distance asc,
     words_count asc,
     rs.id asc
-    ;
+limit
+    $res_limit;
 
 -- не та логика: среднее считается по всем комбинациям, но нужно выбрать пары слов запрос-источник с наименьшими дистанциями и по ним взять среднее
 -- мб и не надо или только для подсказок:
