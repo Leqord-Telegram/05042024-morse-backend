@@ -24,7 +24,7 @@ select Unicode::Substring(source_word, 0, min_of(Unicode::GetLength(source_word)
 -- если слов несколько, то возвращать пересечение?
 -- спрашивать бек о подсказках только спустя скунду после того, как пользователь остановился?
 -- мб проще и дешевле выделить поиск в отдельный контейнер и все-таки читать в память все названия
-    CASE
-        WHEN series_id = 1
-        THEN "IT Crowd"
-        ELSE "Other series"
+--    CASE
+--        WHEN series_id = 1
+--        THEN "IT Crowd"
+--        ELSE "Other series"
