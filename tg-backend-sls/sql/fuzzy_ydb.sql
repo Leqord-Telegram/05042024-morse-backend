@@ -84,7 +84,7 @@ order by
 limit
     $res_limit;
 
--- не та логика: среднее считается по всем комбинациям, но нужно выбрать пары слов запрос-источник с наименьшими дистанциями и по ним взять среднее
+-- теперь попробовать кешировать результаты для отдельных слов строки поиска
 -- мб и не надо или только для подсказок:
 -- select Unicode::Substring(source_word, 0, min_of(Unicode::GetLength(source_word), Unicode::GetLength(search_word))) as source_word_part, search_word from $compareTable;
 -- сформировать таблицу комбинаций запрос-источник
