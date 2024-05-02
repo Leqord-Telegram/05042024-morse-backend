@@ -1,10 +1,15 @@
+-- select Unicode::LevensteinDistance("шоссеандра", "шоф") as distance
 $separator = " ";
-$strRef = "шоссеандра шла";
+
+$strRef = "шоссеандра   шла";
 $RefSplit = Unicode::SplitToList(Unicode::Fold($strRef), $separator);
-$RefSTable = select $RefSplit  as source_str;
+$RefTable = select source_str from (select $RefSplit  as source_str) flatten by source_str; 
 
+$strSearch = "шоссе";
+$SearchSplit = Unicode::SplitToList(Unicode::Fold($strRef), $separator);
+$SearchTable = select search_str from (select $SearchSplit  as search_str) flatten by search_str; 
 
-select source_str from $RefSTable flatten by source_str;
+select $RefStable;
 
 -- сформировать таблицу комбинаций запрос-источник
 -- хранить кеш по словам на стороне сервера в таблице с TTL
