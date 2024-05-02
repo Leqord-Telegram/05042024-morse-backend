@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-#[derive(Serialize)]
+#[derive(Serialize, Clone, PartialEq)]
 pub struct Order {
     pub id: i64,
     pub user_id: i64,
@@ -8,14 +8,14 @@ pub struct Order {
     pub status: Status
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Clone, PartialEq)]
 pub struct Item {
     pub id: i64,
     pub product_id: i64,
     pub quantity: u64,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Clone, PartialEq)]
 pub enum Status {
     Failed,
     Pending,

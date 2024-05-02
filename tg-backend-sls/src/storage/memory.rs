@@ -28,7 +28,7 @@ impl MemoryStorage {
 }
 
 impl Storage for MemoryStorage {
-    async fn get_user(&self, id: Option<i64>, admin: Option<i64>) -> Result<Vec<User>, Error> {
+    async fn get_user(&self, id: Option<i64>, admin: Option<bool>) -> Result<Vec<User>, Error> {
         let filtered_users = self.users.values()
             .filter(|&user| {
                 id.map_or(true, |id_val| user.id == id_val) &&

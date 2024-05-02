@@ -6,7 +6,7 @@ use crate::model::category::*;
 
 
 pub trait Storage {
-    async fn get_user(&self, id: Option<i64>, admin: Option<i64>) -> Result<Vec<User>, Error>;
+    async fn get_user(&self, id: Option<i64>, admin: Option<bool>) -> Result<Vec<User>, Error>;
     async fn upsert_user(&mut self, user: User) -> Result<(), Error>;
     async fn delete_user(&mut self, id: i64) -> Result<(), Error>;
 

@@ -2,7 +2,7 @@ use serde::Serialize;
 
 use super::image::Image;
 
-#[derive(Serialize)]
+#[derive(Serialize, PartialEq)]
 pub struct Product {
     pub id: i64,
     pub name: String,
@@ -11,5 +11,5 @@ pub struct Product {
     pub price: i64,
     pub quantity: i64,
     pub active: bool,
-    pub images: Vec<Image>
+    pub images: Vec<Image>,
 }
