@@ -5,13 +5,21 @@ $splitstr = ($str) -> {
     return Unicode::SplitToList(Unicode::Fold(Unicode::RemoveAll($str, $filtr), "Russian" AS Language), $sep)
 };
 
-$strSearch = "картошка шёл";
-$SearchSplit = $splitstr($strSearch);
-$SearchTable = select search_word from (select $SearchSplit  as search_word) flatten by search_word where Unicode::GetLength(search_word) > 1; 
+$SearchTable = select search_word from (select $splitstr("картошка шёл") as search_word) flatten by search_word where Unicode::GetLength(search_word) > 1; 
 
-$orsplit = select id, $splitstr(text) as list_text from `search-levenstein`;
-
-$RefTable = select id, list_text as source_word from $orsplit flatten by list_text;
+$RefTable = 
+    select 
+        id, 
+        list_text as source_word 
+    from 
+        (
+        select 
+            id, 
+            $splitstr(text) as list_text 
+            from `search-levenstein`
+        ) 
+    flatten by 
+        list_text;
 
 $comptable = select 
         id, 
@@ -28,17 +36,6 @@ $comptable = select
             $RefTable as rt
         );
 
-$result = select 
-    id, 
-    AVG(distance) as weighted_distance,
-    SUM(distance) as sum_distance,
-    COUNT(1) as number,
-from 
-    $comptable
-group by
-    id
-;
-
 select
     id,
     avg(min_distance) as avg_distance
@@ -50,7 +47,7 @@ from
     from
         $comptable
     group by
-        id, search_word
+        id, source_word
     )
 group by
     id
