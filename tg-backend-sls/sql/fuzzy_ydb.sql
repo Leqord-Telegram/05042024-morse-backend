@@ -1,6 +1,9 @@
-$stringA = "шоссеандра шла";
 $separator = " ";
+$strAsplit = Unicode::SplitToList(Unicode::Fold("шоссеандра шла"), $separator);
 
-select distance from (
-    select Unicode::SplitToList(Unicode::Fold($stringA), $separator) as distance
-) flatten by distance;
+
+select source_str from (
+    select $strAsplit  as source_str
+) flatten by source_str;
+
+-- сформировать таблицу комбинаций запрос-источник
