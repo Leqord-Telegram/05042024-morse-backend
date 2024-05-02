@@ -73,7 +73,21 @@ $result =
     group by
         id;
         
-select * from $result;
+select 
+    rs.id,
+    avg_distance,
+    words_count,
+from 
+    $result as rs
+inner join
+    $RefTableLength as ln
+on
+    ln.id = rs.id
+order by
+    avg_distance asc,
+    words_count asc,
+    rs.id asc
+    ;
 
 -- не та логика: среднее считается по всем комбинациям, но нужно выбрать пары слов запрос-источник с наименьшими дистанциями и по ним взять среднее
 -- мб и не надо или только для подсказок:
