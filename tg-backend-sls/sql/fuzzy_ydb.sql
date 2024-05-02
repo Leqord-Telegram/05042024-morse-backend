@@ -13,8 +13,6 @@ $orsplit = select id, $splitstr(text) as list_text from `search-levenstein`;
 
 $RefTable = select id, list_text as source_word from $orsplit flatten by list_text;
 
-$compareTable = 
-
 select 
     id, 
     AVG(distance) as weighted_distance
