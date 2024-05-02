@@ -1,6 +1,8 @@
 mod model;
 
 mod storage;
+use model::category::Category;
+use model::product::Product;
 use storage::memory::*;
 use storage::base::*;
 
@@ -12,10 +14,33 @@ struct AppState {
 }
 
 impl AppState {
-    pub fn new() -> Self {
-        AppState {
+    pub async fn new() -> Self {
+        let mut state = AppState {
             storage: MemoryStorage::new(),
-        }
+        };
+
+        let _ = state.storage.upsert_category(Category{
+            id: 123,
+            name: "Shit".to_string(),
+        }).await;
+
+        let _ = state.storage.upsert_category(Category{
+            id: 141,
+            name: "Show".to_string(),
+        }).await;
+
+        let _ = state.storage.upsert_product(Product{
+            id: 6123,
+            name: "Shit".to_string(),
+            destription: "Huita".to_string(),
+            category_id: 123,
+            price: 5123,
+            quantity: 22,
+            active: true,
+            images: vec![],
+        }).await;
+
+        return state;
     }
 }
 
