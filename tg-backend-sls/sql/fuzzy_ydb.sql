@@ -13,14 +13,11 @@ $orsplit = select id, $splitstr(text) as list_text from `search-levenstein`;
 
 $RefTable = select id, list_text as source_word from $orsplit flatten by list_text;
 
-$result = select 
-    id, 
-    AVG(distance) as weighted_distance
-from 
-    (
-    select 
+$comptable = select 
         id, 
-        Unicode::LevensteinDistance(search_word, source_word) as distance 
+        Unicode::LevensteinDistance(search_word, source_word) as distance,
+        search_word,
+        source_word
     from 
         (
         select 
@@ -29,24 +26,36 @@ from
             $SearchTable as st 
         cross join 
             $RefTable as rt
-        )
-    )
+        );
+
+$result = select 
+    id, 
+    AVG(distance) as weighted_distance,
+    SUM(distance) as sum_distance,
+    COUNT(1) as number,
+from 
+    $comptable
 group by
     id
 ;
 
-select 
-    rs.id, 
-    rs.weighted_distance, 
-    sr.text
+select
+    id,
+    avg(min_distance) as avg_distance
 from
-    $result as rs
-inner join
-    `search-levenstein` as sr
-on
-    rs.id = sr.id
+    (
+    select
+        id,
+        min(distance) as min_distance
+    from
+        $comptable
+    group by
+        id, search_word
+    )
+group by
+    id
 order by
-    weighted_distance asc
+    avg_distance asc
 ;
 
 
