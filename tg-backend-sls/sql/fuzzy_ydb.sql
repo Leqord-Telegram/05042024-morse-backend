@@ -5,18 +5,39 @@ $splitstr = ($str) -> {
     return Unicode::SplitToList(Unicode::Fold(Unicode::RemoveAll($str, $filtr), "Russian" AS Language), $sep)
 };
 
-$strSearch = "шоссе и шоа";
+$strSearch = "картошка и шёл";
 $SearchSplit = $splitstr($strSearch);
-$SearchTable = select search_word from (select $SearchSplit  as search_word) flatten by search_word; 
-
+$SearchTable = select search_word from (select $SearchSplit  as search_word) flatten by search_word where Unicode::GetLength(search_word) > 1; 
 
 $orsplit = select id, $splitstr(text) as list_text from `search-levenstein`;
 
 $RefTable = select id, list_text as source_word from $orsplit flatten by list_text;
 
-$compareTable = select * from $SearchTable as st cross join $RefTable as rt;
+$compareTable = 
 
-select id, Unicode::LevensteinDistance(search_word, source_word) as distance from $compareTable;
+select 
+    id, 
+    AVG(distance) as weighted_distance
+from 
+    (
+    select 
+        id, 
+        Unicode::LevensteinDistance(search_word, source_word) as distance 
+    from 
+        (
+        select 
+            * 
+        from 
+            $SearchTable as st 
+        cross join 
+            $RefTable as rt
+        )
+    )
+group by
+    id
+order by
+    weighted_distance desc
+;
 
 
 -- мб и не надо или только для подсказок:
