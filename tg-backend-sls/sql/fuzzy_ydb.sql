@@ -6,7 +6,7 @@ $word_len_threshold = 1;
 $splitstr = ($str) -> {
     return Unicode::SplitToList(Unicode::Fold(Unicode::RemoveAll($str, $filtr), "Russian" AS Language), $sep)};
 
-$SearchTable = 
+$search_table = 
     select 
         search_word 
     from 
@@ -52,7 +52,7 @@ $comptable = select
         select 
             * 
         from 
-            $SearchTable as st 
+            $search_table as st 
         cross join 
             $ref_table as rt
         );
