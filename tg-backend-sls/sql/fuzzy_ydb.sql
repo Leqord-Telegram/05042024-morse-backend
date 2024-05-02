@@ -26,13 +26,6 @@ $ref_table_list =
     from 
         `search-levenstein`;
 
-$ref_table_len = 
-    select
-        id,
-        ListLength(list_text) as words_count
-    from
-        $ref_table_list;
-
 $ref_table = 
     select 
         id, 
@@ -77,11 +70,11 @@ $result =
 select 
     rs.id,
     avg_distance,
-    words_count,
+    ListLength(ln.list_text) as words_count,
 from 
     $result as rs
 inner join
-    $ref_table_len as ln
+    $ref_table_list as ln
 on
     ln.id = rs.id
 order by
