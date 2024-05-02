@@ -85,6 +85,8 @@ limit
     $res_limit;
 
 -- теперь попробовать кешировать результаты для отдельных слов строки поиска
+-- уже неплохо работает: слова с меньшим количеством дают большую дистанцию
+-- проанализировать теоретически, если будет время
 -- мб и не надо или только для подсказок:
 -- select Unicode::Substring(source_word, 0, min_of(Unicode::GetLength(source_word), Unicode::GetLength(search_word))) as source_word_part, search_word from $compareTable;
 -- сформировать таблицу комбинаций запрос-источник
