@@ -1,6 +1,12 @@
 use serde::Serialize;
 
 #[derive(Serialize, Clone, PartialEq)]
+pub struct Cart {
+    pub user_id: i64,
+    pub items: Vec<Item>,
+}
+
+#[derive(Serialize, Clone, PartialEq)]
 pub struct Order {
     pub id: i64,
     pub user_id: i64,
