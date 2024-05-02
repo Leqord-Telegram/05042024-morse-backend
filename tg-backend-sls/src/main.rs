@@ -1,6 +1,6 @@
 mod model;
-
 mod storage;
+
 use model::category::Category;
 use model::product::Product;
 use storage::memory::*;
@@ -8,6 +8,14 @@ use storage::base::*;
 
 use std::env;
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
+use serde::Deserialize;
+
+#[derive(Deserialize)]
+struct ProductQuery {
+    id: Option<i64>,
+    category_id: Option<i64>,
+    active: Option<bool>,
+}
 
 struct AppState {
     storage: MemoryStorage,
@@ -45,10 +53,18 @@ impl AppState {
 }
 
 #[get("/products")]
-async fn get_products(data: web::Data<AppState>) -> impl Responder {
-    let products = data.storage.get_product(None, None, None).await.unwrap_or_else(|_| vec![]);
+async fn get_products(
+    data: web::Data<AppState>,
+    query: web::Query<ProductQuery>
+) -> impl Responder {
+    let query_info = query.into_inner();
+    let products = data.storage.get_product(query_info.id, 
+                                                            query_info.category_id, 
+                                                            query_info.active
+                                                        ).await.unwrap_or_else(|_| vec![]);
     HttpResponse::Ok().json(products)
 }
+
 
 #[get("/categories")]
 async fn get_categories(data: web::Data<AppState>) -> impl Responder {

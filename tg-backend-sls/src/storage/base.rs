@@ -25,6 +25,9 @@ pub trait Storage {
     async fn get_category(&self, id: Option<i64>) -> Result<Vec<Category>, Error>;
     async fn upsert_category(&mut self, category: Category) -> Result<(), Error>;
     async fn delete_category(&mut self, id: i64) -> Result<(), Error>;
+
+    async fn get_cart(&self, user_id: Option<i64>) -> Result<Vec<Cart>, Error>;
+    async fn upsert_cart(&mut self, cart: Cart) -> Result<(), Error>;
 }
 
 pub enum Error {

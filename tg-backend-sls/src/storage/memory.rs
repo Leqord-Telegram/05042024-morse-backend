@@ -9,6 +9,7 @@ use std::collections::HashMap;
 
 pub struct MemoryStorage {
     users: HashMap<String, User>,
+    carts: HashMap<String, Cart>,
     products: HashMap<String, Product>,
     orders: HashMap<String, Order>,
     images: HashMap<String, Image>,
@@ -19,6 +20,7 @@ impl MemoryStorage {
     pub fn new() -> MemoryStorage {
         MemoryStorage{
             users: HashMap::new(),
+            carts: HashMap::new(),
             products: HashMap::new(),
             orders: HashMap::new(),
             images: HashMap::new(),
@@ -73,7 +75,20 @@ impl Storage for MemoryStorage {
         )
     }
 
-    // Методы для заказов
+    async fn get_cart(&self, user_id: Option<i64>) -> Result<Vec<Cart>, Error> {
+        let carts = self.carts.values()
+        .filter(|cart| 
+            user_id.map_or(true, |user_id| cart.user_id == user_id))
+        .cloned()
+        .collect::<Vec<_>>();
+    Ok(carts)
+    }
+
+    async fn upsert_cart(&mut self, cart: Cart) -> Result<(), Error> {
+        self.carts.insert(cart.user_id.to_string(), cart);
+        Ok(())
+    }
+
     async fn get_order(&self, id: Option<i64>, user_id: Option<i64>, status: Option<Status>) -> Result<Vec<Order>, Error> {
         let orders = self.orders.values()
             .filter(|order| 
@@ -98,7 +113,6 @@ impl Storage for MemoryStorage {
         )
     }
 
-    // Методы для изображений
     async fn get_image(&self, id: Option<i64>) -> Result<Vec<Image>, Error> {
         let images = self.images.values()
             .filter(|image| 
@@ -120,8 +134,6 @@ impl Storage for MemoryStorage {
             |_| Ok(())
         )
     }
-
-    // Методы для категорий
     async fn get_category(&self, id: Option<i64>) -> Result<Vec<Category>, Error> {
         let categories = self.categories.values()
             .filter(|category| 
