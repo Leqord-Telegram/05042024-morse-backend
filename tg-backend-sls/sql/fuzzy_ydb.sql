@@ -34,7 +34,7 @@ from
 group by
     id
 order by
-    weighted_distance desc
+    weighted_distance asc
 ;
 
 
