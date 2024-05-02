@@ -14,7 +14,7 @@ pub trait Storage {
     async fn upsert_product(&mut self, product: Product) -> Result<(), Error>;
     async fn delete_product(&mut self, id: i64) -> Result<(), Error>;
 
-    async fn get_order(&self, id: Option<i64>, user_id: Option<i64>, status: Option<Status>) -> Result<Vec<Order>, Status>;
+    async fn get_order(&self, id: Option<i64>, user_id: Option<i64>, status: Option<Status>) -> Result<Vec<Order>, Error>;
     async fn upsert_order(&mut self, order: Order) -> Result<(), Error>;
     async fn delete_order(&mut self, id: i64) -> Result<(), Error>;
 

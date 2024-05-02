@@ -2,7 +2,7 @@ use serde::Serialize;
 
 use super::image::Image;
 
-#[derive(Serialize, PartialEq)]
+#[derive(Serialize, Clone, PartialEq)]
 pub struct Product {
     pub id: i64,
     pub name: String,
