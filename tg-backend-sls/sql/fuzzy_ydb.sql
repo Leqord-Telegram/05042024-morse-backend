@@ -5,7 +5,7 @@ $splitstr = ($str) -> {
     return Unicode::SplitToList(Unicode::Fold(Unicode::RemoveAll($str, $filtr), "Russian" AS Language), $sep)
 };
 
-$strSearch = "картошка и шёл";
+$strSearch = "картошка шёл";
 $SearchSplit = $splitstr($strSearch);
 $SearchTable = select search_word from (select $SearchSplit  as search_word) flatten by search_word where Unicode::GetLength(search_word) > 1; 
 
@@ -13,7 +13,7 @@ $orsplit = select id, $splitstr(text) as list_text from `search-levenstein`;
 
 $RefTable = select id, list_text as source_word from $orsplit flatten by list_text;
 
-select 
+$result = select 
     id, 
     AVG(distance) as weighted_distance
 from 
@@ -33,11 +33,24 @@ from
     )
 group by
     id
+;
+
+select 
+    rs.id, 
+    rs.weighted_distance, 
+    sr.text
+from
+    $result as rs
+inner join
+    `search-levenstein` as sr
+on
+    rs.id = sr.id
 order by
     weighted_distance asc
 ;
 
 
+-- не та логика: среднее считается по всем комбинациям, но нужно выбрать пары слов запрос-источник с наименьшими дистанциями и по ним взять среднее
 -- мб и не надо или только для подсказок:
 -- select Unicode::Substring(source_word, 0, min_of(Unicode::GetLength(source_word), Unicode::GetLength(search_word))) as source_word_part, search_word from $compareTable;
 -- сформировать таблицу комбинаций запрос-источник
