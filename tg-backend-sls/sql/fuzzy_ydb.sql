@@ -1,10 +1,10 @@
 $separator = " ";
-$strAsplit = Unicode::SplitToList(Unicode::Fold("шоссеандра шла"), $separator);
+$strRef = "шоссеандра шла";
+$RefSplit = Unicode::SplitToList(Unicode::Fold($strRef), $separator);
+$RefSTable = select $RefSplit  as source_str;
 
 
-select source_str from (
-    select $strAsplit  as source_str
-) flatten by source_str;
+select source_str from $RefSTable flatten by source_str;
 
 -- сформировать таблицу комбинаций запрос-источник
 -- хранить кеш по словам на стороне сервера в таблице с TTL
