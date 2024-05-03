@@ -30,11 +30,12 @@ impl MemoryStorage {
 }
 
 impl Storage for MemoryStorage {
-    async fn get_user(&self, id: Option<i64>, admin: Option<bool>) -> Result<Vec<User>, StorageError> {
+    async fn get_user(&self, filter: UserRequest) -> Result<Vec<User>, StorageError> {
         let filtered_users = self.users.values()
             .filter(|&user| {
-                id.map_or(true, |id_val| user.id == id_val) &&
-                admin.map_or(true, |admin_val| user.admin == admin_val)
+                filter.id.map_or(true, |id_val| user.id == id_val) &&
+                filter.admin.map_or(true, |admin_val| user.admin == admin_val) &&
+                filter.name.as_ref().map_or(true, |name_val| user.name == *name_val)
             })
             .cloned()
             .collect::<Vec<_>>();
@@ -51,12 +52,16 @@ impl Storage for MemoryStorage {
         Ok(())
     }
 
-    async fn get_product(&self, id: Option<i64>, category_id: Option<i64>, active: Option<bool>) -> Result<Vec<Product>, StorageError> {
+    async fn get_product(&self, filter: ProductRequest) -> Result<Vec<Product>, StorageError> {
         let products = self.products.values()
             .filter(|product| 
-                id.map_or(true, |id_val| product.id == id_val) &&
-                category_id.map_or(true, |cat_id| product.category_id == cat_id) &&
-                active.map_or(true, |active_val| product.active == active_val)
+                filter.id.map_or(true, |id_val| product.id == id_val) &&
+                filter.category_id.map_or(true, |cat_id| product.category_id == cat_id) &&
+                filter.active.map_or(true, |active_val| product.active == active_val) &&
+                filter.name.as_ref().map_or(true, |name_val| product.name == *name_val) &&
+                filter.description.as_ref().map_or(true, |description_val| product.description == *description_val) &&
+                filter.price.map_or(true, |price_val| product.price == price_val) &&
+                filter.quantity.map_or(true, |quantity_val| product.quantity == quantity_val)
             )
             .cloned()
             .collect::<Vec<_>>();
@@ -89,12 +94,12 @@ impl Storage for MemoryStorage {
         Ok(())
     }
 
-    async fn get_order(&self, id: Option<i64>, user_id: Option<i64>, status: Option<Status>) -> Result<Vec<Order>, StorageError> {
+    async fn get_order(&self, filter: OrderRequest) -> Result<Vec<Order>, StorageError> {
         let orders = self.orders.values()
             .filter(|order| 
-                id.map_or(true, |id_val| order.id == id_val) &&
-                user_id.map_or(true, |user_id_val| order.user_id == user_id_val) &&
-                status.as_ref().map_or(true, |status_val| order.status == *status_val)
+                filter.id.map_or(true, |id_val| order.id == id_val) &&
+                filter.user_id.map_or(true, |user_id_val| order.user_id == user_id_val) &&
+                filter.status.as_ref().map_or(true, |status_val| order.status == *status_val)
             )
             .cloned()
             .collect::<Vec<_>>();

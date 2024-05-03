@@ -6,15 +6,15 @@ use crate::model::category::*;
 
 
 pub trait Storage {
-    async fn get_user(&self, id: Option<i64>, admin: Option<bool>) -> Result<Vec<User>, StorageError>;
+    async fn get_user(&self, filter: UserRequest) -> Result<Vec<User>, StorageError>;
     async fn upsert_user(&mut self, user: User) -> Result<(), StorageError>;
     async fn delete_user(&mut self, id: i64) -> Result<(), StorageError>;
 
-    async fn get_product(&self, id: Option<i64>, category_id: Option<i64>, active: Option<bool>) -> Result<Vec<Product>, StorageError>;
+    async fn get_product(&self, filter: ProductRequest) -> Result<Vec<Product>, StorageError>;
     async fn upsert_product(&mut self, product: Product) -> Result<(), StorageError>;
     async fn delete_product(&mut self, id: i64) -> Result<(), StorageError>;
 
-    async fn get_order(&self, id: Option<i64>, user_id: Option<i64>, status: Option<Status>) -> Result<Vec<Order>, StorageError>;
+    async fn get_order(&self, filter: OrderRequest) -> Result<Vec<Order>, StorageError>;
     async fn upsert_order(&mut self, order: Order) -> Result<(), StorageError>;
     async fn delete_order(&mut self, id: i64) -> Result<(), StorageError>;
 
