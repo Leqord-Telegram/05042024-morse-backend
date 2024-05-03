@@ -201,13 +201,20 @@ async fn delete_product(
 // categories
 
 #[get("/categories")]
-async fn get_categories(data: web::Data<AppState>) -> impl Responder {
+async fn get_categories(
+    data: web::Data<AppState>,
+    query: web::Query<CategoryRequest>
+) -> impl Responder {
     let storage = data.storage.lock().await;
 
-    let categories = storage.get_category(None).await.unwrap_or_else(|_| vec![]);
-    HttpResponse::Ok().json(categories)
-}
+    let query_info = query.into_inner();
+    let categories = storage.get_category(query_info.id).await;
 
+    match categories {
+        Ok(p) => HttpResponse::Ok().json(p),
+        Err(e) => process_error(e)
+    }
+}
 
 // main
 

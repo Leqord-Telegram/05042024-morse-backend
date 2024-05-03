@@ -8,6 +8,5 @@ pub struct Category {
 
 #[derive(Serialize, Deserialize, Clone, PartialEq)]
 pub struct CategoryRequest {
-    pub id: Option<u64>,
-    pub name: Option<String>
+    pub id: Option<u64>
 }
