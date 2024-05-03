@@ -80,7 +80,7 @@ impl Storage for MemoryStorage {
         )
     }
 
-    async fn get_cart(&self, user_id: Option<u64>) -> Result<Vec<Cart>, StorageError> {
+    async fn get_cart(&self, user_id: Option<i64>) -> Result<Vec<Cart>, StorageError> {
         let carts = self.carts.values()
         .filter(|cart| 
             user_id.map_or(true, |user_id| cart.user_id == user_id))

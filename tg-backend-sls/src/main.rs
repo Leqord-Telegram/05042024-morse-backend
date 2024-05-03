@@ -3,6 +3,7 @@ mod storage;
 
 use model::category::*;
 use model::product;
+use model::order::*;
 use model::product::*;
 use storage::memory::*;
 use storage::base::*;
@@ -198,6 +199,87 @@ async fn delete_product(
 }
 
 
+// orders
+
+#[get("/orders")]
+async fn get_orders(
+    data: web::Data<AppState>,
+    query: web::Query<OrderRequest>
+) -> impl Responder {
+    let storage = data.storage.lock().await;
+
+    let query_info = query.into_inner();
+    let categories = storage.get_order(query_info).await;
+
+    match categories {
+        Ok(p) => HttpResponse::Ok().json(p),
+        Err(e) => process_error(e)
+    }
+}
+
+#[post("/orders")]
+async fn create_order(
+    data: web::Data<AppState>,
+    body: web::Json<OrderRequest>
+) -> HttpResponse {
+    let mut storage = data.storage.lock().await;
+
+    let order_req = body.into_inner();
+
+    if !order_req.user_id.clone().is_some() {
+        return HttpResponse::InternalServerError().json("missing user id")
+    }
+
+
+    let possible_id = generate_identifier(order_req.user_id.clone().unwrap().to_string().as_ref());
+
+    let possible_collision_res = storage.get_order(
+        OrderRequest{ 
+            id: Some(possible_id), 
+            user_id: None, 
+            items: None, 
+            status: None
+        }).await;
+
+    if !possible_collision_res.is_ok() {
+        HttpResponse::InternalServerError();
+    }
+
+    if !possible_collision_res.unwrap().is_empty() {
+        return HttpResponse::InternalServerError().json("collision")
+    }
+
+
+    let mut items: Vec<OrderItem> = Vec::new();
+
+    for item_request in order_req.items.unwrap_or(vec![]) {
+        if item_request.product_id.clone().is_none() || item_request.quantity.clone().is_none() {
+            items.push(OrderItem{ 
+                product_id: item_request.product_id.clone().unwrap(), 
+                quantity: item_request.quantity.clone().unwrap() 
+            });
+        }
+        else {
+            return HttpResponse::InternalServerError().json("missing field for item")
+        }
+    }
+
+
+    let order = Order{ 
+        id: possible_id, 
+        user_id: order_req.user_id.unwrap(), 
+        items: items, 
+        status: order_req.status.unwrap_or(Status::Failed) 
+    };
+
+    match storage.upsert_order(order).await {
+        Ok(_) => HttpResponse::Created().json(json!({"status": "success"})),
+        Err(e) => process_error(e)
+        
+    }
+}
+
+
 // categories
 
 #[get("/categories")]
@@ -234,6 +316,8 @@ async fn main() -> std::io::Result<()> {
             .service(create_product)
             .service(update_product)
             .service(delete_product)
+            .service(get_orders)
+            .service(create_order)
             .service(get_categories)
     })
     .bind(("127.0.0.1", 8080))?
