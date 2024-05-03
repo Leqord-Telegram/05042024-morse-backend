@@ -248,18 +248,22 @@ async fn create_order(
         return HttpResponse::InternalServerError().json("collision")
     }
 
+    let item_reqs = order_req.items.unwrap_or(vec![]);
     let mut items: Vec<OrderItem> = Vec::new();
 
-    for item_request in order_req.items.unwrap_or(vec![]) {
-        if item_request.product_id.clone().is_none() || item_request.quantity.clone().is_none() {
-            items.push(OrderItem{ 
-                product_id: item_request.product_id.clone().unwrap(), 
-                quantity: item_request.quantity.clone().unwrap() 
-            });
+    for item_request in item_reqs {
+        if item_request.product_id.is_none() {
+            return HttpResponse::InternalServerError().json("missing product id for item")
         }
-        else {
-            return HttpResponse::InternalServerError().json("missing field for item")
+
+        if item_request.quantity.is_none() {
+            return HttpResponse::InternalServerError().json("missing quantity for item")
         }
+
+        items.push(OrderItem{ 
+            product_id: item_request.product_id.clone().unwrap(), 
+            quantity: item_request.quantity.clone().unwrap() 
+        });
     }
 
 
@@ -309,15 +313,18 @@ async fn update_order(
     let mut items: Vec<OrderItem> = Vec::new();
 
     for item_request in order_req.items.unwrap_or(vec![]) {
-        if item_request.product_id.clone().is_none() || item_request.quantity.clone().is_none() {
-            items.push(OrderItem{ 
-                product_id: item_request.product_id.clone().unwrap(), 
-                quantity: item_request.quantity.clone().unwrap() 
-            });
+        if item_request.product_id.is_none() {
+            return HttpResponse::InternalServerError().json("missing product id for item")
         }
-        else {
-            return HttpResponse::InternalServerError().json("missing field for item")
+
+        if item_request.quantity.is_none() {
+            return HttpResponse::InternalServerError().json("missing quantity for item")
         }
+
+        items.push(OrderItem{ 
+            product_id: item_request.product_id.clone().unwrap(), 
+            quantity: item_request.quantity.clone().unwrap() 
+        });
     }
 
     let order = Order{ 
