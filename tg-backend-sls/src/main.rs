@@ -1,8 +1,8 @@
 mod model;
 mod storage;
 
-use model::category::Category;
-use model::product::Product;
+use model::category::*;
+use model::product::*;
 use storage::memory::*;
 use storage::base::*;
 
@@ -13,13 +13,6 @@ use serde::Deserialize;
 use serde_json::json;
 use tokio::sync::Mutex;
 
-
-#[derive(Deserialize)]
-struct ProductQuery {
-    id: Option<i64>,
-    category_id: Option<i64>,
-    active: Option<bool>,
-}
 
 struct AppState {
     storage: Arc<Mutex<MemoryStorage>>,
@@ -51,6 +44,7 @@ fn process_error(error: StorageError) -> HttpResponse {
     match error {
         StorageError::InternalError(s) => HttpResponse::InternalServerError().json(json!({"status": "error", "details": s})),
         StorageError::NotFoundError(s) => HttpResponse::InternalServerError().json(json!({"status": "not found", "details": s})),
+        StorageError::KeyCollisionError(s) => HttpResponse::InternalServerError().json(json!({"status": "key collision", "details": s})),
     }
 }
 
@@ -58,15 +52,12 @@ fn process_error(error: StorageError) -> HttpResponse {
 #[get("/products")]
 async fn get_products(
     data: web::Data<AppState>,
-    query: web::Query<ProductQuery>
+    query: web::Query<ProductRequest>
 ) -> impl Responder {
     let storage = data.storage.lock().await;
 
     let query_info = query.into_inner();
-    let products = storage.get_product(query_info.id, 
-                                                            query_info.category_id, 
-                                                            query_info.active
-                                                        ).await;
+    let products = storage.get_product(query_info).await;
 
     match products {
         Ok(p) => HttpResponse::Ok().json(p),
