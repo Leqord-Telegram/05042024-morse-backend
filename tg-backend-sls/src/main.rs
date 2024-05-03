@@ -145,7 +145,7 @@ async fn update_product(
 
     let product_req = body.into_inner();
 
-    let possible_collision_res = storage.get_product(ProductRequest{ 
+    let found_product = storage.get_product(ProductRequest{ 
         id: Some(product_id.clone()),
         name: None,
         description: None,
@@ -155,11 +155,11 @@ async fn update_product(
         active: None,
         images: None,}).await;
 
-    if !possible_collision_res.is_ok() {
+    if !found_product.is_ok() {
         HttpResponse::InternalServerError();
     }
 
-    let possible_collision = possible_collision_res.unwrap();
+    let possible_collision = found_product.unwrap();
 
     if possible_collision.is_empty() {
         return HttpResponse::InternalServerError().json("not found")
@@ -295,18 +295,18 @@ async fn update_order(
         return HttpResponse::InternalServerError().json("missing user id")
     }
 
-    let possible_collision_res = storage.get_order(OrderRequest{ 
+    let found_order = storage.get_order(OrderRequest{ 
         id: Some(order_id.clone()), 
         user_id: None, 
         items: None, 
         status: None 
     }).await;
 
-    if !possible_collision_res.is_ok() {
+    if !found_order.is_ok() {
         HttpResponse::InternalServerError();
     }
 
-    if possible_collision_res.unwrap().is_empty() {
+    if found_order.unwrap().is_empty() {
         return HttpResponse::InternalServerError().json("not found")
     }
 
@@ -356,6 +356,40 @@ async fn delete_order(
 }
 
 
+// cart
+
+#[get("/cart/{id}")]
+async fn get_cart(
+    data: web::Data<AppState>,
+    user_id: web::Path<i64>
+) -> impl Responder {
+    let storage = data.storage.lock().await;
+
+    let user_id = user_id.into_inner();
+    let cart = storage.get_cart(Some(user_id)).await;
+
+    match cart {
+        Ok(p) => HttpResponse::Ok().json(p),
+        Err(e) => process_error(e)
+    }
+}
+
+#[put("/cart/{id}")]
+async fn update_cart(
+    data: web::Data<AppState>,
+    user_id: web::Path<i64>,
+    body: web::Json<Cart>
+) -> HttpResponse {
+    let mut storage = data.storage.lock().await;
+
+    match storage.upsert_cart(user_id.into_inner(), body.into_inner()).await {
+        Ok(_) => HttpResponse::Created().json(json!({"status": "success"})),
+        Err(e) => process_error(e)
+        
+    }
+}
+
+
 // categories
 
 #[get("/categories")]
@@ -371,6 +405,93 @@ async fn get_categories(
     match categories {
         Ok(p) => HttpResponse::Ok().json(p),
         Err(e) => process_error(e)
+    }
+}
+
+#[post("/categories")]
+async fn create_category(
+    data: web::Data<AppState>,
+    body: web::Json<CategoryRequest>
+) -> HttpResponse {
+    let mut storage = data.storage.lock().await;
+
+    let category_req = body.into_inner();
+
+    if !category_req.name.clone().is_some() {
+        return HttpResponse::InternalServerError().json("missing name")
+    }
+
+    let possible_id = generate_identifier(category_req.name.clone().unwrap().to_string().as_ref());
+
+    let possible_collision_res = storage.get_category(Some(possible_id)).await;
+
+    if !possible_collision_res.is_ok() {
+        HttpResponse::InternalServerError();
+    }
+
+    if !possible_collision_res.unwrap().is_empty() {
+        return HttpResponse::InternalServerError().json("collision")
+    }
+
+    let category = Category{ 
+        id: possible_id, 
+        name: category_req.name.unwrap()
+    };
+
+    match storage.upsert_category(category).await {
+        Ok(_) => HttpResponse::Created().json(json!({"status": "success"})),
+        Err(e) => process_error(e)
+        
+    }
+}
+
+#[put("/categories/{id}")]
+async fn update_category (
+    data: web::Data<AppState>,
+    category_id: web::Path<u64>,
+    body: web::Json<CategoryRequest>
+) -> HttpResponse {
+    let mut storage = data.storage.lock().await;
+
+    let category_req = body.into_inner();
+
+    if !category_req.name.clone().is_some() {
+        return HttpResponse::InternalServerError().json("missing user id")
+    }
+
+    let found_category = storage.get_category(Some(category_id.clone())).await;
+
+    if !found_category.is_ok() {
+        HttpResponse::InternalServerError();
+    }
+
+    if found_category.unwrap().is_empty() {
+        return HttpResponse::InternalServerError().json("not found")
+    }
+
+    let category = Category{ 
+        id: category_id.into_inner(), 
+        name: category_req.name.unwrap()
+    };
+
+    match storage.upsert_category(category).await {
+        Ok(_) => HttpResponse::Created().json(json!({"status": "success"})),
+        Err(e) => process_error(e)
+        
+    }
+}
+
+#[delete("/categories/{id}")]
+async fn delete_category (
+    data: web::Data<AppState>,
+    order_id: web::Path<u64>
+) -> HttpResponse {
+    let mut storage = data.storage.lock().await;
+
+    match storage.delete_order(order_id.into_inner()).await {
+        Ok(_) => HttpResponse::Created().json(json!({"status": "success"})),
+        Err(e) => process_error(e)
+        
     }
 }
 

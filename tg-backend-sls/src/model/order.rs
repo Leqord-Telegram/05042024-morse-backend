@@ -4,7 +4,6 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Clone, PartialEq)]
 pub struct Cart {
-    pub user_id: i64,
     pub items: Vec<OrderItem>,
 }
 

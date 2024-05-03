@@ -27,7 +27,7 @@ pub trait Storage {
     async fn delete_category(&mut self, id: u64) -> Result<(), StorageError>;
 
     async fn get_cart(&self, user_id: Option<i64>) -> Result<Vec<Cart>, StorageError>;
-    async fn upsert_cart(&mut self, cart: Cart) -> Result<(), StorageError>;
+    async fn upsert_cart(&mut self, user_id: i64, cart: Cart) -> Result<(), StorageError>;
 }
 
 #[derive(Debug)]

@@ -2,19 +2,10 @@
 
 ## Сущности
 
-### User
-
-```Json
-{
-    id: int,
-    name: string,
-    admin: bool,
-}
-```
 
 ### Product
 
-```json
+```
 {
     id: int,
     name: string,
@@ -28,7 +19,7 @@
 
 ### Order
 
-```Json
+```
 {
     id: int,
     user_id: int,
@@ -39,7 +30,7 @@
 
 ### Order Item
 
-```Json
+```
 {
     id: int,
     product_id: int,
@@ -49,7 +40,7 @@
 
 ### Image 
 
-```Json
+```
 {
     id: int,
 }
@@ -57,7 +48,7 @@
 
 ### Category
 
-```Json
+```
 {
     id: int,
     name: string

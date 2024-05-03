@@ -81,16 +81,17 @@ impl Storage for MemoryStorage {
     }
 
     async fn get_cart(&self, user_id: Option<i64>) -> Result<Vec<Cart>, StorageError> {
-        let carts = self.carts.values()
-        .filter(|cart| 
-            user_id.map_or(true, |user_id| cart.user_id == user_id))
-        .cloned()
-        .collect::<Vec<_>>();
-    Ok(carts)
+        match user_id {
+            Some(id) => match self.carts.get(&id.to_string()) {
+                Some(v) => Ok(vec![v.clone()]),
+                None => Ok(vec![])
+            }
+            None =>  Ok(vec![])
+        }
     }
 
-    async fn upsert_cart(&mut self, cart: Cart) -> Result<(), StorageError> {
-        self.carts.insert(cart.user_id.to_string(), cart);
+    async fn upsert_cart(&mut self, user_id: i64, cart: Cart) -> Result<(), StorageError> {
+        self.carts.insert(user_id.to_string(), cart);
         Ok(())
     }
 
