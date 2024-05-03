@@ -2,7 +2,6 @@ mod model;
 mod storage;
 
 use model::category::*;
-use model::product;
 use model::order::*;
 use model::product::*;
 use storage::memory::*;
@@ -173,7 +172,7 @@ async fn update_product(
         category_id: product_req.category_id.unwrap_or_default(), 
         price: product_req.price.unwrap_or_default(),
         quantity: product_req.quantity.unwrap_or_default(), 
-        active: product_req.active.unwrap_or_default(), 
+        active: product_req.active.unwrap_or(false), 
         images: product_req.images.unwrap_or_default(),
     };
 
@@ -249,7 +248,6 @@ async fn create_order(
         return HttpResponse::InternalServerError().json("collision")
     }
 
-
     let mut items: Vec<OrderItem> = Vec::new();
 
     for item_request in order_req.items.unwrap_or(vec![]) {
@@ -273,6 +271,77 @@ async fn create_order(
     };
 
     match storage.upsert_order(order).await {
+        Ok(_) => HttpResponse::Created().json(json!({"status": "success"})),
+        Err(e) => process_error(e)
+        
+    }
+}
+
+#[put("/orders/{id}")]
+async fn update_order(
+    data: web::Data<AppState>,
+    order_id: web::Path<u64>,
+    body: web::Json<OrderRequest>
+) -> HttpResponse {
+    let mut storage = data.storage.lock().await;
+
+    let order_req = body.into_inner();
+
+    if !order_req.user_id.clone().is_some() {
+        return HttpResponse::InternalServerError().json("missing user id")
+    }
+
+    let possible_collision_res = storage.get_order(OrderRequest{ 
+        id: Some(order_id.clone()), 
+        user_id: None, 
+        items: None, 
+        status: None 
+    }).await;
+
+    if !possible_collision_res.is_ok() {
+        HttpResponse::InternalServerError();
+    }
+
+    if possible_collision_res.unwrap().is_empty() {
+        return HttpResponse::InternalServerError().json("not found")
+    }
+
+    let mut items: Vec<OrderItem> = Vec::new();
+
+    for item_request in order_req.items.unwrap_or(vec![]) {
+        if item_request.product_id.clone().is_none() || item_request.quantity.clone().is_none() {
+            items.push(OrderItem{ 
+                product_id: item_request.product_id.clone().unwrap(), 
+                quantity: item_request.quantity.clone().unwrap() 
+            });
+        }
+        else {
+            return HttpResponse::InternalServerError().json("missing field for item")
+        }
+    }
+
+    let order = Order{ 
+        id: order_id.clone(), 
+        user_id: order_req.user_id.unwrap(), 
+        items: items, 
+        status: order_req.status.unwrap_or(Status::Failed) 
+    };
+
+    match storage.upsert_order(order).await {
+        Ok(_) => HttpResponse::Created().json(json!({"status": "success"})),
+        Err(e) => process_error(e)
+        
+    }
+}
+
+#[delete("/orders/{id}")]
+async fn delete_order(
+    data: web::Data<AppState>,
+    order_id: web::Path<u64>
+) -> HttpResponse {
+    let mut storage = data.storage.lock().await;
+
+    match storage.delete_order(order_id.into_inner()).await {
         Ok(_) => HttpResponse::Created().json(json!({"status": "success"})),
         Err(e) => process_error(e)
         
@@ -318,6 +387,8 @@ async fn main() -> std::io::Result<()> {
             .service(delete_product)
             .service(get_orders)
             .service(create_order)
+            .service(update_order)
+            .service(delete_order)
             .service(get_categories)
     })
     .bind(("127.0.0.1", 8080))?
