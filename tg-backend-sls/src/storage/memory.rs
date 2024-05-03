@@ -47,7 +47,7 @@ impl Storage for MemoryStorage {
         Ok(())
     }
 
-    async fn delete_user(&mut self, id: i64) -> Result<(), StorageError> {
+    async fn delete_user(&mut self, id: u64) -> Result<(), StorageError> {
         self.users.remove(&id.to_string());
         Ok(())
     }
@@ -73,14 +73,14 @@ impl Storage for MemoryStorage {
         Ok(())
     }
 
-    async fn delete_product(&mut self, id: i64) -> Result<(), StorageError> {
+    async fn delete_product(&mut self, id: u64) -> Result<(), StorageError> {
         self.products.remove(&id.to_string()).map_or_else(
             || Err(StorageError::NotFoundError(format!("Product with ID {} not found", id))),
             |_| Ok(())
         )
     }
 
-    async fn get_cart(&self, user_id: Option<i64>) -> Result<Vec<Cart>, StorageError> {
+    async fn get_cart(&self, user_id: Option<u64>) -> Result<Vec<Cart>, StorageError> {
         let carts = self.carts.values()
         .filter(|cart| 
             user_id.map_or(true, |user_id| cart.user_id == user_id))
@@ -111,14 +111,14 @@ impl Storage for MemoryStorage {
         Ok(())
     }
 
-    async fn delete_order(&mut self, id: i64) -> Result<(), StorageError> {
+    async fn delete_order(&mut self, id: u64) -> Result<(), StorageError> {
         self.orders.remove(&id.to_string()).map_or_else(
             || Err(StorageError::NotFoundError(format!("Order with ID {} not found", id))),
             |_| Ok(())
         )
     }
 
-    async fn get_image(&self, id: Option<i64>) -> Result<Vec<Image>, StorageError> {
+    async fn get_image(&self, id: Option<u64>) -> Result<Vec<Image>, StorageError> {
         let images = self.images.values()
             .filter(|image| 
                 id.map_or(true, |id_val| image.id == id_val)
@@ -133,13 +133,13 @@ impl Storage for MemoryStorage {
         Ok(())
     }
 
-    async fn delete_image(&mut self, id: i64) -> Result<(), StorageError> {
+    async fn delete_image(&mut self, id: u64) -> Result<(), StorageError> {
         self.images.remove(&id.to_string()).map_or_else(
             || Err(StorageError::NotFoundError(format!("Image with ID {} not found", id))),
             |_| Ok(())
         )
     }
-    async fn get_category(&self, id: Option<i64>) -> Result<Vec<Category>, StorageError> {
+    async fn get_category(&self, id: Option<u64>) -> Result<Vec<Category>, StorageError> {
         let categories = self.categories.values()
             .filter(|category| 
                 id.map_or(true, |id_val| category.id == id_val)
@@ -154,7 +154,7 @@ impl Storage for MemoryStorage {
         Ok(())
     }
 
-    async fn delete_category(&mut self, id: i64) -> Result<(), StorageError> {
+    async fn delete_category(&mut self, id: u64) -> Result<(), StorageError> {
         self.categories.remove(&id.to_string()).map_or_else(
             || Err(StorageError::NotFoundError(format!("Category with ID {} not found", id))),
             |_| Ok(())

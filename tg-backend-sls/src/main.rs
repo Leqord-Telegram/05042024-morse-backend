@@ -9,9 +9,22 @@ use storage::base::*;
 use std::env;
 use std::sync::Arc;
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
-use serde::Deserialize;
 use serde_json::json;
 use tokio::sync::Mutex;
+use chrono::{Utc, TimeZone};
+use std::collections::hash_map::DefaultHasher;
+use std::hash::{Hash, Hasher};
+
+// Функция для генерации идентификатора на основе текущего времени и строки текста
+fn generate_identifier(text: &str) -> u64 {
+    let current_time = Utc::now().timestamp_nanos_opt(); // Получаем текущее время в наносекундах
+    let mut hasher = DefaultHasher::new(); // Создаем хешер для вычисления хеша
+
+    current_time.hash(&mut hasher);
+    text.hash(&mut hasher);
+
+    hasher.finish()
+}
 
 
 struct AppState {
@@ -42,9 +55,12 @@ impl AppState {
 
 fn process_error(error: StorageError) -> HttpResponse {
     match error {
-        StorageError::InternalError(s) => HttpResponse::InternalServerError().json(json!({"status": "error", "details": s})),
-        StorageError::NotFoundError(s) => HttpResponse::InternalServerError().json(json!({"status": "not found", "details": s})),
-        StorageError::KeyCollisionError(s) => HttpResponse::InternalServerError().json(json!({"status": "key collision", "details": s})),
+        StorageError::InternalError(s) => 
+            HttpResponse::InternalServerError().json(json!({"status": "error", "details": s})),
+        StorageError::NotFoundError(s) => 
+            HttpResponse::InternalServerError().json(json!({"status": "not found", "details": s})),
+        StorageError::KeyCollisionError(s) => 
+            HttpResponse::InternalServerError().json(json!({"status": "key collision", "details": s})),
     }
 }
 
