@@ -2,6 +2,7 @@ mod model;
 mod storage;
 
 use model::category::*;
+use model::product;
 use model::product::*;
 use storage::memory::*;
 use storage::base::*;
@@ -24,6 +25,17 @@ fn generate_identifier(text: &str) -> u64 {
     text.hash(&mut hasher);
 
     hasher.finish()
+}
+
+fn process_error(error: StorageError) -> HttpResponse {
+    match error {
+        StorageError::InternalError(s) => 
+            HttpResponse::InternalServerError().json(json!({"status": "error", "details": s})),
+        StorageError::NotFoundError(s) => 
+            HttpResponse::InternalServerError().json(json!({"status": "not found", "details": s})),
+        StorageError::KeyCollisionError(s) => 
+            HttpResponse::InternalServerError().json(json!({"status": "key collision", "details": s})),
+    }
 }
 
 
@@ -53,17 +65,6 @@ impl AppState {
     }
 }
 
-fn process_error(error: StorageError) -> HttpResponse {
-    match error {
-        StorageError::InternalError(s) => 
-            HttpResponse::InternalServerError().json(json!({"status": "error", "details": s})),
-        StorageError::NotFoundError(s) => 
-            HttpResponse::InternalServerError().json(json!({"status": "not found", "details": s})),
-        StorageError::KeyCollisionError(s) => 
-            HttpResponse::InternalServerError().json(json!({"status": "key collision", "details": s})),
-    }
-}
-
 
 #[get("/products")]
 async fn get_products(
@@ -84,11 +85,50 @@ async fn get_products(
 #[post("/products")]
 async fn create_product(
     data: web::Data<AppState>,
-    product: web::Json<Product>
+    body: web::Json<ProductRequest>
 ) -> HttpResponse {
     let mut storage = data.storage.lock().await;
 
-    match storage.upsert_product(product.into_inner()).await {
+    let product_req = body.into_inner();
+
+    if !product_req.name.is_some() {
+        return HttpResponse::InternalServerError().json("missing name")
+    }
+
+    let possible_id = generate_identifier(&product_req.name.unwrap());
+
+    let possible_collision_res = storage.get_product(ProductRequest{ 
+        id: Some(possible_id),
+        name: None,
+        description: None,
+        category_id: None,
+        price: None,
+        quantity: None,
+        active: None,
+        images: None, }).await;
+
+    if !possible_collision_res.is_ok() {
+        HttpResponse::InternalServerError();
+    }
+
+    let possible_collision = possible_collision_res.unwrap();
+
+    if !possible_collision.is_empty() {
+        return HttpResponse::InternalServerError().json("collision")
+    }
+
+    let product = Product { 
+        id: possible_id, 
+        name: (), 
+        description: (), 
+        category_id: (), 
+        price: (), 
+        quantity: (), 
+        active: (), 
+        images: () 
+    };
+
+    match storage.upsert_product(product).await {
         Ok(_) => HttpResponse::Created().json(json!({"status": "success"})),
         Err(e) => process_error(e)
         
