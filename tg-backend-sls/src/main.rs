@@ -31,6 +31,18 @@ impl AppState {
             storage: Arc::new(Mutex::new(MemoryStorage::new())),
         };
 
+        let _ = state.storage.lock().await.upsert_product(
+            Product { 
+                id: 123, 
+                name: "член".to_string(), 
+                destription: "ЗАоуап".to_string(), 
+                category_id: 623, 
+                price: 1234, 
+                quantity: 51, 
+                active: true, 
+                images: [].to_vec() 
+            });
+
         return state;
     }
 }
