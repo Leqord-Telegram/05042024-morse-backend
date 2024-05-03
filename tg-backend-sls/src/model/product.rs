@@ -13,3 +13,15 @@ pub struct Product {
     pub active: bool,
     pub images: Vec<Image>,
 }
+
+#[derive(Serialize, Deserialize, Clone, PartialEq)]
+pub struct ProductRequest {
+    pub id: Option<i64>,
+    pub name: Option<String>,
+    pub description: Option<String>,
+    pub category_id: Option<i64>,
+    pub price: Option<i64>,
+    pub quantity: Option<i64>,
+    pub active: Option<bool>,
+    pub images: Option<Vec<Image>>,
+}
