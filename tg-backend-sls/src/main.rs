@@ -95,7 +95,7 @@ async fn create_product(
         return HttpResponse::InternalServerError().json("missing name")
     }
 
-    let possible_id = generate_identifier(&product_req.name.unwrap());
+    let possible_id = generate_identifier(product_req.name.clone().unwrap().as_ref());
 
     let possible_collision_res = storage.get_product(ProductRequest{ 
         id: Some(possible_id),
@@ -119,13 +119,13 @@ async fn create_product(
 
     let product = Product { 
         id: possible_id, 
-        name: (), 
-        description: (), 
-        category_id: (), 
-        price: (), 
-        quantity: (), 
-        active: (), 
-        images: () 
+        name: product_req.name.unwrap_or_default(), 
+        description: product_req.description.unwrap_or_default(), 
+        category_id: product_req.category_id.unwrap_or_default(), 
+        price: product_req.price.unwrap_or_default(),
+        quantity: product_req.quantity.unwrap_or_default(), 
+        active: product_req.active.unwrap_or_default(), 
+        images: product_req.images.unwrap_or_default(),
     };
 
     match storage.upsert_product(product).await {
