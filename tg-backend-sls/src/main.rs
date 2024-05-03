@@ -11,14 +11,14 @@ use std::sync::Arc;
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 use serde_json::json;
 use tokio::sync::Mutex;
-use chrono::{Utc, TimeZone};
+use chrono::Utc;
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
 
-// Функция для генерации идентификатора на основе текущего времени и строки текста
+
 fn generate_identifier(text: &str) -> u64 {
-    let current_time = Utc::now().timestamp_nanos_opt(); // Получаем текущее время в наносекундах
-    let mut hasher = DefaultHasher::new(); // Создаем хешер для вычисления хеша
+    let current_time = Utc::now().timestamp_nanos_opt();
+    let mut hasher = DefaultHasher::new();
 
     current_time.hash(&mut hasher);
     text.hash(&mut hasher);
