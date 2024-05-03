@@ -33,4 +33,5 @@ pub trait Storage {
 pub enum StorageError {
     InternalError(String),
     NotFoundError(String),
+    KeyCollisionError(String),
 }
