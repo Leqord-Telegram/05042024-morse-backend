@@ -1,6 +1,6 @@
-use serde::Serialize;
+use serde::{Serialize,  Deserialize};
 
-#[derive(Serialize, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Clone, PartialEq)]
 pub struct Image {
     pub id: i64,
 }
