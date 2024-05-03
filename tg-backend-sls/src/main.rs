@@ -35,7 +35,7 @@ impl AppState {
             Product { 
                 id: 123, 
                 name: "член".to_string(), 
-                destription: "ЗАоуап".to_string(), 
+                description: "ЗАоуап".to_string(), 
                 category_id: 623, 
                 price: 1234, 
                 quantity: 51, 
@@ -117,6 +117,7 @@ async fn main() -> std::io::Result<()> {
             .service(echo)
             .service(get_categories)
             .service(get_products)
+            .service(create_product)
     })
     .bind(("127.0.0.1", 8080))?
     .run()

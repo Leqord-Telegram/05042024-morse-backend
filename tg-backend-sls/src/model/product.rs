@@ -6,7 +6,7 @@ use super::image::Image;
 pub struct Product {
     pub id: i64,
     pub name: String,
-    pub destription: String,
+    pub description: String,
     pub category_id: i64,
     pub price: i64,
     pub quantity: i64,
