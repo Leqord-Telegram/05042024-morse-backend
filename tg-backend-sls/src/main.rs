@@ -41,9 +41,16 @@ impl AppState {
                 quantity: 51, 
                 active: true, 
                 images: [].to_vec() 
-            });
+            }).await;
 
         return state;
+    }
+}
+
+fn process_error(error: StorageError) -> HttpResponse {
+    match error {
+        StorageError::InternalError(s) => HttpResponse::InternalServerError().json(json!({"status": "error", "details": s})),
+        StorageError::NotFoundError(s) => HttpResponse::InternalServerError().json(json!({"status": "not found", "details": s})),
     }
 }
 
@@ -59,8 +66,12 @@ async fn get_products(
     let products = storage.get_product(query_info.id, 
                                                             query_info.category_id, 
                                                             query_info.active
-                                                        ).await.unwrap_or_else(|_| vec![]);
-    HttpResponse::Ok().json(products)
+                                                        ).await;
+
+    match products {
+        Ok(p) => HttpResponse::Ok().json(p),
+        Err(e) => process_error(e)
+    }
 }
 
 #[post("/products")]
@@ -72,11 +83,7 @@ async fn create_product(
 
     match storage.upsert_product(product.into_inner()).await {
         Ok(_) => HttpResponse::Created().json(json!({"status": "success"})),
-        Err(e) =>
-            match e {
-                StorageError::InternalError(s) => HttpResponse::InternalServerError().json(json!({"status": "error", "details": s})),
-                StorageError::NotFoundError(s) => HttpResponse::InternalServerError().json(json!({"status": "not found", "details": s})),
-            }
+        Err(e) => process_error(e)
         
     }
 }
