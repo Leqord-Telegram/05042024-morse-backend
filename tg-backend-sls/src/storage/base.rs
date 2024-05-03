@@ -33,4 +33,5 @@ pub trait Storage {
 #[derive(Debug)]
 pub enum StorageError {
     InternalError(String),
+    NotFoundError(String)
 }

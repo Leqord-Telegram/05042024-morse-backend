@@ -31,6 +31,8 @@ fn process_error(error: StorageError) -> HttpResponse {
     match error {
         StorageError::InternalError(s) => 
             HttpResponse::InternalServerError().json(json!({"status": "storage error", "details": s})),
+        StorageError::NotFoundError(s) => 
+            HttpResponse::InternalServerError().json(json!({"status": "storage entry not found", "details": s})),   
     }
 }
 
@@ -144,7 +146,7 @@ async fn update_product(
     let product_req = body.into_inner();
 
     let possible_collision_res = storage.get_product(ProductRequest{ 
-        id: Some(product_id.into_inner()),
+        id: Some(product_id.clone()),
         name: None,
         description: None,
         category_id: None,
@@ -164,7 +166,7 @@ async fn update_product(
     }
 
     let product = Product { 
-        id: possible_id, 
+        id: product_id.clone(), 
         name: product_req.name.unwrap_or_default(), 
         description: product_req.description.unwrap_or_default(), 
         category_id: product_req.category_id.unwrap_or_default(), 
@@ -175,6 +177,20 @@ async fn update_product(
     };
 
     match storage.upsert_product(product).await {
+        Ok(_) => HttpResponse::Created().json(json!({"status": "success"})),
+        Err(e) => process_error(e)
+        
+    }
+}
+
+#[delete("/products/{id}")]
+async fn delete_product(
+    data: web::Data<AppState>,
+    product_id: web::Path<u64>
+) -> HttpResponse {
+    let mut storage = data.storage.lock().await;
+
+    match storage.delete_product(product_id.into_inner()).await {
         Ok(_) => HttpResponse::Created().json(json!({"status": "success"})),
         Err(e) => process_error(e)
         
@@ -211,10 +227,11 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .app_data(app_state.clone())
             .service(echo)
-            .service(get_categories)
             .service(get_products)
             .service(create_product)
             .service(update_product)
+            .service(delete_product)
+            .service(get_categories)
     })
     .bind(("127.0.0.1", 8080))?
     .run()
