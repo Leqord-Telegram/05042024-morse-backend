@@ -9,7 +9,7 @@ use storage::base::*;
 
 use std::env;
 use std::sync::Arc;
-use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{get, post, put, delete, web, App, HttpResponse, HttpServer, Responder};
 use serde_json::json;
 use tokio::sync::Mutex;
 use chrono::Utc;
@@ -30,11 +30,7 @@ fn generate_identifier(text: &str) -> u64 {
 fn process_error(error: StorageError) -> HttpResponse {
     match error {
         StorageError::InternalError(s) => 
-            HttpResponse::InternalServerError().json(json!({"status": "error", "details": s})),
-        StorageError::NotFoundError(s) => 
-            HttpResponse::InternalServerError().json(json!({"status": "not found", "details": s})),
-        StorageError::KeyCollisionError(s) => 
-            HttpResponse::InternalServerError().json(json!({"status": "key collision", "details": s})),
+            HttpResponse::InternalServerError().json(json!({"status": "storage error", "details": s})),
     }
 }
 
@@ -65,6 +61,8 @@ impl AppState {
     }
 }
 
+
+// products
 
 #[get("/products")]
 async fn get_products(
@@ -135,6 +133,57 @@ async fn create_product(
     }
 }
 
+#[put("/products/{id}")]
+async fn update_product(
+    data: web::Data<AppState>,
+    product_id: web::Path<u64>,
+    body: web::Json<ProductRequest>
+) -> HttpResponse {
+    let mut storage = data.storage.lock().await;
+
+    let product_req = body.into_inner();
+
+    let possible_collision_res = storage.get_product(ProductRequest{ 
+        id: Some(product_id.into_inner()),
+        name: None,
+        description: None,
+        category_id: None,
+        price: None,
+        quantity: None,
+        active: None,
+        images: None,}).await;
+
+    if !possible_collision_res.is_ok() {
+        HttpResponse::InternalServerError();
+    }
+
+    let possible_collision = possible_collision_res.unwrap();
+
+    if possible_collision.is_empty() {
+        return HttpResponse::InternalServerError().json("not found")
+    }
+
+    let product = Product { 
+        id: possible_id, 
+        name: product_req.name.unwrap_or_default(), 
+        description: product_req.description.unwrap_or_default(), 
+        category_id: product_req.category_id.unwrap_or_default(), 
+        price: product_req.price.unwrap_or_default(),
+        quantity: product_req.quantity.unwrap_or_default(), 
+        active: product_req.active.unwrap_or_default(), 
+        images: product_req.images.unwrap_or_default(),
+    };
+
+    match storage.upsert_product(product).await {
+        Ok(_) => HttpResponse::Created().json(json!({"status": "success"})),
+        Err(e) => process_error(e)
+        
+    }
+}
+
+
+// categories
+
 #[get("/categories")]
 async fn get_categories(data: web::Data<AppState>) -> impl Responder {
     let storage = data.storage.lock().await;
@@ -165,6 +214,7 @@ async fn main() -> std::io::Result<()> {
             .service(get_categories)
             .service(get_products)
             .service(create_product)
+            .service(update_product)
     })
     .bind(("127.0.0.1", 8080))?
     .run()
