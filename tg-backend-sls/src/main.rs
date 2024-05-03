@@ -208,11 +208,8 @@ async fn get_categories(data: web::Data<AppState>) -> impl Responder {
     HttpResponse::Ok().json(categories)
 }
 
-#[post("/echo")]
-async fn echo(req_body: String) -> impl Responder {
-    HttpResponse::Ok().body(req_body)
-}
 
+// main
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -226,7 +223,6 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(move || {
         App::new()
             .app_data(app_state.clone())
-            .service(echo)
             .service(get_products)
             .service(create_product)
             .service(update_product)
