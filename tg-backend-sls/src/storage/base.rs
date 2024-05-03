@@ -30,6 +30,7 @@ pub trait Storage {
     async fn upsert_cart(&mut self, cart: Cart) -> Result<(), StorageError>;
 }
 
+#[derive(Debug)]
 pub enum StorageError {
     InternalError(String),
     NotFoundError(String),
