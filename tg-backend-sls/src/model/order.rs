@@ -12,7 +12,7 @@ pub struct Order {
     pub id: u64,
     pub user_id: i64,
     pub items: Vec<OrderItem>,
-    pub status: Status
+    pub status: OrderStatus
 }
 
 #[derive(Serialize, Deserialize, Clone, PartialEq)]
@@ -20,7 +20,7 @@ pub struct OrderRequest {
     pub id: Option<u64>,
     pub user_id: Option<i64>,
     pub items: Option<Vec<OrderItemRequest>>,
-    pub status: Option<Status>,
+    pub status: Option<OrderStatus>,
 }
 
 #[derive(Serialize, Deserialize, Clone, PartialEq)]
@@ -36,7 +36,7 @@ pub struct OrderItemRequest {
 }
 
 #[derive(Serialize, Deserialize, Clone, PartialEq)]
-pub enum Status {
+pub enum OrderStatus {
     Failed,
     Pending,
     Shipping,

@@ -271,7 +271,7 @@ async fn create_order(
         id: possible_id, 
         user_id: order_req.user_id.unwrap(), 
         items: items, 
-        status: order_req.status.unwrap_or(Status::Failed) 
+        status: order_req.status.unwrap_or(OrderStatus::Failed) 
     };
 
     match storage.upsert_order(order).await {
@@ -331,7 +331,7 @@ async fn update_order(
         id: order_id.clone(), 
         user_id: order_req.user_id.unwrap(), 
         items: items, 
-        status: order_req.status.unwrap_or(Status::Failed) 
+        status: order_req.status.unwrap_or(OrderStatus::Failed) 
     };
 
     match storage.upsert_order(order).await {
