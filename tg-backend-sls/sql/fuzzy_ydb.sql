@@ -3,7 +3,7 @@ $res_limit = 10;
 $search_word = "пень лес собака шёл картошка";
 $filtr = "()-+=,.\'/\\|[]{}`~?!<>:*&^%$#@";
 $word_len_threshold = 1;
-$filter_distance_threshold = 4
+$filter_distance_threshold = 4;
 
 $splitstr = ($str) -> {
     return Unicode::SplitToList(Unicode::Fold(Unicode::RemoveAll($str, $filtr), "Russian" AS Language), $sep)};
@@ -86,6 +86,7 @@ order by
     rs.id asc
 limit
     $res_limit;
+
 
 
 
