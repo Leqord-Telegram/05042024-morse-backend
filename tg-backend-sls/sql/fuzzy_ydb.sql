@@ -1,5 +1,7 @@
 $sep = " ";
 $res_limit = 10;
+$distance_limit = 4;
+$search_word = "картошка шёл";
 $filtr = "()-+=,.\'/\\|[]{}`~?!<>:*&^%$#@";
 $word_len_threshold = 1;
 
@@ -12,7 +14,7 @@ $search_table =
     from 
         (
         select 
-            $splitstr("картошка шёл") as search_word
+            $splitstr($search_word) as search_word
         ) 
     flatten by 
         search_word 
@@ -61,6 +63,8 @@ $result =
             min(distance) as min_distance
         from
             $comptable
+        where
+            distance < $distance_limit
         group by
             id, search_word
         )
