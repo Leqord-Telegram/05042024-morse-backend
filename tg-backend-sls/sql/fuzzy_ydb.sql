@@ -1,6 +1,6 @@
 $sep = " ";
 $res_limit = 10;
-$search_word = "картошка шёл";
+$search_word = "пень лес собака шёл картошка";
 $filtr = "()-+=,.\'/\\|[]{}`~?!<>:*&^%$#@";
 $word_len_threshold = 1;
 
@@ -54,7 +54,7 @@ $comptable = select
 $result = 
     select
         id as id,
-        sum(min_distance) as sum_distance,
+        cast(sum(min_distance) as float) / count(1) as sum_distance,
     from
         (
         select
@@ -78,6 +78,7 @@ order by
     rs.id asc
 limit
     $res_limit;
+
 
 
 -- теперь попробовать кешировать результаты для отдельных слов строки поиска
