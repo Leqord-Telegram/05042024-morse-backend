@@ -6,8 +6,10 @@ use model::order::*;
 use model::product::*;
 use storage::memory::*;
 use storage::base::*;
+use ydb::ServiceAccountCredentials;
 
 use std::env;
+use std::str::FromStr;
 use std::sync::Arc;
 use actix_web::{get, post, put, delete, web, App, HttpResponse, HttpServer, Responder};
 use serde_json::json;
@@ -15,10 +17,11 @@ use tokio::sync::Mutex;
 use chrono::Utc;
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
+use ydb::{ClientBuilder, Query, StaticToken, YdbResult};
 
 
 fn generate_identifier(text: &str) -> u64 {
-    let current_time = Utc::now().timestamp_nanos_opt();
+    let current_time = Utc::now().timestamp_nanos();
     let mut hasher = DefaultHasher::new();
 
     current_time.hash(&mut hasher);
@@ -499,6 +502,44 @@ async fn delete_category (
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    let ydb_url = env::var("YDB_URL").unwrap();
+
+    println!("Connecting to {}", ydb_url);
+
+    let client = ClientBuilder::new_from_connection_string(ydb_url).unwrap()
+        // get credentials from file located at path specified in YDB_SERVICE_ACCOUNT_KEY_FILE_CREDENTIALS
+        .with_credentials(ServiceAccountCredentials::from_env().unwrap())
+        //  or with credentials from env:
+        // .with_credentials(FromEnvCredentials::new()?)
+        // or you can use custom url
+        // .with_credentials(ServiceAccountCredentials::from_env()?.with_url("https://iam.api.cloud.yandex.net/iam/v1/tokens"))
+        .client().unwrap();
+
+    // wait until the background initialization of the driver finishes
+    client.wait().await.unwrap();
+
+    println!("Client connected");
+
+    // read the query result
+    let sum: i32 = client
+        .table_client() // create table client
+        .retry_transaction(|mut t| async move {
+            // the code in transaction can retry a few times if there was a retriable error
+
+            // send the query to the database
+            let res = t.query(Query::from("SELECT 1 + 1 AS sum")).await?;
+
+            // read exactly one result from the db
+            let field_val: i32 = res.into_only_row()?.remove_field_by_name("sum")?.try_into()?;
+
+            // return result
+            return Ok(field_val);
+        })
+        .await.unwrap();
+
+    // this will print "sum: 2"
+    println!("sum: {}", sum);
+        
     let host = env::var("HOST").unwrap_or_else(|_| "127.0.0.1".to_string());
     let port = env::var("PORT").unwrap_or_else(|_| "8080".to_string());
 
