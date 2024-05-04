@@ -1,6 +1,5 @@
 $sep = " ";
 $res_limit = 10;
-$distance_limit = 4;
 $search_word = "картошка шёл";
 $filtr = "()-+=,.\'/\\|[]{}`~?!<>:*&^%$#@";
 $word_len_threshold = 1;
@@ -63,8 +62,6 @@ $result =
             min(distance) as min_distance
         from
             $comptable
-        where
-            distance < $distance_limit
         group by
             id, search_word
         )
