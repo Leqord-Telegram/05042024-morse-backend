@@ -25,7 +25,7 @@ $ref_table_list =
         $splitstr(text) as list_text
     from 
         `search-levenstein`;
-
+        
 $ref_table = 
     select 
         id, 
@@ -53,7 +53,7 @@ $comptable = select
 $result = 
     select
         id as id,
-        avg(min_distance) as avg_distance,
+        sum(min_distance) as sum_distance,
     from
         (
         select
@@ -69,20 +69,15 @@ $result =
         
 select 
     rs.id,
-    avg_distance,
-    ListLength(ln.list_text) as words_count,
+    sum_distance
 from 
     $result as rs
-inner join
-    $ref_table_list as ln
-on
-    ln.id = rs.id
 order by
-    avg_distance asc,
-    words_count asc,
+    sum_distance asc,
     rs.id asc
 limit
     $res_limit;
+
 
 -- теперь попробовать кешировать результаты для отдельных слов строки поиска
 -- уже неплохо работает: слова с меньшим количеством дают большую дистанцию
