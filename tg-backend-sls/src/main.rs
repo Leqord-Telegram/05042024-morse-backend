@@ -6,10 +6,9 @@ use model::order::*;
 use model::product::*;
 use storage::memory::*;
 use storage::base::*;
-use ydb::ServiceAccountCredentials;
+
 
 use std::env;
-use std::str::FromStr;
 use std::sync::Arc;
 use actix_web::{get, post, put, delete, web, App, HttpResponse, HttpServer, Responder};
 use serde_json::json;
@@ -17,7 +16,7 @@ use tokio::sync::Mutex;
 use chrono::Utc;
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
-use ydb::{ClientBuilder, Query, StaticToken, YdbResult};
+
 
 
 fn generate_identifier(text: &str) -> u64 {
@@ -502,27 +501,6 @@ async fn delete_category (
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    let ydb_url = env::var("YDB_URL").unwrap();
-
-    println!("Connecting to {}", ydb_url);
-
-    let client = ClientBuilder::new_from_connection_string(ydb_url).unwrap()
-        .with_credentials(ServiceAccountCredentials::from_env().unwrap())
-        .client().unwrap();
-    client.wait().await.unwrap();
-
-    println!("Client connected");
-
-    let sum: i32 = client
-        .table_client()
-        .retry_transaction(|mut t| async move {
-            let res = t.query(Query::from("SELECT 1 + 1 AS sum")).await?;
-            let field_val: i32 = res.into_only_row()?.remove_field_by_name("sum")?.try_into()?;
-            return Ok(field_val);
-        })
-        .await.unwrap();
-
-    println!("sum: {}", sum);
         
     let host = env::var("HOST").unwrap_or_else(|_| "127.0.0.1".to_string());
     let port = env::var("PORT").unwrap_or_else(|_| "8080".to_string());
