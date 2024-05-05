@@ -30,4 +30,5 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
     implementation("io.ktor:ktor-serialization:1.5.4")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.1")
+    implementation("io.ktor:ktor-server-status-pages:$ktor_version")
 }
