@@ -6,7 +6,10 @@ import io.ktor.server.netty.*
 import ru.morsianin_shop.plugins.*
 
 fun main() {
-    embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module)
+    val ip = System.getenv("LISTEN_IP") ?: "127.0.0.1"
+    val port = System.getenv("LISTEN_PORT").toIntOrNull() ?: 8080
+
+    embeddedServer(Netty, port = port, host = ip, module = Application::module)
         .start(wait = true)
 }
 
