@@ -1,7 +1,6 @@
 package ru.morsianin_shop.model
 
 import kotlinx.serialization.*
-import kotlinx.serialization.json.*
 
 @Serializable
 data class Category(
