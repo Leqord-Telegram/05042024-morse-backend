@@ -27,7 +27,7 @@ fun Application.module() {
     configureRouting()
     configureOther()
 
-    configureRateLimit(searchRateLimit = System.getenv("RATE_SEARCH")?.toIntOrNull())
+    configureRateLimit()
 
     productRoutes()
     orderRoutes()

@@ -5,7 +5,10 @@ import io.ktor.server.plugins.ratelimit.*
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-fun Application.configureRateLimit(searchRateLimit: Int? = null, refill: Duration = 60.seconds) {
+fun Application.configureRateLimit() {
+    val refill = 60.seconds
+    val searchRateLimit = System.getenv("RATE_SEARCH")?.toIntOrNull()
+
     if (searchRateLimit != null) {
         install(RateLimit) {
             register(RateLimitName("search-suggestions")) {
