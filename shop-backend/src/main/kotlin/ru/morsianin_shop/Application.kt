@@ -20,6 +20,7 @@ fun main() {
 fun Application.module() {
     configureResources()
     configureRouting()
+    configureOther()
 
     configureRateLimit(searchRateLimit = System.getenv("RATE_SEARCH").toIntOrNull())
 
@@ -28,5 +29,5 @@ fun Application.module() {
     imageRoutes()
     categoryRoutes()
     userRoutes()
-    configureOther()
+    searchRoutes()
 }
