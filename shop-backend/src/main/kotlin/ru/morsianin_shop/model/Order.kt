@@ -6,17 +6,17 @@ import kotlinx.serialization.Serializable
 data class Order(
     val id: Long,
     val userId: Long,
-    val items: List<OrderItem>,
-    val status: OrderStatus
+    val items: List<Item>,
+    val status: Status
 ) {
     @Serializable
-    data class OrderItem(
+    data class Item(
         val productId: Long,
         val quantity: Long
     )
 
     @Serializable
-    enum class OrderStatus {
+    enum class Status {
         Failed, Pending, Shipping, Arrived, Finished
     }
 }
