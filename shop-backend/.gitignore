@@ -1,3 +1,6 @@
+.env
+
+### Java ###
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
