@@ -4,6 +4,7 @@ import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import ru.morsianin_shop.plugins.configureOther
+import ru.morsianin_shop.plugins.configureRateLimit
 import ru.morsianin_shop.plugins.configureResources
 import ru.morsianin_shop.plugins.configureRouting
 import ru.morsianin_shop.routes.*
@@ -19,6 +20,8 @@ fun main() {
 fun Application.module() {
     configureResources()
     configureRouting()
+
+    configureRateLimit(searchRateLimit = System.getenv("RATE_SEARCH").toIntOrNull())
 
     productRoutes()
     orderRoutes()
