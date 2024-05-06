@@ -13,4 +13,5 @@ fun Application.configureRouting() {
             call.respondText("App in illegal state as ${cause.message}")
         }
     }
+    log.info("Base routing initialized")
 }

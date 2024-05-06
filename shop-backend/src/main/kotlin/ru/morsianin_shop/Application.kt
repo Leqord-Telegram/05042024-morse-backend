@@ -3,6 +3,7 @@ package ru.morsianin_shop
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import ru.morsianin_shop.plugins.configureOther
 import ru.morsianin_shop.plugins.configureResources
 import ru.morsianin_shop.plugins.configureRouting
 import ru.morsianin_shop.routes.*
@@ -24,4 +25,5 @@ fun Application.module() {
     imageRoutes()
     categoryRoutes()
     userRoutes()
+    configureOther()
 }
