@@ -3,8 +3,9 @@ package ru.morsianin_shop
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
-import io.ktor.server.resources.*
-import ru.morsianin_shop.plugins.*
+import ru.morsianin_shop.plugins.configureResources
+import ru.morsianin_shop.plugins.configureRouting
+import ru.morsianin_shop.routes.productRoutes
 
 fun main() {
     val ip = System.getenv("LISTEN_IP") ?: "127.0.0.1"
@@ -15,7 +16,8 @@ fun main() {
 }
 
 fun Application.module() {
+    configureResources()
     configureRouting()
 
-    install(Resources)
+    productRoutes()
 }
