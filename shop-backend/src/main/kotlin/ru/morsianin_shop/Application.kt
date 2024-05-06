@@ -5,6 +5,7 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import ru.morsianin_shop.plugins.configureResources
 import ru.morsianin_shop.plugins.configureRouting
+import ru.morsianin_shop.routes.imageRoutes
 import ru.morsianin_shop.routes.orderRoutes
 import ru.morsianin_shop.routes.productRoutes
 
@@ -22,4 +23,5 @@ fun Application.module() {
 
     productRoutes()
     orderRoutes()
+    imageRoutes()
 }
