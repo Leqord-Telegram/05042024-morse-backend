@@ -32,6 +32,7 @@ dependencies {
     implementation("io.ktor:ktor-server-content-negotiation:$ktor_version")
     implementation("io.ktor:ktor-server-status-pages:$ktor_version")
     implementation("io.ktor:ktor-server-resources:$ktor_version")
+    implementation("io.ktor:ktor-server-auto-head-response:$ktor_version")
     testImplementation("io.ktor:ktor-server-tests")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 }
