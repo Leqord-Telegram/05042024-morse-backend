@@ -11,7 +11,7 @@ import ru.morsianin_shop.model.Order
 import ru.morsianin_shop.resources.Users
 
 object StoredOrders: LongIdTable() {
-    val user = reference("userId", StoredUsers)
+    val user = reference("user_id", StoredUsers)
     val status = enumerationByName<Order.Status>("status", 255)
 }
 
