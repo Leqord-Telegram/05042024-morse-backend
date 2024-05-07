@@ -8,7 +8,7 @@ import ru.morsianin_shop.model.Order
 import ru.morsianin_shop.resources.Users
 
 object StoredOrders: IntIdTable() {
-    val user = reference("user", StoredUsers)
+    val user = reference("userId", StoredUsers)
     val status = enumerationByName<Order.Status>("status", 255)
 }
 

@@ -8,7 +8,7 @@ import org.jetbrains.exposed.dao.id.IntIdTable
 object StoredProducts: IntIdTable() {
     val name = text("name")
     val description = text("description")
-    val category = reference("category", StoredCategories)
+    val category = reference("categoryId", StoredCategories)
     val price = integer("price")
     val quantity = integer("quantity")
     val active = bool("active")
