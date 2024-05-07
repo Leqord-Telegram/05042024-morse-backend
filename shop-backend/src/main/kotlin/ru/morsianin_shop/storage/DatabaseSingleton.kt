@@ -3,13 +3,27 @@ package ru.morsianin_shop.storage
 import io.ktor.server.application.*
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import org.jetbrains.exposed.sql.transactions.transaction
 
 object DatabaseSingleton {
     private var database: Database? = null;
 
     fun init(driver: String, url: String, user: String, pass: String) {
         database = Database.connect(url, driver, user, pass)
+
+        transaction {
+            SchemaUtils.create(StoredUsers)
+            SchemaUtils.create(StoredImages)
+            SchemaUtils.create(StoredCategories)
+            SchemaUtils.create(StoredProducts)
+            SchemaUtils.create(StoredProductImages)
+            SchemaUtils.create(StoredOrders)
+            SchemaUtils.create(StoredOrderItems)
+            SchemaUtils.create(StoredUserCartItems)
+            SchemaUtils.create(StoredUserPrivileges)
+        }
     }
 
     fun getDatabase(): Database {
