@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 data class User(
     val id: Long,
     val name: String,
+    val username: String,
     val admin: Boolean,
     val cart: Cart
 ) {
