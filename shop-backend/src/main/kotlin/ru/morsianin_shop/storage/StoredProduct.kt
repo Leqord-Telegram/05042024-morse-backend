@@ -2,10 +2,13 @@ package ru.morsianin_shop.storage
 
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
+import org.jetbrains.exposed.dao.LongEntity
+import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
+import org.jetbrains.exposed.dao.id.LongIdTable
 
-object StoredProducts: IntIdTable() {
+object StoredProducts: LongIdTable() {
     val name = text("name")
     val description = text("description")
     val category = reference("categoryId", StoredCategories)
@@ -14,8 +17,8 @@ object StoredProducts: IntIdTable() {
     val active = bool("active")
 }
 
-class StoredProduct(id: EntityID<Int>) : IntEntity(id) {
-    companion object : IntEntityClass<StoredProduct>(StoredProducts)
+class StoredProduct(id: EntityID<Long>) : LongEntity(id) {
+    companion object : LongEntityClass<StoredProduct>(StoredProducts)
     var name by StoredProducts.name
     var description by StoredProducts.description
     var category by StoredCategory referencedOn StoredProducts.category
