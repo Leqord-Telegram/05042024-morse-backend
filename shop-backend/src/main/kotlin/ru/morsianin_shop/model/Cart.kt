@@ -10,6 +10,6 @@ data class Cart(
     @Serializable
     data class Item(
         val productId: Long,
-        val quantity: Long,
+        val quantity: Int,
     )
 }
