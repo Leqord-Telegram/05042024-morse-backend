@@ -4,8 +4,6 @@ import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
-import org.jetbrains.exposed.sql.Table.Dual.references
-import ru.morsianin_shop.storage.StoredCategory.Companion.referrersOn
 
 object StoredProducts: IntIdTable() {
     val name = text("name")
