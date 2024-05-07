@@ -3,14 +3,20 @@ package ru.morsianin_shop.storage
 import io.ktor.server.application.*
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.DatabaseConfig
-import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import org.jetbrains.exposed.sql.transactions.transaction
 
 object DatabaseSingleton {
+    private var database: Database? = null;
+
     fun init(driver: String, url: String, user: String, pass: String) {
-        Database.connect(url, driver, user, pass)
+        database = Database.connect(url, driver, user, pass)
+    }
+
+    fun getDatabase(): Database {
+        if  (database==null) {
+            throw IllegalStateException("Database is not initialized")
+        }
+        return database!!
     }
 
     suspend fun <T> dbQuery(block: suspend () -> T): T =
