@@ -1,6 +1,5 @@
 package ru.morsianin_shop.model
 
-import io.ktor.http.*
 import kotlinx.serialization.Serializable
 
 @Serializable
