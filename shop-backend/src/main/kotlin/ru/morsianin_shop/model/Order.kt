@@ -16,7 +16,11 @@ data class Order(
     )
 
     @Serializable
-    enum class Status {
-        Failed, Pending, Shipping, Arrived, Finished
+    enum class Status(val value: String) {
+        FAILED("failed"),
+        PENDING("pending"),
+        SHIPPING("shipping"),
+        ARRIVED("arrived"),
+        FINISHED("finished")
     }
 }
