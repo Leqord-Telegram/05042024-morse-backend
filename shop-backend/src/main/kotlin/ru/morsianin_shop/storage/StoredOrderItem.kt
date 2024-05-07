@@ -10,7 +10,7 @@ import org.jetbrains.exposed.dao.id.LongIdTable
 import ru.morsianin_shop.resources.Products
 
 object StoredOrderItems: LongIdTable() {
-    val product = reference("productId", StoredProducts)
+    val product = reference("product_id", StoredProducts)
     val quantity = integer("quantity")
 }
 
