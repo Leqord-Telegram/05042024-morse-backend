@@ -14,7 +14,16 @@ fun main() {
     val ip = System.getenv("LISTEN_IP") ?: "127.0.0.1"
     val port = System.getenv("LISTEN_PORT")?.toIntOrNull() ?: 8080
 
-    embeddedServer(Netty, port = port, host = ip, module = Application::module)
+    embeddedServer(Netty, port = port, host = ip, module = Application::module, configure = {
+        connectionGroupSize = 2
+        workerGroupSize = 5
+        callGroupSize = 10
+        shutdownGracePeriod = 2000
+        shutdownTimeout = 3000
+        requestQueueLimit = 16
+        shareWorkGroup = false
+        responseWriteTimeoutSeconds = 10
+    })
         .start(wait = true)
 }
 
