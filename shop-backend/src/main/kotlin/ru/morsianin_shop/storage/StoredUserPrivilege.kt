@@ -13,7 +13,7 @@ object StoredUserPrivileges: LongIdTable("user_privilege") {
 }
 
 class StoredUserPrivilege(id: EntityID<Long>) : LongEntity(id) {
-    companion object : LongEntityClass<StoredUser>(StoredUsers)
+    companion object : LongEntityClass<StoredUserPrivilege>(StoredUserPrivileges)
     var user by StoredUser referencedOn StoredUserPrivileges.user
     var privilege by StoredUserPrivileges.privilege
 }
