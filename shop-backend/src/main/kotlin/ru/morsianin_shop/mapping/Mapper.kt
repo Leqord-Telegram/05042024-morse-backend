@@ -43,7 +43,6 @@ object Mapper {
     )
 
     fun mapToDTO(stored: StoredUser): UserDTO {
-        stored.privileges
         return UserDTO(
             id = stored.id.value,
             name = stored.name,
