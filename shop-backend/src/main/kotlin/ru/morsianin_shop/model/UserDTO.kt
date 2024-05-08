@@ -6,7 +6,6 @@ import kotlinx.serialization.Serializable
 data class UserDTO(
     val id: Long,
     val name: String,
-    val username: String,
     val privileges: Set<UserPrivilegeDTO>,
     val cart: List<UserCartItemDTO>,
 )
