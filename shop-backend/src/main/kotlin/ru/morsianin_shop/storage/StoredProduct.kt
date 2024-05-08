@@ -7,7 +7,7 @@ import org.jetbrains.exposed.dao.id.LongIdTable
 
 object StoredProducts: LongIdTable("product") {
     val name = text("name")
-    val description = text("description")
+    val description = text("description").nullable().default("")
     val category = reference("category_id", Categories)
     val price = integer("price")
     val quantity = integer("quantity")
