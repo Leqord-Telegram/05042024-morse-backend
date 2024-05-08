@@ -16,7 +16,7 @@ object DatabaseSingleton {
         transaction {
             SchemaUtils.create(StoredUsers)
             SchemaUtils.create(StoredImages)
-            SchemaUtils.create(StoredCategories)
+            SchemaUtils.create(Categories)
             SchemaUtils.create(StoredProducts)
             SchemaUtils.create(StoredProductImages)
             SchemaUtils.create(StoredOrders)
