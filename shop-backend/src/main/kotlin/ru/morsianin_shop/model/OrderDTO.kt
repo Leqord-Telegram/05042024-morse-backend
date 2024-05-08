@@ -5,7 +5,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class OrderDTO(
     val id: Long,
-    val userId: Long,
     val items: List<Item>,
     val status: Status
 ) {
