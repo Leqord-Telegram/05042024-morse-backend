@@ -22,4 +22,5 @@ class StoredProduct(id: EntityID<Long>) : LongEntity(id) {
     var price by StoredProducts.price
     var quantity by StoredProducts.quantity
     var active by StoredProducts.active
+    val images by StoredProductImage referrersOn StoredProductImages.product
 }
