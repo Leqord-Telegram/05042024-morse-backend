@@ -8,7 +8,7 @@ import org.jetbrains.exposed.dao.id.LongIdTable
 object StoredUserCartItems: LongIdTable("user_cart_item") {
     val user = reference("user_id", StoredUsers)
     val product = reference("product_id", StoredProducts)
-    val quantity = integer("quantity")
+    val quantity = long("quantity")
 }
 
 class StoredUserCartItem(id: EntityID<Long>) : LongEntity(id) {
