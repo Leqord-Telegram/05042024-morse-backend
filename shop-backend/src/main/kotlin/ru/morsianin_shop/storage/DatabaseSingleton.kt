@@ -1,8 +1,11 @@
 package ru.morsianin_shop.storage
 
+import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.application.*
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.DatabaseConfig
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -11,7 +14,25 @@ object DatabaseSingleton {
     private var database: Database? = null;
 
     fun init(driver: String, url: String, user: String, pass: String) {
-        database = Database.connect(url, driver, user, pass)
+        //database = Database.connect(url, driver, user, pass)
+
+        val config = HikariConfig().apply {
+            jdbcUrl = url
+            driverClassName = driver
+            username = user
+            password = pass
+            maximumPoolSize = 6
+            isReadOnly = false
+            transactionIsolation = "TRANSACTION_SERIALIZABLE"
+        }
+
+        val dataSource = HikariDataSource(config)
+
+        database = Database.connect(
+            datasource = dataSource,
+            databaseConfig = DatabaseConfig {
+            }
+        )
 
         transaction {
             SchemaUtils.create(StoredUsers)
