@@ -5,20 +5,20 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class OrderDTO(
     val id: Long,
-    val items: List<OrderItem>,
-    val status: OrderStatus
+    val items: List<OrderItemDTO>,
+    val status: OrderStatusDTO
 ) {
 
 }
 
 @Serializable
-data class OrderItem(
+data class OrderItemDTO(
     val product: ProductDTO,
     val quantity: Int
 )
 
 @Serializable
-enum class OrderStatus(val value: String) {
+enum class OrderStatusDTO(val value: String) {
     FAILED("failed"),
     PENDING("pending"),
     SHIPPING("shipping"),
