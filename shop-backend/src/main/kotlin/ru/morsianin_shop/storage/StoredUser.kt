@@ -14,6 +14,7 @@ object StoredUsers: LongIdTable("user") {
 class StoredUser(id: EntityID<Long>) : LongEntity(id) {
     companion object : LongEntityClass<StoredUser>(StoredUsers)
     var name by StoredUsers.name
-    val tgId by StoredUsers.tgId
+    var tgId by StoredUsers.tgId
     var tgUsername by StoredUsers.tgUsername
+
 }
