@@ -6,6 +6,7 @@ val logback_version: String by project
 val exposed_version: String by project
 val tcnative_version = "2.0.65.Final"
 val postgres_version = "42.7.3"
+val shapeshift_version = "0.8.0"
 
 val osName = System.getProperty("os.name").lowercase(Locale.getDefault())
 val tcnative_classifier = when {
@@ -50,6 +51,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-dao:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
     implementation("org.postgresql:postgresql:$postgres_version")
+    implementation("dev.krud:shapeshift:$shapeshift_version")
 
     if (tcnative_classifier != null) {
         implementation("io.netty:netty-tcnative-boringssl-static:$tcnative_version:$tcnative_classifier")
