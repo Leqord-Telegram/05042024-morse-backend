@@ -7,15 +7,14 @@ data class UserDTO(
     val id: Long,
     val name: String,
     val username: String,
-    val privileges: Set<Privilege>,
-    val cart: List<CartItem>,
-) {
+    val privileges: Set<UserPrivilegeDTO>,
+    val cart: List<UserCartItemDTO>,
+)
 
-    @Serializable
-    data class CartItem(val product: ProductDTO, val quantity: Long)
+@Serializable
+data class UserCartItemDTO(val product: ProductDTO, val quantity: Long)
 
-    @Serializable
-    enum class Privilege(val value: String) {
-        ADMIN("admin"),
-    }
+@Serializable
+enum class UserPrivilegeDTO(val value: String) {
+    ADMIN("admin"),
 }
