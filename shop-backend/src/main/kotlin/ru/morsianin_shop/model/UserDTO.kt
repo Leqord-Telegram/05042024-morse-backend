@@ -3,7 +3,7 @@ package ru.morsianin_shop.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class User(
+data class UserDTO(
     val id: Long,
     val name: String,
     val username: String,

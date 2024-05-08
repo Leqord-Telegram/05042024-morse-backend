@@ -3,7 +3,7 @@ package ru.morsianin_shop.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Cart(
+data class CartDTO(
     val userId: Long,
     val items: List<Item>,
 ) {

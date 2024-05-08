@@ -4,11 +4,11 @@ import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
-import ru.morsianin_shop.model.User
+import ru.morsianin_shop.model.UserDTO
 
 object StoredUserPrivileges: LongIdTable() {
     val user = reference("user_id", StoredUsers)
-    val privilege = enumerationByName<User.Privilege>("privilege", 255)
+    val privilege = enumerationByName<UserDTO.Privilege>("privilege", 255)
 }
 
 class StoredUserPrivilege(id: EntityID<Long>) : LongEntity(id) {
