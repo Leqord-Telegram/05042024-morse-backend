@@ -9,8 +9,8 @@ object StoredProducts: LongIdTable("product") {
     val name = text("name")
     val description = text("description").nullable().default("")
     val category = reference("category_id", Categories)
-    val price = integer("price")
-    val quantity = integer("quantity")
+    val price = long("price")
+    val quantity = long("quantity")
     val active = bool("active")
 }
 
