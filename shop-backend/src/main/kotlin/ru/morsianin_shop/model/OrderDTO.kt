@@ -11,7 +11,7 @@ data class OrderDTO(
 ) {
     @Serializable
     data class Item(
-        val productId: Long,
+        val product: ProductDTO,
         val quantity: Int
     )
 
