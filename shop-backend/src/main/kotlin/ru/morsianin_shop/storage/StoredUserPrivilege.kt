@@ -14,6 +14,6 @@ object StoredUserPrivileges: LongIdTable("user_privilege") {
 
 class StoredUserPrivilege(id: EntityID<Long>) : LongEntity(id) {
     companion object : LongEntityClass<StoredUser>(StoredUsers)
-    var user by StoredUser referencedOn StoredUsers.id
+    var user by StoredUser referencedOn StoredUserPrivileges.user
     var privilege by StoredUserPrivileges.privilege
 }
