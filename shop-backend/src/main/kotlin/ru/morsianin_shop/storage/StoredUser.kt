@@ -17,5 +17,5 @@ class StoredUser(id: EntityID<Long>) : LongEntity(id) {
     var tgId by StoredUsers.tgId
     var tgUsername by StoredUsers.tgUsername
     val cartItems by StoredUserCartItem referrersOn StoredUserCartItems.user
-    val privileges by StoredUserPrivilege referrersOn StoredUserCartItems.user
+    val privileges by StoredUserPrivilege referrersOn StoredUserPrivileges.user
 }
