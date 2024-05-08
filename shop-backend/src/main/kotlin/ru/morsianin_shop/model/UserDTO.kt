@@ -12,7 +12,7 @@ data class UserDTO(
 ) {
 
     @Serializable
-    data class CartItem(val productId: Long, val quantity: Long)
+    data class CartItem(val product: ProductDTO, val quantity: Long)
 
     @Serializable
     enum class Privilege(val value: String) {
