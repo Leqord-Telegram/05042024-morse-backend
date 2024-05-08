@@ -6,7 +6,7 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
 import ru.morsianin_shop.model.OrderDTO
 
-object StoredOrders: LongIdTable() {
+object StoredOrders: LongIdTable("order") {
     val user = reference("user_id", StoredUsers)
     val status = enumerationByName<OrderDTO.Status>("status", 255)
 }

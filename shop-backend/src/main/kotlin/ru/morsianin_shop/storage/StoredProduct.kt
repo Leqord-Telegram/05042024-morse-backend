@@ -5,7 +5,7 @@ import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
 
-object StoredProducts: LongIdTable() {
+object StoredProducts: LongIdTable("product") {
     val name = text("name")
     val description = text("description")
     val category = reference("category_id", Categories)

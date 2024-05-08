@@ -5,7 +5,7 @@ import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
 
-object StoredProductImages: LongIdTable() {
+object StoredProductImages: LongIdTable("product_image") {
     val product = reference("product_id", StoredProducts)
     val image = reference("image_id", StoredImages)
 }

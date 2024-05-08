@@ -6,7 +6,7 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
 import ru.morsianin_shop.model.UserDTO
 
-object StoredUserPrivileges: LongIdTable() {
+object StoredUserPrivileges: LongIdTable("user_privilege") {
     val user = reference("user_id", StoredUsers)
     val privilege = enumerationByName<UserDTO.Privilege>("privilege", 255)
 }

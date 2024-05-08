@@ -5,7 +5,7 @@ import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
 
-object StoredImages: LongIdTable() {
+object StoredImages: LongIdTable("image") {
     val url = text("url")
 }
 

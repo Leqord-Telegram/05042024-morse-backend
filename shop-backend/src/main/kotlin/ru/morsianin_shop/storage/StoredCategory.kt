@@ -5,7 +5,7 @@ import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
 
-object Categories: LongIdTable() {
+object Categories: LongIdTable("category") {
     val name = text("name")
 }
 
