@@ -16,4 +16,5 @@ data class UserCartItemDTO(val product: ProductDTO, val quantity: Long)
 @Serializable
 enum class UserPrivilegeDTO(val value: String) {
     ADMIN("admin"),
+    SUPPORT("support"),
 }
