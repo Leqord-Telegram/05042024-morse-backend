@@ -3,8 +3,8 @@ package ru.morsianin_shop.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class CategoryDTO(
-    val id: Long?,
+data class CategoryResponse(
+    val id: Long,
     val name: String
 )
 

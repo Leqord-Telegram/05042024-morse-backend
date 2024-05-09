@@ -1,15 +1,14 @@
 package ru.morsianin_shop.resources
 
 import io.ktor.resources.*
-import ru.morsianin_shop.model.OrderDTO
-import ru.morsianin_shop.model.OrderItemDTO
-import ru.morsianin_shop.model.OrderStatusDTO
+import ru.morsianin_shop.model.OrderItemResponse
+import ru.morsianin_shop.model.OrderStatus
 
 @Resource("/orders")
 class Orders(
     val userId: Long? = null,
-    val items: List<OrderItemDTO>? = null,
-    val status: OrderStatusDTO? = null
+    val items: List<OrderItemResponse>? = null,
+    val status: OrderStatus? = null
 )   {
     @Resource("{id}")
     class Id(val parent: Orders = Orders(), val id: Long)
