@@ -3,7 +3,7 @@ package ru.morsianin_shop.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Product(
+data class ProductResponse(
     val id: Long,
     val name: String,
     val description: String,

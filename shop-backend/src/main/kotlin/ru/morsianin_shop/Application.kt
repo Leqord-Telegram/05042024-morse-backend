@@ -45,7 +45,6 @@ fun Application.module() {
     configureRateLimit()
 
     productRoutes()
-    orderRoutes()
     imageRoutes()
     categoryRoutes()
     userRoutes()
