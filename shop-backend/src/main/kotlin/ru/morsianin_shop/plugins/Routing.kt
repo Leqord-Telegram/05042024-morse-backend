@@ -12,10 +12,10 @@ import io.ktor.server.routing.get
 fun Application.configureRouting() {
     install(StatusPages) {
         exception<IllegalStateException> { call, cause ->
-            call.respondText("App in illegal state as ${cause.message}")
+            call.respondText("App in illegal state as ${cause.message}", status = HttpStatusCode.BadRequest)
         }
         exception<Exception> { call, cause ->
-            call.respondText("Fucked up ${cause.message}")
+            call.respondText("Fucked up ${cause.message}", status = HttpStatusCode.BadRequest)
         }
     }
     install(ContentNegotiation) {
