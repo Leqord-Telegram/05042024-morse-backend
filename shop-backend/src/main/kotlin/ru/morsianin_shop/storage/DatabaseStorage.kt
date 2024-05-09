@@ -53,7 +53,7 @@ object DatabaseStorage {
     }
 
     suspend fun <T> dbQuery(block: suspend () -> T): T =
-        newSuspendedTransaction(Dispatchers.IO) { block() }
+        newSuspendedTransaction(Dispatchers.IO, db = getDatabase()) { block() }
 }
 
 fun Application.configureStorage() {
