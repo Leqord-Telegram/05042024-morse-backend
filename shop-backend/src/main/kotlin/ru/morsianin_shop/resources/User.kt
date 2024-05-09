@@ -13,7 +13,7 @@ class UserRequest(
     @Resource("{id}")
     class Id(val parent: UserRequest = UserRequest(), val id: Long) {
         @Resource("cart")
-        class Cart(val parent: Id)
+        class CartRequest(val parent: Id)
 
         // Для администратора доступ ко всем предшествующим id,
         // а для обычного пользователя - только к своему
