@@ -4,7 +4,7 @@ import io.ktor.resources.Resource
 import ru.morsianin_shop.model.ImageResponse
 
 @Resource("/products")
-class Products(
+class ProductRequest(
     val name: String? = null,
     val description: String? = null,
     val categoryId: Long? = null,
@@ -14,5 +14,5 @@ class Products(
     val images: List<ImageResponse>? = null
 ) {
     @Resource("{id}")
-    class Id(val parent: Products = Products(), val id: Long)
+    class Id(val parent: ProductRequest = ProductRequest(), val id: Long)
 }

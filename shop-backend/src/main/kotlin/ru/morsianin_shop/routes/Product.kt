@@ -5,23 +5,23 @@ import io.ktor.server.application.*
 import io.ktor.server.resources.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.routing
-import ru.morsianin_shop.resources.Products
+import ru.morsianin_shop.resources.ProductRequest
 
 fun Application.productRoutes() {
     routing {
-        get<Products> { products ->
+        get<ProductRequest> { products ->
             call.respondText("tbi", status = HttpStatusCode.NotImplemented)
         }
-        post<Products>  {
+        post<ProductRequest>  {
             call.respondText("tbi", status = HttpStatusCode.NotImplemented)
         }
-        get<Products.Id> { id ->
+        get<ProductRequest.Id> { id ->
             call.respondText("${id.id}", status = HttpStatusCode.NotImplemented)
         }
-        put<Products.Id> { id ->
+        put<ProductRequest.Id> { id ->
             call.respondText("${id.id}", status = HttpStatusCode.NotImplemented)
         }
-        delete<Products.Id> { id ->
+        delete<ProductRequest.Id> { id ->
             call.respondText("${id.id}", status = HttpStatusCode.NotImplemented)
         }
 
