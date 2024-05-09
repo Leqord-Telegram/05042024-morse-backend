@@ -10,7 +10,7 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 
-object DatabaseSingleton {
+object DatabaseStorage {
     private var database: Database? = null;
 
     fun init(driver: String, url: String, user: String, pass: String) {
@@ -66,7 +66,7 @@ fun Application.configureStorage() {
 
     log.info("Connecting to: $url user: $user driver: $driver")
 
-    DatabaseSingleton.init(
+    DatabaseStorage.init(
         driver=driver,
         url=url,
         user=user,
