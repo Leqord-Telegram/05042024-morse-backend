@@ -28,7 +28,14 @@ fun Application.categoryRoutes() {
             val response = dbQuery {
                     StoredCategory.find { query }.map { category -> mapToDTO(category) }
                 }
-            call.respond(response)
+
+            if(response.isNotEmpty()) {
+                call.respond(response)
+            }
+            else {
+                call.respond(HttpStatusCode.NotFound)
+            }
+
         }
         post<CategoryRequest> {
             val newCategory = call.receive<CategoryNew>()
