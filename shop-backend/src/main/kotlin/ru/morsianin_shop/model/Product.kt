@@ -15,7 +15,7 @@ data class ProductResponse(
 )
 
 @Serializable
-data class ProductRequest(
+data class ProductNew(
     val name: String,
     val description: String,
     val categoryId: Long,
