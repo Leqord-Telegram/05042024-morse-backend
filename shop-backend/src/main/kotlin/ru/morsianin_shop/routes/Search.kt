@@ -5,5 +5,6 @@ import io.ktor.server.routing.*
 
 fun Application.searchRoutes() {
     routing {
+        // TODO: реализовать
     }
 }
