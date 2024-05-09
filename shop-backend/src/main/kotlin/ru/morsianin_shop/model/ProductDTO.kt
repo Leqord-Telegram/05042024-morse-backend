@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ProductDTO(
-    val id: Long,
+    val id: Long?,
     val name: String,
     val description: String,
     val category: CategoryDTO,

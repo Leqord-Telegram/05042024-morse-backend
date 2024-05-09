@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ImageDTO(
-    val id: Long,
+    val id: Long?,
     val url: String
 )
