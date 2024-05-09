@@ -11,7 +11,6 @@ class ProductRequest(
     val price: Long? = null,
     val quantity: Long? = null,
     val active: Boolean? = null,
-    val images: List<ImageResponse>? = null
 ) {
     @Resource("{id}")
     class Id(val parent: ProductRequest = ProductRequest(), val id: Long)
