@@ -14,8 +14,6 @@ object DatabaseStorage {
     private var database: Database? = null;
 
     fun init(driver: String, url: String, user: String, pass: String) {
-        //database = Database.connect(url, driver, user, pass)
-
         val config = HikariConfig().apply {
             jdbcUrl = url
             driverClassName = driver
