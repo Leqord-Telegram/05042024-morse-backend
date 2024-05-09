@@ -6,11 +6,14 @@ import io.ktor.server.resources.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.routing
 import ru.morsianin_shop.resources.ProductRequest
+import ru.morsianin_shop.storage.DatabaseStorage.dbQuery
 
 fun Application.productRoutes() {
     routing {
         get<ProductRequest> { products ->
-            call.respondText("tbi", status = HttpStatusCode.NotImplemented)
+            dbQuery {
+                
+            }
         }
         post<ProductRequest>  {
             call.respondText("tbi", status = HttpStatusCode.NotImplemented)
