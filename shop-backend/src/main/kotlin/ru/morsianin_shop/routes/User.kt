@@ -15,11 +15,5 @@ fun Application.userRoutes() {
         get<UserRequest.Id> { id ->
             call.respondText("tbi", status = HttpStatusCode.NotImplemented)
         }
-        get<UserRequest.Id.Cart> { cart ->
-            call.respondText("tbi", status = HttpStatusCode.NotImplemented)
-        }
-        put<UserRequest.Id.Cart> { cart ->
-            call.respondText("tbi", status = HttpStatusCode.NotImplemented)
-        }
     }
 }
