@@ -7,3 +7,8 @@ data class CategoryDTO(
     val id: Long?,
     val name: String
 )
+
+@Serializable
+data class CategoryNew(
+    val name: String
+)
