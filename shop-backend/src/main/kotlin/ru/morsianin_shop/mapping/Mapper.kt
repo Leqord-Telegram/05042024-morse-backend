@@ -14,7 +14,7 @@ object Mapper {
         url = stored.url
     )
 
-    fun mapToDTO(stored: StoredProduct): Product = Product(
+    fun mapToDTO(stored: StoredProduct): ProductResponse = ProductResponse(
         id = stored.id.value,
         name = stored.name,
         description = stored.description?: "",
