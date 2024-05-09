@@ -9,7 +9,7 @@ object Mapper {
         name = stored.name
     )
 
-    fun mapToDTO(stored: StoredImage): Image = Image(
+    fun mapToDTO(stored: StoredImage): ImageResponse = ImageResponse(
         id = stored.id.value,
         url = stored.url
     )
