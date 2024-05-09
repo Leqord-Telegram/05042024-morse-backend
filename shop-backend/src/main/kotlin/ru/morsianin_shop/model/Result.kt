@@ -6,3 +6,5 @@ import kotlinx.serialization.Serializable
 data class ResultCreated(
     val id: Long
 )
+
+// TODO: возвращать его после всех операций создания
