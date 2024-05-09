@@ -14,6 +14,9 @@ class UserRequest(
     class Id(val parent: UserRequest = UserRequest(), val id: Long) {
         @Resource("cart")
         class Cart(val parent: Id)
+
+        // Для администратора доступ ко всем предшествующим id,
+        // а для обычного пользователя - только к своему
         @Resource("order")
         class OrderRequest(
             val userId: Long? = null,
