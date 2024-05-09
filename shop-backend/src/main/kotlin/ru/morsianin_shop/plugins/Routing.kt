@@ -12,6 +12,9 @@ fun Application.configureRouting() {
         exception<IllegalStateException> { call, cause ->
             call.respondText("App in illegal state as ${cause.message}")
         }
+        exception<Exception> { call, cause ->
+            call.respondText("Fucked up ${cause.message}")
+        }
     }
     log.info("Base routing initialized")
 }
