@@ -7,9 +7,11 @@ import org.jetbrains.exposed.dao.id.LongIdTable
 
 object StoredImages: LongIdTable("image") {
     val url = text("url")
+    val blob = blob("content").nullable()
 }
 
 class StoredImage(id: EntityID<Long>) : LongEntity(id) {
     companion object : LongEntityClass<StoredImage>(StoredImages)
     var url by StoredImages.url
+    var blob by StoredImages.blob
 }
