@@ -1,7 +1,6 @@
 package ru.morsianin_shop.resources
 
 import io.ktor.resources.Resource
-import ru.morsianin_shop.model.ImageResponse
 
 @Resource("/products")
 class ProductRequest(

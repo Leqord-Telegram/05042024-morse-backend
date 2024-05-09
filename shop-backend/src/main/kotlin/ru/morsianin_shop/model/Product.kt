@@ -3,7 +3,7 @@ package ru.morsianin_shop.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ProductResponse(
+data class Product(
     val id: Long,
     val name: String,
     val description: String,
@@ -11,5 +11,5 @@ data class ProductResponse(
     val price: Long,
     val quantity: Long,
     val active: Boolean,
-    val images: List<ImageResponse>
+    val imageResponses: List<Image>
 )

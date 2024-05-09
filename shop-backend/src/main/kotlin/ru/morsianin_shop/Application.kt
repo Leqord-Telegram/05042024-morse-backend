@@ -16,6 +16,7 @@ import ru.morsianin_shop.routes.*
 import ru.morsianin_shop.storage.DatabaseStorage.dbQuery
 import ru.morsianin_shop.storage.DatabaseStorage.getDatabase
 import ru.morsianin_shop.storage.StoredCategory
+import ru.morsianin_shop.storage.StoredImage
 import ru.morsianin_shop.storage.configureStorage
 
 fun main() {
@@ -49,4 +50,5 @@ fun Application.module() {
     categoryRoutes()
     userRoutes()
     searchRoutes()
+
 }

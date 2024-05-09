@@ -11,7 +11,7 @@ data class UserResponse(
 )
 
 @Serializable
-data class UserCartItemResponse(val product: ProductResponse, val quantity: Long)
+data class UserCartItemResponse(val product: Product, val quantity: Long)
 
 @Serializable
 enum class UserPrivilege(val value: String) {

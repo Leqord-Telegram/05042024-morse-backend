@@ -9,12 +9,12 @@ object Mapper {
         name = stored.name
     )
 
-    fun mapToDTO(stored: StoredImage): ImageResponse = ImageResponse(
+    fun mapToDTO(stored: StoredImage): Image = Image(
         id = stored.id.value,
         url = stored.url
     )
 
-    fun mapToDTO(stored: StoredProduct): ProductResponse = ProductResponse(
+    fun mapToDTO(stored: StoredProduct): Product = Product(
         id = stored.id.value,
         name = stored.name,
         description = stored.description?: "",
@@ -22,7 +22,7 @@ object Mapper {
         price = stored.price,
         quantity = stored.quantity,
         active = stored.active,
-        images = stored.images.map { mapToDTO(it) }
+        imageResponses = stored.images.map { mapToDTO(it) }
     )
 
     fun mapToDTO(stored: StoredOrderItem): OrderItemResponse = OrderItemResponse(
