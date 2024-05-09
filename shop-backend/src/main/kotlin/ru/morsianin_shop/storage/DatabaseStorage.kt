@@ -35,7 +35,7 @@ object DatabaseStorage {
         transaction {
             SchemaUtils.create(StoredUsers)
             SchemaUtils.create(StoredImages)
-            SchemaUtils.create(Categories)
+            SchemaUtils.create(StoredCategories)
             SchemaUtils.create(StoredProducts)
             SchemaUtils.create(StoredProductImages)
             SchemaUtils.create(StoredOrders)

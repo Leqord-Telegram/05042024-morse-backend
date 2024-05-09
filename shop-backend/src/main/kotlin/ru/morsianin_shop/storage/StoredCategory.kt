@@ -5,12 +5,12 @@ import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
 
-object Categories: LongIdTable("category") {
+object StoredCategories: LongIdTable("category") {
     val name = text("name")
 }
 
 class StoredCategory(id: EntityID<Long>) : LongEntity(id) {
-    companion object : LongEntityClass<StoredCategory>(Categories)
+    companion object : LongEntityClass<StoredCategory>(StoredCategories)
 
-    var name by Categories.name
+    var name by StoredCategories.name
 }
