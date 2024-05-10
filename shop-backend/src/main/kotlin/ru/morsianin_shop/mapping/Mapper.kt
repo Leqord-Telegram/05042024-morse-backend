@@ -42,7 +42,6 @@ object Mapper {
         id = stored.id.value,
         product = mapToResponse(stored.product),
         quantity = stored.quantity,
-        userId = stored.user.id.value,
     )
 
 

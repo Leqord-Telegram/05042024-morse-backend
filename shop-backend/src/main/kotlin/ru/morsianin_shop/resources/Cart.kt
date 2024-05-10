@@ -4,12 +4,8 @@ import io.ktor.resources.*
 
 @Resource("/cart")
 data class CartRequest (
-    val userId: Long,
-    val items: List<CartItemRequest>
+    val userId: Long? = null,
 ) {
-    @Resource("item")
-    class CartItemRequest(val parent: Id) {
-        @Resource("{id}")
-        class Id(val parent: CartItemRequest, val id: Long)
-    }
+    @Resource("{id}")
+    class Id(val parent: CartRequest = CartRequest(), val id: Long)
 }
