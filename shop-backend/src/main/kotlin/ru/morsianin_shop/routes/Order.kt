@@ -46,16 +46,18 @@ fun Application.orderRoutes() {
             upsertOrder()
         }
         get<OrderRequest.Id> { id ->
-            val candidate = dbQuery {
-                StoredOrder.findById(id.id)
+             dbQuery {
+                val candidate = StoredOrder.findById(id.id)
+
+                if (candidate != null) {
+                    call.respond(mapToResponse(candidate))
+                }
+                else {
+                    call.respond(HttpStatusCode.NotFound)
+                }
             }
 
-            if (candidate != null) {
-                call.respond(mapToResponse(candidate))
-            }
-            else {
-                call.respond(HttpStatusCode.NotFound)
-            }
+
         }
         delete<OrderRequest.Id> { id ->
             dbQuery {
