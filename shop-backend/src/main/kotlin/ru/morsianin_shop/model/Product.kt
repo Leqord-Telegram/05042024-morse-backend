@@ -11,7 +11,7 @@ data class ProductResponse(
     val price: Long,
     val quantity: Long,
     val active: Boolean,
-    val imageResponses: List<ImageResponse>
+    val images: List<ImageResponse>
 )
 
 @Serializable
