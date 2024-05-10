@@ -15,6 +15,7 @@ import ru.morsianin_shop.mapping.Mapper.mapToResponse
 import ru.morsianin_shop.model.OrderItemChanged
 import ru.morsianin_shop.model.OrderItemNew
 import ru.morsianin_shop.model.OrderNew
+import ru.morsianin_shop.model.OrderStatus
 import ru.morsianin_shop.resources.OrderRequest
 import ru.morsianin_shop.storage.*
 import ru.morsianin_shop.storage.DatabaseStorage.dbQuery
@@ -78,7 +79,7 @@ fun Application.orderRoutes() {
                 val candidate = StoredOrder.findById(status.parent.id)
 
                 if (candidate != null) {
-                    call.respond(mapToResponse(candidate).status)
+                    call.respond(candidate.status)
                 }
                 else {
                     call.respond(HttpStatusCode.NotFound)
@@ -87,11 +88,12 @@ fun Application.orderRoutes() {
         }
 
         put<OrderRequest.Id.Status> { status ->
+            val newStatus = call.receive<OrderStatus>()
             dbQuery {
                 val candidate = StoredOrder.findById(status.parent.id)
 
                 if (candidate != null) {
-                    candidate.status = status.status
+                    candidate.status = newStatus
                     call.respond(HttpStatusCode.OK)
                 }
                 else {

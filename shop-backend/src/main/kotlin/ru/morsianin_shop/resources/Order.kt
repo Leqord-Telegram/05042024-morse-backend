@@ -11,9 +11,9 @@ data class OrderRequest(
     val status: OrderStatus? = null
 )   {
     @Resource("{id}")
-    data class Id(val parent: OrderRequest = OrderRequest(), val id: Long) {
+    data class Id(val parent: OrderRequest, val id: Long) {
         @Resource("status")
-        data class Status(val parent: Id, val status: OrderStatus)
+        data class Status(val parent: Id)
 
         @Resource("item")
         data class Item(val parent: Id) {

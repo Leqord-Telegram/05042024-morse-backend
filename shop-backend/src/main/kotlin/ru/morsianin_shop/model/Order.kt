@@ -34,10 +34,10 @@ data class OrderItemChanged(
 )
 
 @Serializable
-enum class OrderStatus(val value: String) {
-    FAILED("failed"),
-    PENDING("pending"),
-    SHIPPING("shipping"),
-    ARRIVED("arrived"),
-    FINISHED("finished")
+enum class OrderStatus {
+    FAILED,
+    PENDING,
+    SHIPPING,
+    ARRIVED,
+    FINISHED
 }
