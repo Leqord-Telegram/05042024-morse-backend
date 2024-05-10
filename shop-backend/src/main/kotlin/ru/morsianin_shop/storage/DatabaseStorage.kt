@@ -19,7 +19,7 @@ object DatabaseStorage {
             driverClassName = driver
             username = user
             password = pass
-            maximumPoolSize = 6
+            maximumPoolSize = 32
             isReadOnly = false
             transactionIsolation = "TRANSACTION_SERIALIZABLE"
         }

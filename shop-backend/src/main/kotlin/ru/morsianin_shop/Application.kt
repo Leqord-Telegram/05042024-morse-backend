@@ -15,9 +15,9 @@ fun main() {
     val port = System.getenv("LISTEN_PORT")?.toIntOrNull() ?: 8080
 
     embeddedServer(Netty, port = port, host = ip, module = Application::module, configure = {
-        connectionGroupSize = 2
-        workerGroupSize = 5
-        callGroupSize = 10
+        connectionGroupSize = 4
+        workerGroupSize = 8
+        callGroupSize = 16
         shutdownGracePeriod = 2000
         shutdownTimeout = 3000
         requestQueueLimit = 16
