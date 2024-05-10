@@ -26,6 +26,7 @@ object Mapper {
     )
 
     fun mapToDTO(stored: StoredOrderItem): OrderItemResponse = OrderItemResponse(
+        id = stored.id.value,
         product = mapToDTO(stored.product),
         quantity = stored.quantity,
     )
@@ -37,17 +38,18 @@ object Mapper {
             status = stored.status
     )
 
-    fun mapToDTO(stored: StoredUserCartItem): UserCartItemResponse = UserCartItemResponse(
+    fun mapToDTO(stored: StoredUserCartItem): CartItemResponse = CartItemResponse(
+        id = stored.id.value,
         product = mapToDTO(stored.product),
         quantity = stored.quantity
     )
+
 
     fun mapToDTO(stored: StoredUser): UserResponse {
         return UserResponse(
             id = stored.id.value,
             name = stored.name,
             privileges = stored.privileges.map { it.privilege }.toSet(),
-            cart = stored.cartItems.map { mapToDTO(it) }
         )
     }
 

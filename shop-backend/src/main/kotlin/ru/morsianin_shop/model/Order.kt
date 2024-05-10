@@ -13,6 +13,7 @@ data class OrderResponse(
 
 @Serializable
 data class OrderItemResponse(
+    val id: Long,
     val product: ProductResponse,
     val quantity: Int
 )
