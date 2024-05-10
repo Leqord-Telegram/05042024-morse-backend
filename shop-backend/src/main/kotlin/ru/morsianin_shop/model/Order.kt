@@ -7,9 +7,7 @@ data class OrderResponse(
     val id: Long,
     val items: List<OrderItemResponse>,
     val status: OrderStatus
-) {
-
-}
+)
 
 @Serializable
 data class OrderItemResponse(
