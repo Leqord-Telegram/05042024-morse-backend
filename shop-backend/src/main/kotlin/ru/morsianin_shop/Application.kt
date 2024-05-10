@@ -41,5 +41,6 @@ fun Application.module() {
     userRoutes()
     searchRoutes()
     orderRoutes()
+    cartRoutes()
 
 }

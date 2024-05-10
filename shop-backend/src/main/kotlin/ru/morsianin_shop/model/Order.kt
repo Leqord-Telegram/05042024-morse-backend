@@ -19,6 +19,23 @@ data class OrderItemResponse(
 )
 
 @Serializable
+data class OrderNew(
+    val items: List<OrderItemNew>,
+    val status: OrderStatus
+)
+
+@Serializable
+data class OrderItemNew(
+    val productId: Long,
+    val quantity: Int
+)
+
+@Serializable
+data class OrderItemChanged(
+    val quantity: Int
+)
+
+@Serializable
 enum class OrderStatus(val value: String) {
     FAILED("failed"),
     PENDING("pending"),
