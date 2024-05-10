@@ -14,6 +14,9 @@ import ru.morsianin_shop.storage.DatabaseStorage.dbQuery
 import ru.morsianin_shop.storage.StoredUser
 import ru.morsianin_shop.storage.StoredUsers
 
+
+
+// TODO: авторизация
 fun Application.userRoutes() {
     routing {
         get<UserRequest> { filter ->

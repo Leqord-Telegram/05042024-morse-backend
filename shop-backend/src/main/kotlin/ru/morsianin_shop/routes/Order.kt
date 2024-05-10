@@ -7,6 +7,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.routing
 import ru.morsianin_shop.resources.OrderRequest
 
+// TODO: авторизация
 fun Application.orderRoutes() {
     routing {
         get<OrderRequest> { orders ->
