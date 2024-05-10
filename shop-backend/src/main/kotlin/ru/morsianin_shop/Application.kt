@@ -40,5 +40,6 @@ fun Application.module() {
     categoryRoutes()
     userRoutes()
     searchRoutes()
+    orderRoutes()
 
 }
