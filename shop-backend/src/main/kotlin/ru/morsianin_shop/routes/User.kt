@@ -8,10 +8,9 @@ import io.ktor.server.routing.routing
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
-import ru.morsianin_shop.mapping.Mapper.mapToDTO
+import ru.morsianin_shop.mapping.Mapper.mapToResponse
 import ru.morsianin_shop.resources.UserRequest
 import ru.morsianin_shop.storage.DatabaseStorage.dbQuery
-import ru.morsianin_shop.storage.StoredCategories
 import ru.morsianin_shop.storage.StoredUser
 import ru.morsianin_shop.storage.StoredUsers
 
@@ -30,7 +29,7 @@ fun Application.userRoutes() {
                 }
 
                 if (!found.empty()) {
-                    call.respond(found.map { mapToDTO(it) }.toList())
+                    call.respond(found.map { mapToResponse(it) }.toList())
                 }
                 else {
                     call.respond(HttpStatusCode.NoContent)
@@ -42,7 +41,7 @@ fun Application.userRoutes() {
                 val found = StoredUser.findById(id.id)
 
                 if (found != null) {
-                    call.respond(mapToDTO(found))
+                    call.respond(mapToResponse(found))
                 }
                 else {
                     call.respond(HttpStatusCode.NotFound)

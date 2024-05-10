@@ -4,48 +4,48 @@ import ru.morsianin_shop.model.*
 import ru.morsianin_shop.storage.*
 
 object Mapper {
-    fun mapToDTO(stored: StoredCategory): CategoryResponse = CategoryResponse(
+    fun mapToResponse(stored: StoredCategory): CategoryResponse = CategoryResponse(
         id = stored.id.value,
         name = stored.name
     )
 
-    fun mapToDTO(stored: StoredImage): ImageResponse = ImageResponse(
+    fun mapToResponse(stored: StoredImage): ImageResponse = ImageResponse(
         id = stored.id.value,
         url = stored.url
     )
 
-    fun mapToDTO(stored: StoredProduct): ProductResponse = ProductResponse(
+    fun mapToResponse(stored: StoredProduct): ProductResponse = ProductResponse(
         id = stored.id.value,
         name = stored.name,
         description = stored.description?: "",
-        category = mapToDTO(stored.category),
+        category = mapToResponse(stored.category),
         price = stored.price,
         quantity = stored.quantity,
         active = stored.active,
-        imageResponses = stored.images.map { mapToDTO(it) }
+        imageResponses = stored.images.map { mapToResponse(it) }
     )
 
-    fun mapToDTO(stored: StoredOrderItem): OrderItemResponse = OrderItemResponse(
+    fun mapToResponse(stored: StoredOrderItem): OrderItemResponse = OrderItemResponse(
         id = stored.id.value,
-        product = mapToDTO(stored.product),
+        product = mapToResponse(stored.product),
         quantity = stored.quantity,
     )
 
 
-    fun mapToDTO(stored: StoredOrder): OrderResponse = OrderResponse(
+    fun mapToResponse(stored: StoredOrder): OrderResponse = OrderResponse(
             id = stored.id.value,
-            items = stored.items.map { mapToDTO(it) },
+            items = stored.items.map { mapToResponse(it) },
             status = stored.status
     )
 
-    fun mapToDTO(stored: StoredUserCartItem): CartItemResponse = CartItemResponse(
+    fun mapToResponse(stored: StoredUserCartItem): CartItemResponse = CartItemResponse(
         id = stored.id.value,
-        product = mapToDTO(stored.product),
+        product = mapToResponse(stored.product),
         quantity = stored.quantity
     )
 
 
-    fun mapToDTO(stored: StoredUser): UserResponse {
+    fun mapToResponse(stored: StoredUser): UserResponse {
         return UserResponse(
             id = stored.id.value,
             name = stored.name,

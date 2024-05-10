@@ -1,7 +1,6 @@
 package ru.morsianin_shop.routes
 
 import io.ktor.http.*
-import io.ktor.resources.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.resources.*
@@ -11,22 +10,12 @@ import io.ktor.util.pipeline.*
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.inList
 import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.upsert
-import ru.morsianin_shop.mapping.Mapper.mapToDTO
-import ru.morsianin_shop.model.OrderItemResponse
-import ru.morsianin_shop.model.OrderStatus
+import ru.morsianin_shop.mapping.Mapper.mapToResponse
 import ru.morsianin_shop.model.ProductNew
 import ru.morsianin_shop.resources.ProductRequest
 import ru.morsianin_shop.storage.*
 import ru.morsianin_shop.storage.DatabaseStorage.dbQuery
-import ru.morsianin_shop.storage.StoredOrders.status
-import ru.morsianin_shop.storage.StoredProducts.active
-import ru.morsianin_shop.storage.StoredProducts.category
-import ru.morsianin_shop.storage.StoredProducts.description
-import ru.morsianin_shop.storage.StoredProducts.price
 
 fun Application.productRoutes() {
     routing {
@@ -60,7 +49,7 @@ fun Application.productRoutes() {
             val found = dbQuery {
                 StoredProduct.find {
                     query
-                }.map { mapToDTO(it) }
+                }.map { mapToResponse(it) }
             }
 
             if (found.isNotEmpty()) {

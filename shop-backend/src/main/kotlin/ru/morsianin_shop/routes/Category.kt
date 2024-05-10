@@ -9,7 +9,7 @@ import io.ktor.server.routing.routing
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
-import ru.morsianin_shop.mapping.Mapper.mapToDTO
+import ru.morsianin_shop.mapping.Mapper.mapToResponse
 import ru.morsianin_shop.model.CategoryNew
 import ru.morsianin_shop.resources.CategoryRequest
 import ru.morsianin_shop.storage.DatabaseStorage.dbQuery
@@ -26,7 +26,7 @@ fun Application.categoryRoutes() {
             }
 
             val response = dbQuery {
-                    StoredCategory.find { query }.map { category -> mapToDTO(category) }
+                    StoredCategory.find { query }.map { category -> mapToResponse(category) }
                 }
 
             if(response.isNotEmpty()) {
@@ -56,7 +56,7 @@ fun Application.categoryRoutes() {
             }
 
             val response = dbQuery {
-                StoredCategory.find { query }.map { category -> mapToDTO(category) }.singleOrNull()
+                StoredCategory.find { query }.map { category -> mapToResponse(category) }.singleOrNull()
             }
 
             call.respond(response?: HttpStatusCode.NotFound)
