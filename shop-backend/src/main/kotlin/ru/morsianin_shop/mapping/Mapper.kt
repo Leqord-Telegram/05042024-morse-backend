@@ -41,7 +41,8 @@ object Mapper {
     fun mapToResponse(stored: StoredUserCartItem): CartItemResponse = CartItemResponse(
         id = stored.id.value,
         product = mapToResponse(stored.product),
-        quantity = stored.quantity
+        quantity = stored.quantity,
+        userId = stored.user.id.value,
     )
 
 
