@@ -2,7 +2,7 @@ package ru.morsianin_shop.resources
 
 import io.ktor.resources.*
 
-@Resource("/images")
+@Resource("/image")
 class ImageRequest(
     val id: Long? = null,
     val link: String? = null,

@@ -2,7 +2,7 @@ package ru.morsianin_shop.resources
 
 import io.ktor.resources.Resource
 
-@Resource("/products")
+@Resource("/product")
 class ProductRequest(
     val name: String? = null,
     val description: String? = null,

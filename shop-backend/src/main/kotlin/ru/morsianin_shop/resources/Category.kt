@@ -2,7 +2,7 @@ package ru.morsianin_shop.resources
 
 import io.ktor.resources.*
 
-@Resource("/categories")
+@Resource("/category")
 class CategoryRequest(
     val name: String? = null
 )   {

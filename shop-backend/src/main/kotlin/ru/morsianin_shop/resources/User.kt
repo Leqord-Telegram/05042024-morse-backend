@@ -5,7 +5,7 @@ import ru.morsianin_shop.model.OrderItemResponse
 import ru.morsianin_shop.model.OrderStatus
 import ru.morsianin_shop.model.UserPrivilege
 
-@Resource("/users")
+@Resource("/user")
 class UserRequest(
     val name: String? = null,
     //val admin: Boolean? = null,
