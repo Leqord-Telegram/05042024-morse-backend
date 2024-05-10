@@ -51,7 +51,7 @@ fun Application.orderRoutes() {
             }
 
             if (candidate != null) {
-                call.respond(candidate)
+                call.respond(mapToResponse(candidate))
             }
             else {
                 call.respond(HttpStatusCode.NotFound)
@@ -91,7 +91,7 @@ fun Application.orderRoutes() {
             }
 
             if (candidate != null) {
-                call.respond(candidate.items)
+                call.respond(candidate.items.map { mapToResponse(it) })
             }
             else {
                 call.respond(HttpStatusCode.NotFound)
