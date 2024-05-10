@@ -22,7 +22,7 @@ object Mapper {
         price = stored.price,
         quantity = stored.quantity,
         active = stored.active,
-        imageResponses = stored.images.map { mapToResponse(it) }
+        images = stored.images.map { mapToResponse(it) }
     )
 
     fun mapToResponse(stored: StoredOrderItem): OrderItemResponse = OrderItemResponse(
