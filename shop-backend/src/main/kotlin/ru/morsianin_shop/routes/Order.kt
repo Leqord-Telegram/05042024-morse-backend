@@ -73,6 +73,19 @@ fun Application.orderRoutes() {
             }
         }
 
+        get<OrderRequest.Id.Status> { status ->
+            dbQuery {
+                val candidate = StoredOrder.findById(status.parent.id)
+
+                if (candidate != null) {
+                    call.respond(mapToResponse(candidate).status)
+                }
+                else {
+                    call.respond(HttpStatusCode.NotFound)
+                }
+            }
+        }
+
         put<OrderRequest.Id.Status> { status ->
             dbQuery {
                 val candidate = StoredOrder.findById(status.parent.id)
