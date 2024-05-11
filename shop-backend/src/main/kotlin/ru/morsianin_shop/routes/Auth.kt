@@ -1,18 +1,30 @@
 package ru.morsianin_shop.routes
 
+import com.auth0.jwt.JWT
+import com.auth0.jwt.algorithms.Algorithm
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.resources.post
 import io.ktor.server.routing.routing
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonBuilder
 import org.apache.commons.codec.digest.HmacUtils
 import ru.morsianin_shop.model.AuthType
+import ru.morsianin_shop.model.TelegramAuthUserData
 import ru.morsianin_shop.plugins.AuthSettings
+import ru.morsianin_shop.plugins.AuthSettings.getJwtSettingsUserspace
 import ru.morsianin_shop.resources.AuthRequest
+import ru.morsianin_shop.storage.DatabaseStorage.dbQuery
+import ru.morsianin_shop.storage.StoredUser
+import ru.morsianin_shop.storage.StoredUsers
 import java.nio.charset.StandardCharsets
+import java.security.InvalidParameterException
+import java.util.*
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
+import kotlin.time.Duration.Companion.hours
 
 
 fun Application.authRoutes() {
@@ -20,18 +32,13 @@ fun Application.authRoutes() {
         post<AuthRequest> { request ->
 
             if (request.type != AuthType.Telegram) {
-                call.respondText("Unknown type ${request.type}", status = HttpStatusCode.BadRequest)
+                call.respondText("Unknown login method ${request.type}", status = HttpStatusCode.BadRequest)
                 return@post
             }
 
             val initDataRaw = call.receive<String>()
             val initData = parseQueryString(initDataRaw)
-            val receivedHash = initData["hash"]
-
-            if (receivedHash == null) {
-                call.respondText("missing hash", status = HttpStatusCode.BadRequest)
-                return@post
-            }
+            val receivedHash = initData["hash"]?: throw InvalidParameterException("Hash is missing")
 
             val botToken = AuthSettings.getTgBotToken()
             val calculatedHash = hmacSha256(buildDataCheckString(initDataRaw), generateSecretKey(botToken))
@@ -41,7 +48,26 @@ fun Application.authRoutes() {
                 return@post
             }
 
-            call.respond(HttpStatusCode.OK, "Validation successful")
+            val userJson = initData["user"]?: throw InvalidParameterException("User data is missing")
+
+            val json = Json { ignoreUnknownKeys = true }
+
+            val user = json.decodeFromString<TelegramAuthUserData>(userJson)
+
+            dbQuery {
+                val candidate = StoredUser.find {
+                    StoredUsers.tgId eq user.id
+                }
+            }
+
+            val token = JWT.create()
+                .withAudience(getJwtSettingsUserspace().audience)
+                .withIssuer(getJwtSettingsUserspace().issuer)
+                .withClaim("tgUserId", user.id)
+                .withExpiresAt(Date(System.currentTimeMillis() + 48.hours.inWholeMilliseconds))
+                .sign(Algorithm.HMAC256(getJwtSettingsUserspace().secretKey))
+
+            call.respond(token)
         }
     }
 }

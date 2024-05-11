@@ -1,32 +1,23 @@
 package ru.morsianin_shop.plugins
 
+import com.auth0.jwt.JWT
+import com.auth0.jwt.algorithms.Algorithm
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
+import ru.morsianin_shop.plugins.AuthSettings.getJwtSettingsUserspace
 import java.util.*
 
+data class AuthJWTSettings(
+    val secretKey: String,
+    val audience: String,
+    val realm: String,
+    val issuer: String,
+)
 
 object AuthSettings {
-    private var secretKey: String? = null
     private var tgBotToken: String? = null
-
-    fun getSecretKey(): String {
-        if (secretKey != null) {
-            return secretKey!!
-        }
-        else {
-            val envSecret = System.getenv("JWT_SECRET")
-
-            if (envSecret == null) {
-                throw IllegalStateException("JWT_SECRET env variable is not set")
-            }
-            else {
-                secretKey = System.getenv("JWT_SECRET")
-                return secretKey!!
-            }
-
-        }
-    }
+    private var jwtSettingsUserspace: AuthJWTSettings? = null
 
     fun getTgBotToken(): String {
         if (tgBotToken != null) {
@@ -44,14 +35,35 @@ object AuthSettings {
             }
         }
     }
+
+    fun getJwtSettingsUserspace(): AuthJWTSettings {
+        if (jwtSettingsUserspace == null) {
+            jwtSettingsUserspace = AuthJWTSettings(
+                secretKey = System.getenv("JWT_SECRET"),
+                audience = System.getenv("JWT_AUDIENCE"),
+                issuer = System.getenv("JWT_ISSUER"),
+                realm = "userspace"
+            )
+            return jwtSettingsUserspace!!
+        }
+        else {
+            return jwtSettingsUserspace!!
+        }
+    }
 }
 
 
 
 fun Application.configureAuth() {
     install(Authentication) {
-        jwt {
-
+        jwt("auth-jwt-user") {
+            realm = getJwtSettingsUserspace().realm
+            verifier(
+                JWT
+                .require(Algorithm.HMAC256(getJwtSettingsUserspace().secretKey))
+                .withAudience(getJwtSettingsUserspace().audience)
+                .withIssuer(getJwtSettingsUserspace().issuer)
+                .build())
         }
     }
 }

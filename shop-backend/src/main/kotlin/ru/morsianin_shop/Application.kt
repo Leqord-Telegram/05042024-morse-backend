@@ -25,6 +25,7 @@ fun main() {
         .start(wait = true)
 }
 
+// TODO: вынести конфишурацию в файл
 fun Application.module() {
     configureStorage()
     configureResources()
