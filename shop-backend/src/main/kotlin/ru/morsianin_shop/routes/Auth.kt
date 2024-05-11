@@ -81,7 +81,7 @@ fun Application.authRoutes() {
             val token = JWT.create()
                 .withAudience(getJwtSettingsUserspace().audience)
                 .withIssuer(getJwtSettingsUserspace().issuer)
-                .withClaim("userId", user!!.id)
+                .withClaim("user-id", user!!.id)
                 .withExpiresAt(Date(System.currentTimeMillis() + 48.hours.inWholeMilliseconds))
                 .sign(Algorithm.HMAC256(getJwtSettingsUserspace().secretKey))
 

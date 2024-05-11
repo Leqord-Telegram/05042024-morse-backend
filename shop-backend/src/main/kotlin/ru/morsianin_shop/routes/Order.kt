@@ -2,11 +2,14 @@ package ru.morsianin_shop.routes
 
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.auth.*
+import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.resources.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.routing
 import io.ktor.util.pipeline.*
+import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
@@ -25,22 +28,28 @@ import ru.morsianin_shop.storage.StoredOrders.status
 // TODO: авторизация
 fun Application.orderRoutes() {
     routing {
-        get<OrderRequest> { filter ->
-            var query: Op<Boolean> = Op.TRUE
+        authenticate("auth-jwt-user") {
+            get<OrderRequest> { filter ->
+                val principal = call.principal<JWTPrincipal>()
+                val userId = principal!!.payload.getClaim("user-id").asLong()
 
-            filter.status?.let {
-                query = query and (StoredOrders.status eq it)
-            }
+                var query: Op<Boolean> = Op.TRUE
 
-            val response = dbQuery {
-                StoredOrder.find { query }.map { order -> mapToResponse(order) }
-            }
+                query = query and (StoredOrders.user eq EntityID(userId, StoredUsers))
 
-            if(response.isNotEmpty()) {
-                call.respond(response)
-            }
-            else {
-                call.respond(HttpStatusCode.NoContent)
+                filter.status?.let {
+                    query = query and (StoredOrders.status eq it)
+                }
+
+                val response = dbQuery {
+                    StoredOrder.find { query }.map { order -> mapToResponse(order) }
+                }
+
+                if (response.isNotEmpty()) {
+                    call.respond(response)
+                } else {
+                    call.respond(HttpStatusCode.NoContent)
+                }
             }
         }
         post<OrderRequest> { orders ->
