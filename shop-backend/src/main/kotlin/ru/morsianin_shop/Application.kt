@@ -1,12 +1,10 @@
 package ru.morsianin_shop
 
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
-import ru.morsianin_shop.plugins.configureOther
-import ru.morsianin_shop.plugins.configureRateLimit
-import ru.morsianin_shop.plugins.configureResources
-import ru.morsianin_shop.plugins.configureRouting
+import ru.morsianin_shop.plugins.*
 import ru.morsianin_shop.routes.*
 import ru.morsianin_shop.storage.configureStorage
 
@@ -30,6 +28,7 @@ fun main() {
 fun Application.module() {
     configureStorage()
     configureResources()
+    configureAuth()
     configureRouting()
     configureOther()
 
@@ -42,5 +41,5 @@ fun Application.module() {
     searchRoutes()
     orderRoutes()
     cartRoutes()
-
+    authRoutes()
 }
