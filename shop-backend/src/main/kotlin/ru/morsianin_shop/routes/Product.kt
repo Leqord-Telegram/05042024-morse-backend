@@ -16,6 +16,7 @@ import ru.morsianin_shop.model.ProductNew
 import ru.morsianin_shop.resources.ProductRequest
 import ru.morsianin_shop.storage.*
 import ru.morsianin_shop.storage.DatabaseStorage.dbQuery
+import kotlin.reflect.jvm.internal.ReflectProperties.Val
 
 fun Application.productRoutes() {
     routing {
@@ -106,7 +107,7 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.upsertRequest(id: Lon
 
         if (foundCategory != null && foundImages.toList().size == newProduct.imageIds.size) {
             if (id == null) {
-                StoredProduct.new {
+                val newStoredProduct = StoredProduct.new {
                     name = newProduct.name
                     description = newProduct.description
                     category = foundCategory
@@ -114,6 +115,9 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.upsertRequest(id: Lon
                     active = newProduct.active
                     images = foundImages
                 }
+
+                call.response.status(HttpStatusCode.Created)
+                call.respond(newStoredProduct)
             }
             else {
                 val candidate = StoredProduct.findById(id)
@@ -126,7 +130,7 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.upsertRequest(id: Lon
                     candidate.images = foundImages
                     candidate.category = foundCategory
 
-                    call.respond(HttpStatusCode.Created)
+                    call.respond(HttpStatusCode.NoContent)
                 }
                 else {
                     call.respond(HttpStatusCode.NotFound)

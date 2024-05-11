@@ -36,12 +36,13 @@ fun Application.cartRoutes() {
                 val productCandidate = StoredProduct.findById(newCartItem.productId)
 
                 if (productCandidate != null) {
-                    StoredUserCartItem.new {
+                    val newStoredItem = StoredUserCartItem.new {
                         user = StoredUser.all().first() // TODO: УБРАТЬ!!
                         product = productCandidate
                         quantity = newCartItem.quantity
                     }
-                    call.respond(HttpStatusCode.Created)
+                    call.response.status(HttpStatusCode.Created)
+                    call.respond(mapToResponse(newStoredItem))
                 }
                 else {
                     call.respond(HttpStatusCode.BadRequest)

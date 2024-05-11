@@ -122,11 +122,13 @@ fun Application.orderRoutes() {
                 val candidateProduct = StoredProduct.findById(newItem.productId)
 
                 if (candidateOrder != null && candidateProduct != null) {
-                    StoredOrderItem.new {
+                    val newStoredOrderItem = StoredOrderItem.new {
                         order = candidateOrder
                         product = candidateProduct
                         quantity = newItem.quantity
                     }
+                    call.response.status(HttpStatusCode.Created)
+                    call.respond(mapToResponse(newStoredOrderItem))
                 }
                 else {
                     call.respond(HttpStatusCode.NotFound)

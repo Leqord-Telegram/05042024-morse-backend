@@ -39,12 +39,13 @@ fun Application.categoryRoutes() {
         }
         post<CategoryRequest> {
             val newCategory = call.receive<CategoryNew>()
-            dbQuery {
+            val newStoredCategory = dbQuery {
                 StoredCategory.new {
                     name = newCategory.name
                 }
             }
-            call.respond(HttpStatusCode.Created)
+            call.response.status(HttpStatusCode.Created)
+            call.respond(mapToResponse(newStoredCategory))
         }
         get<CategoryRequest.Id> { id ->
             var query: Op<Boolean> = Op.TRUE
