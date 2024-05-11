@@ -2,9 +2,11 @@ package ru.morsianin_shop.plugins
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
+import io.ktor.server.response.*
 import ru.morsianin_shop.plugins.AuthSettings.getJwtSettingsUserspace
 import java.util.*
 
@@ -58,12 +60,25 @@ fun Application.configureAuth() {
     install(Authentication) {
         jwt("auth-jwt-user") {
             realm = getJwtSettingsUserspace().realm
+
             verifier(
                 JWT
                 .require(Algorithm.HMAC256(getJwtSettingsUserspace().secretKey))
                 .withAudience(getJwtSettingsUserspace().audience)
                 .withIssuer(getJwtSettingsUserspace().issuer)
                 .build())
+
+            validate { credential ->
+                if (credential.payload.getClaim("userId").asString() != "") {
+                    JWTPrincipal(credential.payload)
+                } else {
+                    null
+                }
+            }
+
+            challenge { _, realm ->
+                call.respond(HttpStatusCode.Unauthorized, "Token for $realm is not valid or has expired")
+            }
         }
     }
 }

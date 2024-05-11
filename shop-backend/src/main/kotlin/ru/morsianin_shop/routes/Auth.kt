@@ -11,14 +11,17 @@ import io.ktor.server.routing.routing
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonBuilder
 import org.apache.commons.codec.digest.HmacUtils
+import ru.morsianin_shop.mapping.Mapper.mapToResponse
 import ru.morsianin_shop.model.AuthType
 import ru.morsianin_shop.model.TelegramAuthUserData
+import ru.morsianin_shop.model.UserResponse
 import ru.morsianin_shop.plugins.AuthSettings
 import ru.morsianin_shop.plugins.AuthSettings.getJwtSettingsUserspace
 import ru.morsianin_shop.resources.AuthRequest
 import ru.morsianin_shop.storage.DatabaseStorage.dbQuery
 import ru.morsianin_shop.storage.StoredUser
 import ru.morsianin_shop.storage.StoredUsers
+import ru.morsianin_shop.storage.StoredUsers.tgId
 import java.nio.charset.StandardCharsets
 import java.security.InvalidParameterException
 import java.util.*
@@ -52,18 +55,33 @@ fun Application.authRoutes() {
 
             val json = Json { ignoreUnknownKeys = true }
 
-            val user = json.decodeFromString<TelegramAuthUserData>(userJson)
+            val tgUserData = json.decodeFromString<TelegramAuthUserData>(userJson)
 
+            var user: UserResponse? = null
             dbQuery {
                 val candidate = StoredUser.find {
-                    StoredUsers.tgId eq user.id
+                    tgId eq tgUserData.id
+                }.map { it }
+
+                if (candidate.size == 1) {
+                    user = mapToResponse(candidate.first())
+                    return@dbQuery
+                }
+                else if (candidate.isEmpty()) {
+                    user = mapToResponse(StoredUser.new {
+                        name = tgUserData.username
+                        tgId = tgUserData.id
+                    })
+                    return@dbQuery
+                } else {
+                    throw InvalidParameterException("User data is more than one candidate")
                 }
             }
 
             val token = JWT.create()
                 .withAudience(getJwtSettingsUserspace().audience)
                 .withIssuer(getJwtSettingsUserspace().issuer)
-                .withClaim("tgUserId", user.id)
+                .withClaim("userId", user!!.id)
                 .withExpiresAt(Date(System.currentTimeMillis() + 48.hours.inWholeMilliseconds))
                 .sign(Algorithm.HMAC256(getJwtSettingsUserspace().secretKey))
 
