@@ -14,6 +14,7 @@ import org.apache.commons.codec.digest.HmacUtils
 import ru.morsianin_shop.mapping.Mapper.mapToResponse
 import ru.morsianin_shop.model.AuthType
 import ru.morsianin_shop.model.TelegramAuthUserData
+import ru.morsianin_shop.model.UserPrivilege
 import ru.morsianin_shop.model.UserResponse
 import ru.morsianin_shop.plugins.AuthSettings
 import ru.morsianin_shop.plugins.AuthSettings.getJwtSettingsUserspace
@@ -82,6 +83,10 @@ fun Application.authRoutes() {
                 .withAudience(getJwtSettingsUserspace().audience)
                 .withIssuer(getJwtSettingsUserspace().issuer)
                 .withClaim("user-id", user!!.id)
+                .withClaim("privileges",
+                    if (user!!.privileges.contains(UserPrivilege.ADMIN))
+                        UserPrivilege.ADMIN.toString()
+                    else UserPrivilege.USER.toString())
                 .withExpiresAt(Date(System.currentTimeMillis() + 48.hours.inWholeMilliseconds))
                 .sign(Algorithm.HMAC256(getJwtSettingsUserspace().secretKey))
 

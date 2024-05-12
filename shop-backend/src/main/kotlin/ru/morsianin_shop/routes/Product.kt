@@ -16,7 +16,6 @@ import ru.morsianin_shop.model.ProductNew
 import ru.morsianin_shop.resources.ProductRequest
 import ru.morsianin_shop.storage.*
 import ru.morsianin_shop.storage.DatabaseStorage.dbQuery
-import kotlin.reflect.jvm.internal.ReflectProperties.Val
 
 fun Application.productRoutes() {
     routing {

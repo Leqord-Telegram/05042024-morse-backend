@@ -8,7 +8,6 @@ import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.response.*
 import ru.morsianin_shop.plugins.AuthSettings.getJwtSettingsUserspace
-import java.util.*
 
 data class AuthJWTSettings(
     val secretKey: String,
@@ -20,6 +19,7 @@ data class AuthJWTSettings(
 object AuthSettings {
     private var tgBotToken: String? = null
     private var jwtSettingsUserspace: AuthJWTSettings? = null
+    private var jwtSettingsAdmin: AuthJWTSettings? = null
 
     fun getTgBotToken(): String {
         if (tgBotToken != null) {
