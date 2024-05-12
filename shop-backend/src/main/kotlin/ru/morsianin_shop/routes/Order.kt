@@ -70,6 +70,7 @@ fun Application.orderRoutes() {
 
 
         }
+        /*
         delete<OrderRequest.Id> { id ->
             val userId = call.principal<JWTPrincipal>()!!.payload.getClaim("user-id").asLong()
             dbQuery {
@@ -87,7 +88,7 @@ fun Application.orderRoutes() {
                 }
             }
         }
-
+        */
         get<OrderRequest.Id.Status> { status ->
             val userId = call.principal<JWTPrincipal>()!!.payload.getClaim("user-id").asLong()
             dbQuery {
@@ -104,7 +105,7 @@ fun Application.orderRoutes() {
                 }
             }
         }
-
+        /*
         put<OrderRequest.Id.Status> { status ->
             val newStatus = call.receive<OrderStatus>()
             val userId = call.principal<JWTPrincipal>()!!.payload.getClaim("user-id").asLong()
@@ -123,24 +124,30 @@ fun Application.orderRoutes() {
                 }
             }
         }
+        */
 
         get<OrderRequest.Id.Item> { item ->
             val userId = call.principal<JWTPrincipal>()!!.payload.getClaim("user-id").asLong()
-            val candidate = dbQuery {
-                StoredOrder.find {
+            val dbQuery = dbQuery {
+                val candidate = StoredOrder.find {
                     StoredOrders.id eq EntityID(item.parent.id, StoredOrders)
                     StoredOrders.user eq userId
                 }.singleOrNull()
-            }
 
-            if (candidate != null) {
-                call.respond(candidate.items.map { mapToResponse(it) })
-            }
-            else {
-                call.respond(HttpStatusCode.NotFound)
+                if (candidate != null) {
+                    if (candidate.items.toList().isEmpty()) {
+                        call.respond(HttpStatusCode.NoContent)
+                    }
+                    else {
+                        call.respond(candidate.items.map { mapToResponse(it) })
+                    }
+                }
+                else {
+                    call.respond(HttpStatusCode.NotFound)
+                }
             }
         }
-
+            /*
         post<OrderRequest.Id.Item> { item ->
             val newItem = call.receive<OrderItemNew>()
             val userId = call.principal<JWTPrincipal>()!!.payload.getClaim("user-id").asLong()
@@ -222,6 +229,7 @@ fun Application.orderRoutes() {
                 }
             }
         }
+        */
         }
     }
 }
