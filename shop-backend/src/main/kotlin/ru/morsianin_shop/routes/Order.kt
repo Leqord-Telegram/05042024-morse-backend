@@ -22,16 +22,13 @@ import ru.morsianin_shop.model.OrderStatus
 import ru.morsianin_shop.resources.OrderRequest
 import ru.morsianin_shop.storage.*
 import ru.morsianin_shop.storage.DatabaseStorage.dbQuery
-import ru.morsianin_shop.storage.StoredOrderItems.order
-import ru.morsianin_shop.storage.StoredOrders.status
 
 // TODO: авторизация
 fun Application.orderRoutes() {
     routing {
         authenticate("auth-jwt-user") {
             get<OrderRequest> { filter ->
-                val principal = call.principal<JWTPrincipal>()
-                val userId = principal!!.payload.getClaim("user-id").asLong()
+                val userId = call.principal<JWTPrincipal>()!!.payload.getClaim("user-id").asLong()
 
                 var query: Op<Boolean> = Op.TRUE
 
@@ -51,13 +48,17 @@ fun Application.orderRoutes() {
                     call.respond(HttpStatusCode.NoContent)
                 }
             }
-        }
-        post<OrderRequest> { orders ->
+
+        post<OrderRequest> {
             upsertOrder()
         }
         get<OrderRequest.Id> { id ->
+            val userId = call.principal<JWTPrincipal>()!!.payload.getClaim("user-id").asLong()
              dbQuery {
-                val candidate = StoredOrder.findById(id.id)
+                val candidate = StoredOrder.find {
+                    StoredOrders.id eq EntityID(id.id, StoredOrders)
+                    StoredOrders.user eq userId
+                }.singleOrNull()
 
                 if (candidate != null) {
                     call.respond(mapToResponse(candidate))
@@ -70,8 +71,12 @@ fun Application.orderRoutes() {
 
         }
         delete<OrderRequest.Id> { id ->
+            val userId = call.principal<JWTPrincipal>()!!.payload.getClaim("user-id").asLong()
             dbQuery {
-                val candidate = StoredOrder.findById(id.id)
+                val candidate = StoredOrder.find {
+                    StoredOrders.id eq EntityID(id.id, StoredOrders)
+                    StoredOrders.user eq userId
+                }.singleOrNull()
 
                 if (candidate != null) {
                     candidate.delete()
@@ -84,8 +89,12 @@ fun Application.orderRoutes() {
         }
 
         get<OrderRequest.Id.Status> { status ->
+            val userId = call.principal<JWTPrincipal>()!!.payload.getClaim("user-id").asLong()
             dbQuery {
-                val candidate = StoredOrder.findById(status.parent.id)
+                val candidate = StoredOrder.find {
+                    StoredOrders.id eq EntityID(status.parent.id, StoredOrders)
+                    StoredOrders.user eq userId
+                }.singleOrNull()
 
                 if (candidate != null) {
                     call.respond(candidate.status)
@@ -98,8 +107,12 @@ fun Application.orderRoutes() {
 
         put<OrderRequest.Id.Status> { status ->
             val newStatus = call.receive<OrderStatus>()
+            val userId = call.principal<JWTPrincipal>()!!.payload.getClaim("user-id").asLong()
             dbQuery {
-                val candidate = StoredOrder.findById(status.parent.id)
+                val candidate = StoredOrder.find {
+                    StoredOrders.id eq EntityID(status.parent.id, StoredOrders)
+                    StoredOrders.user eq userId
+                }.singleOrNull()
 
                 if (candidate != null) {
                     candidate.status = newStatus
@@ -112,8 +125,12 @@ fun Application.orderRoutes() {
         }
 
         get<OrderRequest.Id.Item> { item ->
+            val userId = call.principal<JWTPrincipal>()!!.payload.getClaim("user-id").asLong()
             val candidate = dbQuery {
-                StoredOrder.findById(item.parent.id)
+                StoredOrder.find {
+                    StoredOrders.id eq EntityID(item.parent.id, StoredOrders)
+                    StoredOrders.user eq userId
+                }.singleOrNull()
             }
 
             if (candidate != null) {
@@ -126,8 +143,12 @@ fun Application.orderRoutes() {
 
         post<OrderRequest.Id.Item> { item ->
             val newItem = call.receive<OrderItemNew>()
+            val userId = call.principal<JWTPrincipal>()!!.payload.getClaim("user-id").asLong()
             dbQuery {
-                val candidateOrder = StoredOrder.findById(item.parent.id)
+                val candidateOrder = StoredOrder.find {
+                    StoredOrders.id eq EntityID(item.parent.id, StoredOrders)
+                    StoredOrders.user eq userId
+                }.singleOrNull()
                 val candidateProduct = StoredProduct.findById(newItem.productId)
 
                 if (candidateOrder != null && candidateProduct != null) {
@@ -147,9 +168,22 @@ fun Application.orderRoutes() {
 
         put<OrderRequest.Id.Item.ItemId> { item ->
             val changedItem = call.receive<OrderItemChanged>()
-
+            val userId = call.principal<JWTPrincipal>()!!.payload.getClaim("user-id").asLong()
             dbQuery {
-                val candidateItem = StoredOrderItem.findById(item.itemId)
+                val candidateOrder = StoredOrder.find {
+                    StoredOrders.id eq EntityID(item.parent.id, StoredOrders)
+                    StoredOrders.user eq userId
+                }.singleOrNull()
+
+                if (candidateOrder == null) {
+                    call.respond(HttpStatusCode.NotFound)
+                    return@dbQuery
+                }
+
+                val candidateItem = StoredOrderItem.find {
+                    StoredOrderItems.id eq EntityID(item.parent.id, StoredOrderItems)
+                    StoredOrderItems.order eq candidateOrder.id
+                }.singleOrNull()
 
                 if (candidateItem != null) {
                     candidateItem.quantity = changedItem.quantity
@@ -161,9 +195,23 @@ fun Application.orderRoutes() {
             }
         }
 
-        delete<OrderRequest.Id.Item.ItemId> { itemId ->
+        delete<OrderRequest.Id.Item.ItemId> { item ->
+            val userId = call.principal<JWTPrincipal>()!!.payload.getClaim("user-id").asLong()
             dbQuery {
-                val candidateItem = StoredOrderItem.findById(itemId.itemId)
+                val candidateOrder = StoredOrder.find {
+                    StoredOrders.id eq EntityID(item.parent.id, StoredOrders)
+                    StoredOrders.user eq userId
+                }.singleOrNull()
+
+                if (candidateOrder == null) {
+                    call.respond(HttpStatusCode.NotFound)
+                    return@dbQuery
+                }
+
+                val candidateItem = StoredOrderItem.find {
+                    StoredOrderItems.id eq EntityID(item.parent.id, StoredOrderItems)
+                    StoredOrderItems.order eq candidateOrder.id
+                }.singleOrNull()
 
                 if (candidateItem != null) {
                     candidateItem.delete()
@@ -174,21 +222,28 @@ fun Application.orderRoutes() {
                 }
             }
         }
+        }
     }
 }
 
 private suspend fun PipelineContext<Unit, ApplicationCall>.upsertOrder() {
     val newOrder = call.receive<OrderNew>()
+    val userId = call.principal<JWTPrincipal>()!!.payload.getClaim("user-id").asLong()
 
     dbQuery {
-        val userCandidate = StoredUser.all().first()// TODO: ИЗМЕНИТЬ
+        val userCandidate = StoredUser.findById(userId)
+
+        if (userCandidate == null) {
+            call.respond(HttpStatusCode.BadRequest)
+            return@dbQuery
+        }
 
         val currentOrder: StoredOrder  = StoredOrder.new {
                 user = userCandidate
-                status = newOrder.status // TODO: проконтролировать возможные статусы после авторизации
+                status = OrderStatus.PENDING
             }
 
-        var productCandidate: StoredProduct? = null
+        var productCandidate: StoredProduct?
         for (item in newOrder.items) {
             productCandidate = StoredProduct.findById(item.productId)
 
@@ -204,7 +259,7 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.upsertOrder() {
                 return@dbQuery
             }
         }
-
         call.respond(HttpStatusCode.Created)
+
     }
 }
