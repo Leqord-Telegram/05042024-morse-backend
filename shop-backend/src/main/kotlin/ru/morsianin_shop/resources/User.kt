@@ -13,4 +13,7 @@ class UserRequest(
 ) {
     @Resource("{id}")
     class Id(val parent: UserRequest = UserRequest(), val id: Long)
+
+    @Resource("me")
+    class Me(val parent: UserRequest = UserRequest())
 }

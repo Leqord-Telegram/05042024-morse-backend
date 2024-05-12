@@ -10,8 +10,7 @@ data class UserResponse(
 )
 
 @Serializable
-enum class UserPrivilege {
-    ADMIN,
-    SUPPORT,
-    USER,
+enum class UserPrivilege(val value: String) {
+    ADMIN("admin"),
+    SUPPORT("support"),
 }

@@ -79,14 +79,13 @@ fun Application.authRoutes() {
                 }
             }
 
+            val userPrivilegesString = user!!.privileges.joinToString("|") { it.value }
+
             val token = JWT.create()
                 .withAudience(getJwtSettingsUserspace().audience)
                 .withIssuer(getJwtSettingsUserspace().issuer)
                 .withClaim("user-id", user!!.id)
-                .withClaim("privileges",
-                    if (user!!.privileges.contains(UserPrivilege.ADMIN))
-                        UserPrivilege.ADMIN.toString()
-                    else UserPrivilege.USER.toString())
+                .withClaim("privileges", userPrivilegesString)
                 .withExpiresAt(Date(System.currentTimeMillis() + 48.hours.inWholeMilliseconds))
                 .sign(Algorithm.HMAC256(getJwtSettingsUserspace().secretKey))
 

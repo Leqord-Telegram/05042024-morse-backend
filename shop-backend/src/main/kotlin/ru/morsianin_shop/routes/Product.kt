@@ -2,6 +2,8 @@ package ru.morsianin_shop.routes
 
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.auth.*
+import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.resources.*
 import io.ktor.server.response.*
@@ -13,6 +15,8 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
 import ru.morsianin_shop.mapping.Mapper.mapToResponse
 import ru.morsianin_shop.model.ProductNew
+import ru.morsianin_shop.model.UserPrivilege
+import ru.morsianin_shop.plugins.hasPrivilege
 import ru.morsianin_shop.resources.ProductRequest
 import ru.morsianin_shop.storage.*
 import ru.morsianin_shop.storage.DatabaseStorage.dbQuery
@@ -59,8 +63,15 @@ fun Application.productRoutes() {
                 call.respond(HttpStatusCode.NotFound)
             }
         }
-        post<ProductRequest>  {
-            upsertRequest(null)
+        authenticate("auth-jwt-user") {
+            post<ProductRequest> {
+                if (!hasPrivilege(call.principal<JWTPrincipal>()!!.payload, UserPrivilege.ADMIN)) {
+                    call.respond(HttpStatusCode.Forbidden)
+                    return@post
+                }
+
+                upsertRequest(null)
+            }
         }
         get<ProductRequest.Id> { id ->
             dbQuery {
@@ -74,19 +85,30 @@ fun Application.productRoutes() {
                 }
             }
         }
-        put<ProductRequest.Id> { id ->
-            upsertRequest(id.id)
-        }
-        delete<ProductRequest.Id> { id ->
-            dbQuery {
-                val candidate = StoredProduct.findById(id.id)
-
-                if (candidate != null) {
-                    candidate.delete()
-                    call.respond(HttpStatusCode.OK)
+        authenticate("auth-jwt-user") {
+            put<ProductRequest.Id> { id ->
+                if (!hasPrivilege(call.principal<JWTPrincipal>()!!.payload, UserPrivilege.ADMIN)) {
+                    call.respond(HttpStatusCode.Forbidden)
+                    return@put
                 }
-                else {
-                    call.respond(HttpStatusCode.NotFound)
+
+                upsertRequest(id.id)
+            }
+            delete<ProductRequest.Id> { id ->
+                if (!hasPrivilege(call.principal<JWTPrincipal>()!!.payload, UserPrivilege.ADMIN)) {
+                    call.respond(HttpStatusCode.Forbidden)
+                    return@delete
+                }
+
+                dbQuery {
+                    val candidate = StoredProduct.findById(id.id)
+
+                    if (candidate != null) {
+                        candidate.delete()
+                        call.respond(HttpStatusCode.OK)
+                    } else {
+                        call.respond(HttpStatusCode.NotFound)
+                    }
                 }
             }
         }

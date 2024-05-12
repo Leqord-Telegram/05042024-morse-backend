@@ -2,6 +2,8 @@ package ru.morsianin_shop.routes
 
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.auth.*
+import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.resources.*
 import io.ktor.server.response.*
@@ -11,6 +13,8 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
 import ru.morsianin_shop.mapping.Mapper.mapToResponse
 import ru.morsianin_shop.model.CategoryNew
+import ru.morsianin_shop.model.UserPrivilege
+import ru.morsianin_shop.plugins.hasPrivilege
 import ru.morsianin_shop.resources.CategoryRequest
 import ru.morsianin_shop.storage.DatabaseStorage.dbQuery
 import ru.morsianin_shop.storage.StoredCategories
@@ -37,15 +41,23 @@ fun Application.categoryRoutes() {
             }
 
         }
-        post<CategoryRequest> {
-            val newCategory = call.receive<CategoryNew>()
-            val newStoredCategory = dbQuery {
-                StoredCategory.new {
-                    name = newCategory.name
+
+        authenticate("auth-jwt-user") {
+            post<CategoryRequest> {
+                if (!hasPrivilege(call.principal<JWTPrincipal>()!!.payload, UserPrivilege.ADMIN)) {
+                    call.respond(HttpStatusCode.Forbidden)
+                    return@post
                 }
+
+                val newCategory = call.receive<CategoryNew>()
+                val newStoredCategory = dbQuery {
+                    StoredCategory.new {
+                        name = newCategory.name
+                    }
+                }
+                call.response.status(HttpStatusCode.Created)
+                call.respond(mapToResponse(newStoredCategory))
             }
-            call.response.status(HttpStatusCode.Created)
-            call.respond(mapToResponse(newStoredCategory))
         }
         get<CategoryRequest.Id> { id ->
             var query: Op<Boolean> = Op.TRUE
@@ -62,35 +74,45 @@ fun Application.categoryRoutes() {
 
             call.respond(response?: HttpStatusCode.NotFound)
         }
-        put<CategoryRequest.Id> { id ->
-            val newCategory = call.receive<CategoryNew>()
-
-            dbQuery {
-                val candidate = StoredCategory.findById(id.id)
-
-                if (candidate != null) {
-                    candidate.name = newCategory.name
-                    call.respond(HttpStatusCode.OK)
+        authenticate("auth-jwt-user") {
+            put<CategoryRequest.Id> { id ->
+                if (!hasPrivilege(call.principal<JWTPrincipal>()!!.payload, UserPrivilege.ADMIN)) {
+                    call.respond(HttpStatusCode.Forbidden)
+                    return@put
                 }
-                else {
-                    StoredCategory.new(id.id) {
-                        name = newCategory.name
+
+                val newCategory = call.receive<CategoryNew>()
+
+                dbQuery {
+                    val candidate = StoredCategory.findById(id.id)
+
+                    if (candidate != null) {
+                        candidate.name = newCategory.name
+                        call.respond(HttpStatusCode.OK)
+                    } else {
+                        StoredCategory.new(id.id) {
+                            name = newCategory.name
+                        }
+                        call.respond(HttpStatusCode.Created)
                     }
-                    call.respond(HttpStatusCode.Created)
                 }
             }
-        }
-        delete<CategoryRequest.Id> { id ->
-            dbQuery {
-                val candidate = StoredCategory.findById(id.id)
-                if (candidate != null) {
-                    candidate.delete()
-                    call.respond(HttpStatusCode.OK)
-                }
-                else {
-                    call.respond(HttpStatusCode.NotFound)
+            delete<CategoryRequest.Id> { id ->
+                if (!hasPrivilege(call.principal<JWTPrincipal>()!!.payload, UserPrivilege.ADMIN)) {
+                    call.respond(HttpStatusCode.Forbidden)
+                    return@delete
                 }
 
+                dbQuery {
+                    val candidate = StoredCategory.findById(id.id)
+                    if (candidate != null) {
+                        candidate.delete()
+                        call.respond(HttpStatusCode.OK)
+                    } else {
+                        call.respond(HttpStatusCode.NotFound)
+                    }
+
+                }
             }
         }
     }

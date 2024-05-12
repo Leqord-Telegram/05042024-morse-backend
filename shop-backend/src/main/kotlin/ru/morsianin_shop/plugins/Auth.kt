@@ -2,11 +2,13 @@ package ru.morsianin_shop.plugins
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import com.auth0.jwt.interfaces.Payload
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.response.*
+import ru.morsianin_shop.model.UserPrivilege
 import ru.morsianin_shop.plugins.AuthSettings.getJwtSettingsUserspace
 
 data class AuthJWTSettings(
@@ -52,6 +54,14 @@ object AuthSettings {
             return jwtSettingsUserspace!!
         }
     }
+}
+
+fun hasPrivilege(payload: Payload, privilege: UserPrivilege): Boolean {
+    val claim = payload.getClaim("privileges")
+    if(claim != null) {
+        return claim.toString().trim('"') .split("|").map { it.trim() }.contains(privilege.value.trim())
+    }
+    return false
 }
 
 
