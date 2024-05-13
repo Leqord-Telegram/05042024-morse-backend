@@ -58,7 +58,7 @@ object DatabaseStorage {
 
 fun Application.configureStorage() {
     val driver = "org.postgresql.Driver"
-    val url = "jdbc:postgresql://localhost:5432/shop"
+    val url = System.getenv("DB_URL")?: "jdbc:postgresql://localhost:5432/shop"
     val user = System.getenv("DB_USER") ?: "postgres"
     val password = System.getenv("DB_PASSWORD") ?: "postgres"
 
