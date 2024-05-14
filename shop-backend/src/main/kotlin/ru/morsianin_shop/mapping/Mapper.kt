@@ -11,7 +11,8 @@ object Mapper {
 
     fun mapToResponse(stored: StoredImage): ImageResponse = ImageResponse(
         id = stored.id.value,
-        url = stored.url
+        storedId = stored.storedId,
+        format = stored.format
     )
 
     fun mapToResponse(stored: StoredProduct): ProductResponse = ProductResponse(
@@ -30,7 +31,6 @@ object Mapper {
         product = mapToResponse(stored.product),
         quantity = stored.quantity,
     )
-
 
     fun mapToResponse(stored: StoredOrder): OrderResponse = OrderResponse(
             id = stored.id.value,
