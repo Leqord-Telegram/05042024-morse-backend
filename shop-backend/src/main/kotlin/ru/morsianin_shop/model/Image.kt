@@ -5,5 +5,12 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ImageResponse(
     val id: Long,
-    val url: String
+    val storedId: String,
+    val format: ImageFormat,
 )
+
+@Serializable
+enum class ImageFormat(val mime: String) {
+    Png("image/png"),
+    Jpeg("image/jpeg")
+}

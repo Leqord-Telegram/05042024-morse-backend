@@ -4,6 +4,9 @@ val ktor_version: String by project
 val kotlin_version: String by project
 val logback_version: String by project
 val exposed_version: String by project
+
+val aws_sdk_version = "1.2.10"
+val smithy_version = "1.2.3"
 val tcnative_version = "2.0.65.Final"
 val postgres_version = "42.7.3"
 val shapeshift_version = "0.8.0"
@@ -56,6 +59,14 @@ dependencies {
     implementation("commons-codec:commons-codec:1.17.0")
     implementation("org.postgresql:postgresql:$postgres_version")
     implementation("com.zaxxer:HikariCP:$hikaricp_version")
+    implementation("aws.sdk.kotlin:s3:$aws_sdk_version")
+    implementation("aws.sdk.kotlin:s3control:$aws_sdk_version")
+    implementation("aws.sdk.kotlin:sts:$aws_sdk_version")
+    implementation("aws.sdk.kotlin:secretsmanager:$aws_sdk_version")
+    implementation("aws.smithy.kotlin:http-client-engine-okhttp:$smithy_version")
+    implementation("aws.smithy.kotlin:http-client-engine-crt:$smithy_version")
+    implementation("aws.smithy.kotlin:aws-signing-crt:$smithy_version")
+    implementation("aws.smithy.kotlin:http-auth-aws:$smithy_version")
 
     if (tcnative_classifier != null) {
         implementation("io.netty:netty-tcnative-boringssl-static:$tcnative_version:$tcnative_classifier")
