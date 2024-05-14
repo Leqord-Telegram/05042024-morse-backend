@@ -20,13 +20,13 @@ import ru.morsianin_shop.storage.DatabaseStorage.dbQuery
 
 fun Application.imageRoutes() {
     routing {
-        get<ImageRequest> { images->
+        get<ImageRequest> {
             dbQuery {
                 call.respond(StoredImage.all().map { img -> mapToResponse(img) })
             }
         }
         authenticate("auth-jwt-user") {
-            post<ImageRequest> { images ->
+            post<ImageRequest> {
                 if (!hasPrivilege(call.principal<JWTPrincipal>()!!.payload, UserPrivilege.ADMIN)) {
                     call.respond(HttpStatusCode.Forbidden)
                     return@post
