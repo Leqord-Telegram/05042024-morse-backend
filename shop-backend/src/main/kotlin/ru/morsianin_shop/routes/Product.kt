@@ -135,6 +135,7 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.upsertRequest(id: Lon
                     price = newProduct.price
                     active = newProduct.active
                     images = foundImages
+                    quantity = newProduct.quantity
                 }
 
                 call.response.status(HttpStatusCode.Created)
