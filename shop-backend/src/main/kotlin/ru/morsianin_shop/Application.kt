@@ -42,4 +42,25 @@ fun Application.module() {
     orderRoutes()
     cartRoutes()
     authRoutes()
+
+    /*
+    for (i in 1..20) {
+        val runtime = Runtime.getRuntime()
+        runtime.gc()
+        val startMemory = runtime.totalMemory() - runtime.freeMemory()
+
+        val duration = measureTimeMillis {
+            runBlocking {
+                SearchLevenshtein.findTopBestMatchingProducts("горбатая говно горбатая псина анус", 10)
+            }
+        }
+        val endMemory = runtime.totalMemory() - runtime.freeMemory()
+        val memoryUsed = endMemory - startMemory
+
+        println("Использовано памяти: ${memoryUsed/(1024.0*1024.0)} МБайт")
+
+        println("Duration: $duration ms")
+
+    }
+    */
 }

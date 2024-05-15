@@ -11,6 +11,8 @@ val tcnative_version = "2.0.65.Final"
 val postgres_version = "42.7.3"
 val shapeshift_version = "0.8.0"
 val hikaricp_version = "4.0.3"
+val fuzzywuzzy_version = "1.4.0"
+var guava_version = "33.2.0-jre"
 
 val osName = System.getProperty("os.name").lowercase(Locale.getDefault())
 val tcnative_classifier = when {
@@ -67,6 +69,9 @@ dependencies {
     implementation("aws.smithy.kotlin:http-client-engine-crt:$smithy_version")
     implementation("aws.smithy.kotlin:aws-signing-crt:$smithy_version")
     implementation("aws.smithy.kotlin:http-auth-aws:$smithy_version")
+    implementation("me.xdrop:fuzzywuzzy:$fuzzywuzzy_version")
+    implementation("com.google.guava:guava:$guava_version")
+
 
     if (tcnative_classifier != null) {
         implementation("io.netty:netty-tcnative-boringssl-static:$tcnative_version:$tcnative_classifier")

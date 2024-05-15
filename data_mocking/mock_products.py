@@ -6,8 +6,8 @@ import string
 conn = psycopg2.connect(
     host="127.0.0.1",
     database="shop",
-    user="postgresuser",
-    password="adminpass"
+    user="shop",
+    password="password"
 )
 
 # Создаём курсор для выполнения SQL-запросов
@@ -15,7 +15,7 @@ cur = conn.cursor()
 
 # Предопределённые значения
 words = ["хуй", "жопа", "член", "банан", "залупа", "пизда", "анус", "говно", "псина", "горбатая"]
-categories = [1,]  # Подставьте сюда ваши реальные категории
+categories = [1, 2, 3, 4, 5]  # Подставьте сюда ваши реальные категории
 
 # Функция для создания случайных строк
 def random_text(min_words=4, max_words=10):

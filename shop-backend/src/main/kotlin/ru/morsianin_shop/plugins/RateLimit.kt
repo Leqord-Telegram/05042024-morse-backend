@@ -2,7 +2,6 @@ package ru.morsianin_shop.plugins
 
 import io.ktor.server.application.*
 import io.ktor.server.plugins.ratelimit.*
-import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 fun Application.configureRateLimit() {
@@ -11,7 +10,7 @@ fun Application.configureRateLimit() {
 
     if (searchRateLimit != null) {
         install(RateLimit) {
-            register(RateLimitName("search-suggestions")) {
+            register(RateLimitName("search")) {
                 rateLimiter(limit = searchRateLimit, refillPeriod = refill)
             }
         }
