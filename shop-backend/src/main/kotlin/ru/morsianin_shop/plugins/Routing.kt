@@ -13,11 +13,10 @@ fun Application.configureRouting() {
             call.respondText("App in illegal state as ${cause.message}", status = HttpStatusCode.BadRequest)
         }
 
-        /*
         exception<Exception> { call, cause ->
             call.respondText("I've fucked up, sry: \n${cause.message}", status = HttpStatusCode.BadRequest)
         }
-        */
+
     }
     install(ContentNegotiation) {
         json()
