@@ -43,8 +43,8 @@ fun Application.imageRoutes() {
                         is PartData.FileItem -> {
                             val contentType = part.contentType
                             imageFormat = when (contentType?.toString()) {
-                                "image/jpeg", "image/jpg" -> ImageFormat.Jpeg
-                                "image/png" -> ImageFormat.Png
+                                "multipart/jpeg", "multipart/jpg" -> ImageFormat.Jpeg
+                                "multipart/png" -> ImageFormat.Png
                                 else -> null
                             }
 
@@ -72,8 +72,7 @@ fun Application.imageRoutes() {
                     return@post
                 }
 
-                val fileBytes: ByteArray = call.receive<ByteArray>()
-                val hash = computeSHA256Hash(fileBytes)
+                val hash = computeSHA256Hash(imageBytes!!)
                 val filename = "$hash.${contentType!!.contentSubtype}"
 
                 dbQuery {
@@ -87,7 +86,7 @@ fun Application.imageRoutes() {
                             storedId = filename
                             format = imageFormat!!
                         }
-                        putS3Object(filename, fileBytes, imageFormat!!.mime)
+                        putS3Object(filename, imageBytes!!, imageFormat!!.mime)
                         call.response.status(HttpStatusCode.Created)
                         call.respond(ResultCreated(id = created.id.value))
                     }
