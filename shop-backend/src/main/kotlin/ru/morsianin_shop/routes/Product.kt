@@ -158,10 +158,16 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.upsertRequest(id: Lon
                 }
             }
         } else {
+        if(foundCategory == null) {
             call.respondText(
                 "category with id ${newProduct.categoryId} not found",
                 status = HttpStatusCode.NotFound
             )
         }
+            else {
+                call.respond(HttpStatusCode.NotFound)
+            }
+        }
+
     }
 }
