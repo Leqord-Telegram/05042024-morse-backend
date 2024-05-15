@@ -150,6 +150,7 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.upsertRequest(id: Lon
                     candidate.active = newProduct.active
                     candidate.images = foundImages
                     candidate.category = foundCategory
+                    candidate.quantity = newProduct.quantity
 
                     call.respond(HttpStatusCode.NoContent)
                 }
