@@ -11,7 +11,7 @@ import ru.morsianin_shop.search.SearchLevenshtein
 
 fun Application.searchRoutes() {
     routing {
-        //rateLimit(RateLimitName("search")) {
+        rateLimit(RateLimitName("search")) {
             get<SearchRequest> { searchRequest ->
                 if (searchRequest.query == null) {
                     call.respond(HttpStatusCode.BadRequest)
@@ -25,6 +25,6 @@ fun Application.searchRoutes() {
 
                 call.respond(HttpStatusCode.OK, result)
             }
-        //}
+        }
     }
 }
