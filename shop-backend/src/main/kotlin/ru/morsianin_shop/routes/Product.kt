@@ -138,7 +138,7 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.upsertRequest(id: Lon
                 }
 
                 call.response.status(HttpStatusCode.Created)
-                call.respond(newStoredProduct)
+                call.respond(mapToResponse(newStoredProduct))
             }
             else {
                 val candidate = StoredProduct.findById(id)
