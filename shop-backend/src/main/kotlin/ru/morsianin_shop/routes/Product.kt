@@ -165,7 +165,10 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.upsertRequest(id: Lon
             )
         }
             else {
-                call.respond(HttpStatusCode.NotFound)
+            call.respondText(
+                "Not all images were not found",
+                status = HttpStatusCode.NotFound
+            )
             }
         }
 
