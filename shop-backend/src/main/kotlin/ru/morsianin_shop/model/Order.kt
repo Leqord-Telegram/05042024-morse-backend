@@ -19,7 +19,6 @@ data class OrderItemResponse(
 @Serializable
 data class OrderNew(
     val items: List<OrderItemNew>,
-    val status: OrderStatus
 )
 
 @Serializable
