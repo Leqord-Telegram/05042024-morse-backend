@@ -6,10 +6,14 @@ import io.ktor.server.netty.*
 import ru.morsianin_shop.plugins.*
 import ru.morsianin_shop.routes.*
 import ru.morsianin_shop.storage.configureStorage
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 fun main() {
     val ip = System.getenv("LISTEN_IP") ?: "127.0.0.1"
     val port = System.getenv("LISTEN_PORT")?.toIntOrNull() ?: 8080
+    val timeoutRequest = System.getenv("TIMEOUT_REQUEST")?.toIntOrNull() ?: 360
+    val timeoutResponse = System.getenv("TIMEOUT_RESPONSE")?.toIntOrNull() ?: 36
 
     embeddedServer(Netty, port = port, host = ip, module = Application::module, configure = {
         connectionGroupSize = 4
@@ -19,10 +23,9 @@ fun main() {
         shutdownTimeout = 3000
         requestQueueLimit = 16
         shareWorkGroup = false
-        requestReadTimeoutSeconds = 120
-        responseWriteTimeoutSeconds = 120
-    })
-        .start(wait = true)
+        requestReadTimeoutSeconds = timeoutRequest
+        responseWriteTimeoutSeconds = timeoutResponse
+    }).start(wait = true)
 }
 
 // TODO: вынести конфишурацию в файл
