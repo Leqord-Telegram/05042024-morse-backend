@@ -50,6 +50,7 @@ fun Application.orderRoutes() {
             }
 
         post<OrderRequest> {
+            // TODO: отнять количество товара на складе!!
             upsertOrder()
         }
         get<OrderRequest.Id> { id ->
