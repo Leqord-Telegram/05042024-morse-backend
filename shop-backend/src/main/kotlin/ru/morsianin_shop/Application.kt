@@ -6,8 +6,6 @@ import io.ktor.server.netty.*
 import ru.morsianin_shop.plugins.*
 import ru.morsianin_shop.routes.*
 import ru.morsianin_shop.storage.configureStorage
-import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Duration.Companion.seconds
 
 fun main() {
     val ip = System.getenv("LISTEN_IP") ?: "127.0.0.1"
@@ -16,12 +14,12 @@ fun main() {
     val timeoutResponse = System.getenv("TIMEOUT_RESPONSE")?.toIntOrNull() ?: 36
 
     embeddedServer(Netty, port = port, host = ip, module = Application::module, configure = {
-        connectionGroupSize = 4
-        workerGroupSize = 8
+        connectionGroupSize = 8
+        workerGroupSize = 16
         callGroupSize = 16
         shutdownGracePeriod = 2000
-        shutdownTimeout = 3000
-        requestQueueLimit = 16
+        shutdownTimeout = 6000
+        requestQueueLimit = 32
         shareWorkGroup = false
         requestReadTimeoutSeconds = timeoutRequest
         responseWriteTimeoutSeconds = timeoutResponse
