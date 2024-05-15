@@ -19,7 +19,8 @@ fun main() {
         shutdownTimeout = 3000
         requestQueueLimit = 16
         shareWorkGroup = false
-        responseWriteTimeoutSeconds = 10
+        requestReadTimeoutSeconds = 120
+        responseWriteTimeoutSeconds = 120
     })
         .start(wait = true)
 }
