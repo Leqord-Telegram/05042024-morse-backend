@@ -6,14 +6,14 @@ import kotlin.time.Duration.Companion.seconds
 
 fun Application.configureRateLimit() {
     val refill = 60.seconds
-    val searchRateLimit = System.getenv("RATE_SEARCH")?.toIntOrNull()
+    val searchRateLimit = System.getenv("RATE_SEARCH")?.toIntOrNull()?: 3600
 
-    if (searchRateLimit != null) {
-        install(RateLimit) {
-            register(RateLimitName("search")) {
-                rateLimiter(limit = searchRateLimit, refillPeriod = refill)
-            }
+
+    install(RateLimit) {
+        register(RateLimitName("search")) {
+            rateLimiter(limit = searchRateLimit, refillPeriod = refill)
         }
-        log.info("Rate limit initialized as $searchRateLimit for $refill")
     }
+    log.info("Rate limit initialized as $searchRateLimit for $refill")
+
 }

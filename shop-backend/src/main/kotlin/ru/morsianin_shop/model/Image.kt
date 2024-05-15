@@ -10,7 +10,7 @@ data class ImageResponse(
 )
 
 @Serializable
-enum class ImageFormat(val mime: String) {
-    Png("image/png"),
-    Jpeg("image/jpeg")
+enum class ImageFormat(val mime: String, val extension: String ) {
+    Png("image/png", "png"),
+    Jpeg("image/jpeg", "jpeg")
 }

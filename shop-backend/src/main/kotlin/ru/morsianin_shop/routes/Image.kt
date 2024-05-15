@@ -1,6 +1,5 @@
 package ru.morsianin_shop.routes
 
-import io.ktor.client.utils.EmptyContent.contentType
 import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.server.application.*
@@ -34,11 +33,12 @@ fun Application.imageRoutes() {
                     return@post
                 }
 
-                val multipart = call.receiveMultipart()
+                val multipartData = call.receiveMultipart()
+
                 var imageBytes: ByteArray? = null
                 var imageFormat: ImageFormat? = null
 
-                multipart.forEachPart { part ->
+                multipartData.forEachPart { part ->
                     when (part) {
                         is PartData.FileItem -> {
                             val contentType = part.contentType
@@ -48,23 +48,17 @@ fun Application.imageRoutes() {
                                 else -> null
                             }
 
-                            if (imageFormat == null) {
-                                part.dispose()
-                                call.respondText("Unknown content type $contentType", status = HttpStatusCode.BadRequest)
-                                return@forEachPart
+                            if (imageBytes == null) {
+                                imageBytes = part.streamProvider().readBytes()
                             }
-
-                            val fileBytes = part.streamProvider().use { it.readBytes() }
-                            if (imageBytes != null) {
-                                imageBytes = imageBytes!! + fileBytes
-
-                            } else {
-                                imageBytes = fileBytes
+                            else {
+                                imageBytes = imageBytes!! + part.streamProvider().readBytes()
                             }
-
                         }
-                        else -> part.dispose()
+
+                        else -> {}
                     }
+                    part.dispose()
                 }
 
                 if (imageBytes == null || imageFormat == null) {
@@ -73,7 +67,7 @@ fun Application.imageRoutes() {
                 }
 
                 val hash = computeSHA256Hash(imageBytes!!)
-                val filename = "$hash.${contentType!!.contentSubtype}"
+                val filename = "$hash.${imageFormat!!.extension}"
 
                 dbQuery {
                     val candidate = StoredImage.all().find { img -> img.storedId == filename }
@@ -86,7 +80,9 @@ fun Application.imageRoutes() {
                             storedId = filename
                             format = imageFormat!!
                         }
-                        putS3Object(filename, imageBytes!!, imageFormat!!.mime)
+
+                        FileStorage.saveFile(filename, imageBytes!!)
+
                         call.response.status(HttpStatusCode.Created)
                         call.respond(ResultCreated(id = created.id.value))
                     }
@@ -95,18 +91,16 @@ fun Application.imageRoutes() {
             }
         }
         get<ImageRequest.Id> { id ->
-            val storageUrl = S3ImageStorage.getHost()
-
-            dbQuery {
-                val candidate = StoredImage.findById(id.id)
-
-                if (candidate != null) {
-                    call.respondRedirect("${storageUrl}/${candidate.storedId}")
-                }
-                else {
-                    call.respond(HttpStatusCode.NotFound)
+            val imageCandidate = dbQuery {
+                StoredImage.findById(id.id)?.let {
+                    mapToResponse(it)
                 }
             }
+
+            if (imageCandidate == null) {
+                call.respond(HttpStatusCode.NotFound)
+            }
+            call.respondFile(FileStorage.getFile(imageCandidate!!.storedId))
         }
         authenticate("auth-jwt-user") {
             delete<ImageRequest.Id> { id ->
