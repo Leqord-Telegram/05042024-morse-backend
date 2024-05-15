@@ -6,5 +6,6 @@ RUN gradle buildFatJar --no-daemon
 FROM amazoncorretto:22-headless
 EXPOSE 8160
 RUN mkdir /app
+RUN mkdir /app/images
 COPY --from=build /home/gradle/src/build/libs/*.jar /app/webapp-morsianin.jar
 ENTRYPOINT ["java","-jar","/app/webapp-morsianin.jar"]

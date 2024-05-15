@@ -23,6 +23,7 @@ services:
       TG_BOT_TOKEN: ${TG_BOT_TOKEN}
       LISTEN_IP: 0.0.0.0
       LISTEN_PORT: 8160
+      IMAGES_DIR: /app/images
     depends_on:
       myapp-postgres:
         condition: service_healthy
