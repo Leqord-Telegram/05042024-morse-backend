@@ -42,7 +42,8 @@ object SearchLevenshtein {
                 SearchResult(
                     id =  item.id,
                     score = FuzzySearch.tokenSortRatio(request, item.content),
-                    type = item.type, content =  item.content
+                    type = item.type,
+                    content = item.content
                 )
             }.sortedByDescending { it.score }.take(topN)
         }
