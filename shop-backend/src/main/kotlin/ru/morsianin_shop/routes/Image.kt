@@ -43,8 +43,8 @@ fun Application.imageRoutes() {
                         is PartData.FileItem -> {
                             val contentType = part.contentType
                             imageFormat = when (contentType?.toString()) {
-                                "multipart/jpeg", "multipart/jpg" -> ImageFormat.Jpeg
-                                "multipart/png" -> ImageFormat.Png
+                                "image/jpeg", "image/jpg" -> ImageFormat.Jpeg
+                                "image/png" -> ImageFormat.Png
                                 else -> null
                             }
 
