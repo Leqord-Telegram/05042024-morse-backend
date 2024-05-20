@@ -10,7 +10,7 @@ class ProductRequest(
     val categoryId: Long? = null,
     val price: Long? = null,
     val quantity: Long? = null,
-    val active: Boolean? = null,
+    val active: Boolean? = true,
     val sort: ProductSort = ProductSort.IdAsc,
     val offset: Long = 0,
     val limit: Int = 100,
