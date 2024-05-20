@@ -11,10 +11,12 @@ import io.ktor.server.routing.routing
 import io.ktor.util.pipeline.*
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.Op
+import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
 import ru.morsianin_shop.mapping.Mapper.mapToResponse
 import ru.morsianin_shop.model.ProductNew
+import ru.morsianin_shop.model.ProductSort
 import ru.morsianin_shop.model.UserPrivilege
 import ru.morsianin_shop.plugins.hasPrivilege
 import ru.morsianin_shop.resources.ProductRequest
@@ -50,10 +52,22 @@ fun Application.productRoutes() {
                 query = query and (StoredProducts.active eq it)
             }
 
+            val sortType = when (filter.sort) {
+                ProductSort.PriceAsc -> StoredProducts.price to SortOrder.ASC
+                ProductSort.PriceDesc -> StoredProducts.price to SortOrder.DESC
+                ProductSort.NameAsc -> StoredProducts.name to SortOrder.ASC
+                ProductSort.NameDesc -> StoredProducts.name to SortOrder.DESC
+                ProductSort.QuantityAsc -> StoredProducts.quantity to SortOrder.ASC
+                ProductSort.QuantityDesc -> StoredProducts.quantity to SortOrder.DESC
+                ProductSort.IdAsc -> StoredProducts.id to SortOrder.ASC
+            }
+
             val found = dbQuery {
                 StoredProduct.find {
                     query
-                }.map { mapToResponse(it) }
+                }.orderBy(sortType)
+                    .limit(filter.limit, filter.offset)
+                    .map { mapToResponse(it) }
             }
 
             if (found.isNotEmpty()) {

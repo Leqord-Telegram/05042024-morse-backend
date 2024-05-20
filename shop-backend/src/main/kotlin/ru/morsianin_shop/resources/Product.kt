@@ -1,6 +1,7 @@
 package ru.morsianin_shop.resources
 
 import io.ktor.resources.Resource
+import ru.morsianin_shop.model.ProductSort
 
 @Resource("/product")
 class ProductRequest(
@@ -10,7 +11,10 @@ class ProductRequest(
     val price: Long? = null,
     val quantity: Long? = null,
     val active: Boolean? = null,
+    val sort: ProductSort = ProductSort.IdAsc,
+    val offset: Long = 0,
+    val limit: Int = 100,
 ) {
     @Resource("{id}")
-    class Id(val parent: ProductRequest = ProductRequest(), val id: Long)
+    class Id(val id: Long)
 }

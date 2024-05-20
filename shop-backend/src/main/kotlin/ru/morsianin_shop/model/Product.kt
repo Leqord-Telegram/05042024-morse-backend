@@ -24,3 +24,15 @@ data class ProductNew(
     val active: Boolean,
     val imageIds: List<Long>
 )
+
+@Serializable
+enum class ProductSort {
+    PriceAsc,
+    PriceDesc,
+    QuantityAsc,
+    QuantityDesc,
+    NameAsc,
+    NameDesc,
+    IdAsc,
+}
+
