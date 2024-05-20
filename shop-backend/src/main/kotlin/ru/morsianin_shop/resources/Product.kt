@@ -17,4 +17,7 @@ class ProductRequest(
 ) {
     @Resource("{id}")
     class Id(val id: Long)
+
+    @Resource("total")
+    class Total()
 }

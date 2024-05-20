@@ -20,6 +20,7 @@ import ru.morsianin_shop.model.ProductSort
 import ru.morsianin_shop.model.UserPrivilege
 import ru.morsianin_shop.plugins.hasPrivilege
 import ru.morsianin_shop.resources.ProductRequest
+import ru.morsianin_shop.search.SearchLevenshtein
 import ru.morsianin_shop.storage.*
 import ru.morsianin_shop.storage.DatabaseStorage.dbQuery
 
@@ -76,6 +77,9 @@ fun Application.productRoutes() {
             else {
                 call.respond(HttpStatusCode.NotFound)
             }
+        }
+        get<ProductRequest.Total> {
+            call.respond(SearchLevenshtein.getProducts().size)
         }
         authenticate("auth-jwt-user") {
             post<ProductRequest> {

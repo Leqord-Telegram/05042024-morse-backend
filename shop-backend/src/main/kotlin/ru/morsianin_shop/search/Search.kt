@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 import me.xdrop.fuzzywuzzy.FuzzySearch
 import ru.morsianin_shop.storage.DatabaseStorage.dbQuery
 import ru.morsianin_shop.storage.StoredProduct
+import ru.morsianin_shop.storage.StoredProducts
 import java.util.concurrent.TimeUnit
 
 object SearchLevenshtein {
@@ -15,14 +16,16 @@ object SearchLevenshtein {
         .expireAfterWrite(5, TimeUnit.MINUTES)
         .build<String, List<SearchItem>>()
 
-    private suspend fun getProducts(): List<SearchItem> {
+    suspend fun getProducts(): List<SearchItem> {
         return withContext(Dispatchers.Default) {
             val cachedProducts = productCache.getIfPresent("products")
             if (cachedProducts != null) {
                 cachedProducts
             } else {
                 val products = dbQuery {
-                    StoredProduct.all().map { storedProduct ->
+                    StoredProduct.find {
+                        StoredProducts.active eq true
+                    }.map { storedProduct ->
                         SearchItem(
                             id = storedProduct.id.value,
                             content = storedProduct.name,
