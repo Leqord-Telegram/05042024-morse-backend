@@ -99,7 +99,7 @@ fun Application.productRoutes() {
                 val candidate = StoredProduct.findById(id.id)
 
                 if (candidate != null) {
-                    call.respond(candidate)
+                    call.respond(mapToResponse(candidate))
                 }
                 else {
                     call.respond(HttpStatusCode.NotFound)
