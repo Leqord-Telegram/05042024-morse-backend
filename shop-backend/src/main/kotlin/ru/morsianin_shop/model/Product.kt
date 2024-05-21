@@ -9,6 +9,7 @@ data class ProductResponse(
     val description: String,
     val category: CategoryResponse,
     val price: Long,
+    val priceOld: Long?,
     val quantity: Long,
     val active: Boolean,
     val images: List<ImageResponse>

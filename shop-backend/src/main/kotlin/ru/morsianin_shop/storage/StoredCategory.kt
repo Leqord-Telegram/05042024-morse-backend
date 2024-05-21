@@ -4,13 +4,15 @@ import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
+import ru.morsianin_shop.storage.StoredProducts.default
 
 object StoredCategories: LongIdTable("category") {
     val name = text("name")
+    val enabled = bool("enabled").default(true)
 }
 
 class StoredCategory(id: EntityID<Long>) : LongEntity(id) {
     companion object : LongEntityClass<StoredCategory>(StoredCategories)
-
+    var enabled by StoredCategories.enabled
     var name by StoredCategories.name
 }

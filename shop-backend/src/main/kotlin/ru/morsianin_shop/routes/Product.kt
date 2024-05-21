@@ -29,6 +29,8 @@ fun Application.productRoutes() {
         get<ProductRequest> { filter ->
             var query: Op<Boolean> = Op.TRUE
 
+            query = query and (StoredProducts.enabled eq true)
+
             filter.name?.let {
                 query = query and (StoredProducts.name eq it)
             }
@@ -122,7 +124,8 @@ fun Application.productRoutes() {
                     val candidate = StoredProduct.findById(id.id)
 
                     if (candidate != null) {
-                        candidate.delete()
+                        candidate.enabled = false
+
                         call.respond(HttpStatusCode.OK)
                     } else {
                         call.respond(HttpStatusCode.NotFound)
@@ -145,7 +148,11 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.upsertRequest(id: Lon
         }
 
         if (foundCategory != null && foundImages.toList().size == newProduct.imageIds.size) {
-            if (id == null) {
+            val candidate = id?.let {
+                StoredProduct.findById(id)
+            }
+
+            if (candidate == null) {
                 val newStoredProduct = StoredProduct.new {
                     name = newProduct.name
                     description = newProduct.description
@@ -160,22 +167,16 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.upsertRequest(id: Lon
                 call.respond(mapToResponse(newStoredProduct))
             }
             else {
-                val candidate = StoredProduct.findById(id)
+                candidate.name = newProduct.name
+                candidate.description = newProduct.description
+                candidate.priceOld = candidate.price
+                candidate.price = newProduct.price
+                candidate.active = newProduct.active
+                candidate.images = foundImages
+                candidate.category = foundCategory
+                candidate.quantity = newProduct.quantity
 
-                if (candidate != null) {
-                    candidate.name = newProduct.name
-                    candidate.description = newProduct.description
-                    candidate.price = newProduct.price
-                    candidate.active = newProduct.active
-                    candidate.images = foundImages
-                    candidate.category = foundCategory
-                    candidate.quantity = newProduct.quantity
-
-                    call.respond(HttpStatusCode.NoContent)
-                }
-                else {
-                    call.respond(HttpStatusCode.NotFound)
-                }
+                call.respond(HttpStatusCode.NoContent)
             }
         } else {
         if(foundCategory == null) {
@@ -186,7 +187,7 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.upsertRequest(id: Lon
         }
             else {
             call.respondText(
-                "Not all images were not found",
+                "Not all images were found",
                 status = HttpStatusCode.NotFound
             )
             }

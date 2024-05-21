@@ -11,6 +11,7 @@ import io.ktor.server.routing.routing
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.update
 import ru.morsianin_shop.mapping.Mapper.mapToResponse
 import ru.morsianin_shop.model.CategoryNew
 import ru.morsianin_shop.model.UserPrivilege
@@ -19,6 +20,7 @@ import ru.morsianin_shop.resources.CategoryRequest
 import ru.morsianin_shop.storage.DatabaseStorage.dbQuery
 import ru.morsianin_shop.storage.StoredCategories
 import ru.morsianin_shop.storage.StoredCategory
+import ru.morsianin_shop.storage.StoredProducts
 
 fun Application.categoryRoutes() {
     routing {
@@ -106,7 +108,12 @@ fun Application.categoryRoutes() {
                 dbQuery {
                     val candidate = StoredCategory.findById(id.id)
                     if (candidate != null) {
-                        candidate.delete()
+                        candidate.enabled = false
+
+                        StoredProducts.update({ StoredProducts.category eq candidate.id }) {
+                            it[enabled] = false
+                        }
+
                         call.respond(HttpStatusCode.OK)
                     } else {
                         call.respond(HttpStatusCode.NotFound)
