@@ -27,6 +27,8 @@ fun Application.categoryRoutes() {
         get<CategoryRequest> { filter ->
             var query: Op<Boolean> = Op.TRUE
 
+            query = query and (StoredCategories.enabled eq true)
+
             filter.name?.let {
                 query = query and (StoredCategories.name eq it)
             }
