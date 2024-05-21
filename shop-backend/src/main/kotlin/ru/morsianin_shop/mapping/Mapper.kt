@@ -24,6 +24,7 @@ object Mapper {
         quantity = stored.quantity,
         active = stored.active,
         priceOld = stored.priceOld,
+        createdAt = stored.createdAt,
         images = stored.images.map { mapToResponse(it) }
     )
 

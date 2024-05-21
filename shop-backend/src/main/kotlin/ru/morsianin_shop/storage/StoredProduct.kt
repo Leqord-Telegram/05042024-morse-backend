@@ -1,9 +1,11 @@
 package ru.morsianin_shop.storage
 
+import io.ktor.server.http.*
 import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
+import org.jetbrains.exposed.sql.javatime.date
 
 object StoredProducts: LongIdTable("product") {
     val name = text("name")
@@ -13,6 +15,7 @@ object StoredProducts: LongIdTable("product") {
     val priceOld = long("price_old").nullable()
     val quantity = long("quantity")
     val active = bool("active")
+    val createdAt = date("created_date")
     val enabled = bool("enabled").default(true)
 }
 
@@ -26,5 +29,6 @@ class StoredProduct(id: EntityID<Long>) : LongEntity(id) {
     var quantity by StoredProducts.quantity
     var active by StoredProducts.active
     var enabled by StoredProducts.enabled
+    var createdAt by StoredProducts.createdAt
     var images by StoredImage via StoredProductImages
 }

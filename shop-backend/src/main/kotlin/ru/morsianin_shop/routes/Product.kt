@@ -23,6 +23,7 @@ import ru.morsianin_shop.resources.ProductRequest
 import ru.morsianin_shop.search.SearchLevenshtein
 import ru.morsianin_shop.storage.*
 import ru.morsianin_shop.storage.DatabaseStorage.dbQuery
+import java.time.LocalDate
 
 fun Application.productRoutes() {
     routing {
@@ -160,6 +161,7 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.upsertRequest(id: Lon
                     price = newProduct.price
                     active = newProduct.active
                     images = foundImages
+                    createdAt = LocalDate.now()
                     quantity = newProduct.quantity
                 }
 
