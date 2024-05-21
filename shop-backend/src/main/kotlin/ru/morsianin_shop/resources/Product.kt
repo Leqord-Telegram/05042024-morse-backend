@@ -16,8 +16,8 @@ class ProductRequest(
     val limit: Int = 100,
 ) {
     @Resource("{id}")
-    class Id(val id: Long)
+    class Id(val parent: ProductRequest = ProductRequest(), val id: Long)
 
     @Resource("total")
-    class Total()
+    class Total(val parent: ProductRequest = ProductRequest())
 }
