@@ -15,8 +15,6 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import ru.morsianin_shop.mapping.Mapper.mapToResponse
-import ru.morsianin_shop.model.OrderItemChanged
-import ru.morsianin_shop.model.OrderItemNew
 import ru.morsianin_shop.model.OrderNew
 import ru.morsianin_shop.model.OrderStatus
 import ru.morsianin_shop.resources.OrderRequest
@@ -129,7 +127,7 @@ fun Application.orderRoutes() {
 
         get<OrderRequest.Id.Item> { item ->
             val userId = call.principal<JWTPrincipal>()!!.payload.getClaim("user-id").asLong()
-            val dbQuery = dbQuery {
+            dbQuery {
                 val candidate = StoredOrder.find {
                     StoredOrders.id eq EntityID(item.parent.id, StoredOrders)
                     StoredOrders.user eq userId
@@ -256,12 +254,14 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.upsertOrder() {
         for (item in newOrder.items) {
             productCandidate = StoredProduct.findById(item.productId)
 
-            if (productCandidate != null) {
+            if (productCandidate != null && productCandidate.quantity > 0) {
                 StoredOrderItem.new {
                     order = currentOrder
                     product = productCandidate
                     quantity = item.quantity
                 }
+
+                productCandidate.quantity -= 1
             } else {
                 TransactionManager.current().rollback()
                 call.respond(HttpStatusCode.BadRequest)
