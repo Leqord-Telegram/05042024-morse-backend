@@ -25,6 +25,7 @@ object SearchLevenshtein {
                 val products = dbQuery {
                     StoredProduct.find {
                         StoredProducts.active eq true
+                        StoredProducts.enabled eq true
                     }.map { storedProduct ->
                         SearchItem(
                             id = storedProduct.id.value,
