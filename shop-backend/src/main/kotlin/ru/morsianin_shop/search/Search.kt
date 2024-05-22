@@ -45,7 +45,7 @@ object SearchLevenshtein {
             getProducts().map { item ->
                 SearchResult(
                     id =  item.id,
-                    score = FuzzySearch.tokenSortRatio(request, item.content),
+                    score = FuzzySearch.tokenSortPartialRatio(request, item.content),
                     type = item.type,
                     content = item.content
                 )
