@@ -82,9 +82,7 @@ fun Application.categoryRoutes() {
         get<CategoryRequest.Id.Total> { total ->
             val products = dbQuery {
                 StoredProduct.find {
-                    StoredProducts.enabled eq true
-                    StoredProducts.active eq true
-                    StoredProducts.category eq total.parent.id
+                    (StoredProducts.enabled eq true) and (StoredProducts.active eq true) and (StoredProducts.category eq total.parent.id)
                 }.count()
             }
 
