@@ -8,6 +8,7 @@ import me.xdrop.fuzzywuzzy.FuzzySearch
 import ru.morsianin_shop.storage.DatabaseStorage.dbQuery
 import ru.morsianin_shop.storage.StoredProduct
 import ru.morsianin_shop.storage.StoredProducts
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 object SearchLevenshtein {
@@ -45,7 +46,7 @@ object SearchLevenshtein {
             getProducts().map { item ->
                 SearchResult(
                     id =  item.id,
-                    score = FuzzySearch.tokenSortPartialRatio(request, item.content),
+                    score = FuzzySearch.tokenSortPartialRatio(request.lowercase(Locale.getDefault()), item.content.lowercase(Locale.getDefault())),
                     type = item.type,
                     content = item.content
                 )
