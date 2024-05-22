@@ -21,6 +21,10 @@ fun Application.searchRoutes() {
                     call.respond(HttpStatusCode.BadRequest)
                 }
 
+                if (searchRequest.fresh) {
+                    SearchLevenshtein.invalidate()
+                }
+
                 val result = SearchLevenshtein.findTopBestMatchingProductsSuggestions(searchRequest.query!!, searchRequest.topN)
 
                 call.respond(HttpStatusCode.OK, result)

@@ -20,6 +20,7 @@ import ru.morsianin_shop.resources.CategoryRequest
 import ru.morsianin_shop.storage.DatabaseStorage.dbQuery
 import ru.morsianin_shop.storage.StoredCategories
 import ru.morsianin_shop.storage.StoredCategory
+import ru.morsianin_shop.storage.StoredProduct
 import ru.morsianin_shop.storage.StoredProducts
 
 fun Application.categoryRoutes() {
@@ -77,6 +78,17 @@ fun Application.categoryRoutes() {
             }
 
             call.respond(response?: HttpStatusCode.NotFound)
+        }
+        get<CategoryRequest.Id.Total> { total ->
+            val products = dbQuery {
+                StoredProduct.find {
+                    StoredProducts.enabled eq true
+                    StoredProducts.active eq true
+                    StoredProducts.category eq total.parent.id
+                }.count()
+            }
+
+            call.respond(products)
         }
         authenticate("auth-jwt-user") {
             put<CategoryRequest.Id> { id ->

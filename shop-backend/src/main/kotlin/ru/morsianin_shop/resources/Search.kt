@@ -5,6 +5,7 @@ import io.ktor.resources.*
 @Resource("/search")
 class SearchRequest(
     val query: String? = null,
-    val topN: Int = 20
+    val topN: Int = 20,
+    val fresh: Boolean = false
 )
 

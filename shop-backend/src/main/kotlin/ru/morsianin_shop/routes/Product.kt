@@ -20,7 +20,6 @@ import ru.morsianin_shop.model.ProductSort
 import ru.morsianin_shop.model.UserPrivilege
 import ru.morsianin_shop.plugins.hasPrivilege
 import ru.morsianin_shop.resources.ProductRequest
-import ru.morsianin_shop.search.SearchLevenshtein
 import ru.morsianin_shop.storage.*
 import ru.morsianin_shop.storage.DatabaseStorage.dbQuery
 import java.time.LocalDate
@@ -82,7 +81,13 @@ fun Application.productRoutes() {
             }
         }
         get<ProductRequest.Total> {
-            call.respond(SearchLevenshtein.getProducts().size)
+            val products = dbQuery {
+                StoredProduct.find {
+                    StoredProducts.enabled eq true
+                    StoredProducts.active eq true
+                }.count()
+            }
+            call.respond(products)
         }
         authenticate("auth-jwt-user") {
             post<ProductRequest> {

@@ -17,6 +17,12 @@ object SearchLevenshtein {
         .expireAfterWrite(5, TimeUnit.MINUTES)
         .build<String, List<SearchItem>>()
 
+    suspend fun invalidate() {
+        withContext(Dispatchers.Default) {
+            productCache.invalidateAll()
+        }
+    }
+
     suspend fun getProducts(): List<SearchItem> {
         return withContext(Dispatchers.Default) {
             val cachedProducts = productCache.getIfPresent("products")

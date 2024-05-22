@@ -7,5 +7,8 @@ class CategoryRequest(
     val name: String? = null
 )   {
     @Resource("{id}")
-    class Id(val parent: CategoryRequest = CategoryRequest(), val id: Long)
+    class Id(val parent: CategoryRequest = CategoryRequest(), val id: Long) {
+        @Resource("total")
+        class Total(val parent: Id)
+    }
 }
