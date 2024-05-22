@@ -46,7 +46,7 @@ object SearchLevenshtein {
             getProducts().map { item ->
                 SearchResult(
                     id =  item.id,
-                    score = FuzzySearch.tokenSortPartialRatio(request.lowercase(Locale.getDefault()), item.content.lowercase(Locale.getDefault())),
+                    score = FuzzySearch.weightedRatio(request.lowercase(Locale.getDefault()), item.content.lowercase(Locale.getDefault())),
                     type = item.type,
                     content = item.content
                 )
