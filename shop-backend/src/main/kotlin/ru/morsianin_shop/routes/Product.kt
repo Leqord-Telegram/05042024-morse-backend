@@ -62,6 +62,8 @@ fun Application.productRoutes() {
                 ProductSort.NameDesc -> StoredProducts.name to SortOrder.DESC
                 ProductSort.QuantityAsc -> StoredProducts.quantity to SortOrder.ASC
                 ProductSort.QuantityDesc -> StoredProducts.quantity to SortOrder.DESC
+                ProductSort.CreatedAsc -> StoredProducts.createdAt to SortOrder.ASC
+                ProductSort.CreatedDesc -> StoredProducts.createdAt to SortOrder.DESC
                 ProductSort.IdAsc -> StoredProducts.id to SortOrder.ASC
             }
 

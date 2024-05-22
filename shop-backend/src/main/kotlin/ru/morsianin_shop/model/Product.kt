@@ -43,6 +43,8 @@ enum class ProductSort {
     QuantityDesc,
     NameAsc,
     NameDesc,
+    CreatedAsc,
+    CreatedDesc,
     IdAsc,
 }
 
