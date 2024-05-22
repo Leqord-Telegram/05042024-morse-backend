@@ -5,6 +5,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import me.xdrop.fuzzywuzzy.FuzzySearch
+import org.jetbrains.exposed.sql.and
 import ru.morsianin_shop.storage.DatabaseStorage.dbQuery
 import ru.morsianin_shop.storage.StoredProduct
 import ru.morsianin_shop.storage.StoredProducts
@@ -31,8 +32,7 @@ object SearchLevenshtein {
             } else {
                 val products = dbQuery {
                     StoredProduct.find {
-                        StoredProducts.active eq true
-                        StoredProducts.enabled eq true
+                        (StoredProducts.active eq true) and (StoredProducts.enabled eq true)
                     }.map { storedProduct ->
                         SearchItem(
                             id = storedProduct.id.value,

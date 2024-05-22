@@ -83,8 +83,7 @@ fun Application.productRoutes() {
         get<ProductRequest.Total> {
             val products = dbQuery {
                 StoredProduct.find {
-                    StoredProducts.enabled eq true
-                    StoredProducts.active eq true
+                    (StoredProducts.enabled eq true) and (StoredProducts.active eq true)
                 }.count()
             }
             call.respond(products)
