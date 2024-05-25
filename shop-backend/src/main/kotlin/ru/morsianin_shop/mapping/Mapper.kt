@@ -62,5 +62,16 @@ object Mapper {
         )
     }
 
+    fun mapToResponse(stored: StoredLabel): LabelResponse {
+        return LabelResponse(
+            id = stored.id.value,
+            name = stored.name,
+            color = LabelColorRGB(
+                red = stored.colorRed.toUByte(),
+                green = stored.colorGreen.toUByte(),
+                blue = stored.colorBlue.toUByte(),
+            )
+        )
+    }
 
 }

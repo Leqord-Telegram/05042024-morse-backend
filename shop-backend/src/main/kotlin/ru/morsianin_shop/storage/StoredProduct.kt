@@ -1,6 +1,5 @@
 package ru.morsianin_shop.storage
 
-import io.ktor.server.http.*
 import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -15,6 +14,8 @@ object StoredProducts: LongIdTable("product") {
     val priceOld = long("price_old").nullable()
     val quantity = long("quantity")
     val active = bool("active")
+    val inStock = bool("in_stock").default(true)
+    val shipmentScheduledAt = date("shipment_scheduled_at").nullable()
     val createdAt = date("created_date")
     val enabled = bool("enabled").default(true)
 }
@@ -31,4 +32,7 @@ class StoredProduct(id: EntityID<Long>) : LongEntity(id) {
     var enabled by StoredProducts.enabled
     var createdAt by StoredProducts.createdAt
     var images by StoredImage via StoredProductImages
+    var labels by StoredLabel via StoredProductLabels
+    var inStock by StoredProducts.inStock
+    var shipmentScheduledAt by StoredProducts.shipmentScheduledAt
 }
