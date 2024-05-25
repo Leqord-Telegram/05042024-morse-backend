@@ -4,10 +4,11 @@ import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
+import org.jetbrains.exposed.sql.ReferenceOption
 
 object StoredUserCartItems: LongIdTable("user_cart_item") {
-    val user = reference("user_id", StoredUsers)
-    val product = reference("product_id", StoredProducts)
+    val user = reference("user_id", StoredUsers, onDelete = ReferenceOption.CASCADE)
+    val product = reference("product_id", StoredProducts, onDelete = ReferenceOption.CASCADE)
     val quantity = long("quantity")
 }
 
