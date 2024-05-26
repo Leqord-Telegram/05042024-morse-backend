@@ -154,6 +154,10 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.upsertRequest(id: Lon
             StoredImages.id inList newProduct.imageIds.map { id -> EntityID(id, StoredImages) }
         }
 
+        val foundLabels = StoredLabel.find {
+            StoredLabels.id inList newProduct.labelIds.map { id -> EntityID(id, StoredLabels) }
+        }
+
         if (foundCategory != null && foundImages.toList().size == newProduct.imageIds.size) {
             val candidate = id?.let {
                 StoredProduct.findById(id)
@@ -167,6 +171,7 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.upsertRequest(id: Lon
                     price = newProduct.price
                     active = newProduct.active
                     images = foundImages
+                    labels = foundLabels
                     createdAt = LocalDate.now()
                     quantity = newProduct.quantity
                 }
@@ -179,6 +184,7 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.upsertRequest(id: Lon
                 candidate.description = newProduct.description
                 candidate.priceOld = candidate.price
                 candidate.price = newProduct.price
+                candidate.labels = foundLabels
                 candidate.active = newProduct.active
                 candidate.images = foundImages
                 candidate.category = foundCategory

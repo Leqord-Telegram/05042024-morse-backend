@@ -11,7 +11,7 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 import org.jetbrains.exposed.sql.transactions.transaction
 
 object DatabaseStorage {
-    private var database: Database? = null;
+    private var database: Database? = null
 
     fun init(driver: String, url: String, user: String, pass: String) {
         val config = HikariConfig().apply {
@@ -42,6 +42,8 @@ object DatabaseStorage {
             SchemaUtils.create(StoredOrderItems)
             SchemaUtils.create(StoredUserCartItems)
             SchemaUtils.create(StoredUserPrivileges)
+            SchemaUtils.create(StoredLabels)
+            SchemaUtils.create(StoredProductLabels)
         }
     }
 

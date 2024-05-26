@@ -21,7 +21,8 @@ data class ProductResponse(
     val priceOld: Long?,
     val quantity: Long,
     val active: Boolean,
-    val images: List<ImageResponse>
+    val images: List<ImageResponse>,
+    val labels: List<LabelResponse>,
 )
 
 @Serializable
@@ -32,7 +33,8 @@ data class ProductNew(
     val price: Long,
     val quantity: Long,
     val active: Boolean,
-    val imageIds: List<Long>
+    val imageIds: List<Long>,
+    val labelIds: List<Long>,
 )
 
 @Serializable
