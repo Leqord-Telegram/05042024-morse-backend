@@ -15,3 +15,9 @@ data class LabelColorRGB (
     val green: UByte,
     val blue: UByte,
 )
+
+@Serializable
+data class LabelNew(
+    val name: String,
+    val color: LabelColorRGB
+)

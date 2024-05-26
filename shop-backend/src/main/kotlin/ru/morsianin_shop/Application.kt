@@ -43,6 +43,7 @@ fun Application.module() {
     searchRoutes()
     orderRoutes()
     cartRoutes()
+    labelRoutes()
     authRoutes()
 
     /*
