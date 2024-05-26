@@ -88,6 +88,7 @@ fun Application.cartRoutes() {
                     if (candidate != null && productCandidate != null) {
                         candidate.quantity = cartItem.quantity
                         candidate.product = productCandidate
+                        call.respond(HttpStatusCode.OK)
                     } else {
                         call.respond(HttpStatusCode.NotFound)
                     }
