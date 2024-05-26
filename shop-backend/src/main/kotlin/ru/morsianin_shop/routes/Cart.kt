@@ -74,12 +74,13 @@ fun Application.cartRoutes() {
                 }
             }
             put<CartRequest.Id> { id ->
-                val cartItem = call.receive<CartItemRequest>()
                 val userId = call.principal<JWTPrincipal>()!!.payload.getClaim("user-id").asLong()
+                val cartItem = call.receive<CartItemRequest>()
+
                 dbQuery {
                     val candidate = StoredUserCartItem.find {
-                        StoredUserCartItems.id eq id.id
-                        StoredUserCartItems.user eq userId
+                        (StoredUserCartItems.id eq id.id) and
+                                (StoredUserCartItems.user eq userId)
                     }.singleOrNull()
 
                     val productCandidate = StoredProduct.findById(cartItem.productId)
