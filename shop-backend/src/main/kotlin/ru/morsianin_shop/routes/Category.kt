@@ -104,10 +104,11 @@ fun Application.categoryRoutes() {
                         candidate.name = newCategory.name
                         call.respond(HttpStatusCode.OK)
                     } else {
-                        StoredCategory.new(id.id) {
+                        val createdCategory = StoredCategory.new(id.id) {
                             name = newCategory.name
                         }
-                        call.respond(HttpStatusCode.Created)
+                        call.response.status(HttpStatusCode.Created)
+                        call.respond(mapToResponse(createdCategory))
                     }
                 }
             }
