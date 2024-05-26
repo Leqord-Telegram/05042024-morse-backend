@@ -8,6 +8,7 @@ import io.ktor.server.request.*
 import io.ktor.server.resources.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.routing
+import org.jetbrains.exposed.sql.and
 import ru.morsianin_shop.mapping.Mapper.mapToResponse
 import ru.morsianin_shop.model.CartItemRequest
 import ru.morsianin_shop.resources.CartRequest
@@ -95,8 +96,7 @@ fun Application.cartRoutes() {
                 val userId = call.principal<JWTPrincipal>()!!.payload.getClaim("user-id").asLong()
                 dbQuery {
                     val candidate = StoredUserCartItem.find {
-                        StoredUserCartItems.id eq id.id
-                        StoredUserCartItems.user eq userId
+                        (StoredUserCartItems.id eq id.id) and (StoredUserCartItems.user eq userId)
                     }.singleOrNull()
 
                     if (candidate != null) {
