@@ -15,6 +15,9 @@ data class OrderRequest(
         @Resource("status")
         data class Status(val parent: Id)
 
+        @Resource("cancel")
+        data class Cancel(val parent: Id)
+
         @Resource("item")
         data class Item(val parent: Id) {
             @Resource("{itemId}")

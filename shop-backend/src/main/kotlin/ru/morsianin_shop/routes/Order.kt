@@ -122,7 +122,28 @@ fun Application.orderRoutes() {
                 }
             }
         }
-        */
+    */
+        post<OrderRequest.Id.Cancel> { item ->
+            val userId = call.principal<JWTPrincipal>()!!.payload.getClaim("user-id").asLong()
+
+            // TODO: проверка таймера отмены в часах
+
+            dbQuery {
+                val candidate = StoredOrder.find {
+                    StoredOrders.id eq EntityID(item.parent.id, StoredOrders)
+                    StoredOrders.user eq userId
+                }.singleOrNull()
+
+                if (candidate != null) {
+                    candidate.status = OrderStatus.CANCELED
+
+                    call.respond(mapToResponse(candidate))
+                }
+                else {
+                    call.respond(HttpStatusCode.NotFound)
+                }
+            }
+        }
 
         get<OrderRequest.Id.Item> { item ->
             val userId = call.principal<JWTPrincipal>()!!.payload.getClaim("user-id").asLong()
