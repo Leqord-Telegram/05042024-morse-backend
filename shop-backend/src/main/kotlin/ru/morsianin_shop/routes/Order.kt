@@ -245,9 +245,15 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.upsertOrder() {
         }
 
         val currentOrder: StoredOrder  = StoredOrder.new {
-                user = userCandidate
-                status = OrderStatus.PENDING
-            }
+            user = userCandidate
+            status = OrderStatus.PENDING
+            shipment = newOrder.shipment
+            shipmentDateTime = newOrder.shipmentDateTime
+            shipmentAddress = newOrder.shipmentAddress
+            description = newOrder.description
+            userName = newOrder.userName
+
+        }
 
         var productCandidate: StoredProduct?
         for (item in newOrder.items) {

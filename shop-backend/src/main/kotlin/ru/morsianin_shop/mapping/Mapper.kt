@@ -19,7 +19,7 @@ object Mapper {
         id = stored.id.value,
         name = stored.name,
         description = stored.description?: "",
-        category = mapToResponse(stored.category),
+        category = stored.categories.map { mapToResponse(it) },
         price = stored.price,
         quantity = stored.quantity,
         active = stored.active,
@@ -43,9 +43,14 @@ object Mapper {
     )
 
     fun mapToResponse(stored: StoredOrder): OrderResponse = OrderResponse(
-            id = stored.id.value,
-            items = stored.items.map { mapToResponse(it) },
-            status = stored.status
+        id = stored.id.value,
+        items = stored.items.map { mapToResponse(it) },
+        status = stored.status,
+        userName = stored.userName,
+        description = stored.description?: "",
+        shipment = stored.shipment,
+        shipmentAddress = stored.shipmentAddress,
+        shipmentDateTime = stored.shipmentDateTime
     )
 
     fun mapToResponse(stored: StoredUserCartItem): CartItemResponse = CartItemResponse(

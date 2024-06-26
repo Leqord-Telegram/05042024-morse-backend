@@ -14,7 +14,7 @@ data class ProductResponse(
     val id: Long,
     val name: String,
     val description: String,
-    val category: CategoryResponse,
+    val category: List<CategoryResponse>,
     val price: Long,
     @Serializable(with = LocalDateSerializer::class)
     val createdAt: LocalDate,
@@ -29,7 +29,7 @@ data class ProductResponse(
 data class ProductNew(
     val name: String,
     val description: String,
-    val categoryId: Long,
+    val categoriesId: List<Long>,
     val price: Long,
     val quantity: Long,
     val active: Boolean,

@@ -13,6 +13,7 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.inList
 import org.jetbrains.exposed.sql.and
 import ru.morsianin_shop.mapping.Mapper.mapToResponse
 import ru.morsianin_shop.model.ProductNew
@@ -22,6 +23,7 @@ import ru.morsianin_shop.plugins.hasPrivilege
 import ru.morsianin_shop.resources.ProductRequest
 import ru.morsianin_shop.storage.*
 import ru.morsianin_shop.storage.DatabaseStorage.dbQuery
+import ru.morsianin_shop.storage.StoredProductCategories.category
 import java.time.LocalDate
 
 fun Application.productRoutes() {
@@ -40,7 +42,7 @@ fun Application.productRoutes() {
             }
 
             filter.categoryId?.let {
-                query = query and (StoredProducts.category eq it)
+                query = query and (category eq it)
             }
 
             filter.price?.let {
@@ -68,11 +70,12 @@ fun Application.productRoutes() {
             }
 
             val found = dbQuery {
-                StoredProduct.find {
-                    query
-                }.orderBy(sortType)
-                    .limit(filter.limit, filter.offset)
-                    .map { mapToResponse(it) }
+                StoredProduct.wrapRows(
+                    StoredProducts.innerJoin(StoredProductCategories).select(StoredProducts.columns).where {
+                        query
+                    }.orderBy(sortType)
+                        .limit(filter.limit, filter.offset)
+                ).toList().map { mapToResponse(it) }
             }
 
             if (found.isNotEmpty()) {
@@ -148,7 +151,9 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.upsertRequest(id: Lon
     val newProduct = call.receive<ProductNew>()
 
     dbQuery {
-        val foundCategory = StoredCategory.findById(newProduct.categoryId)
+        val foundCategories = StoredCategory.find {
+            StoredCategories.id inList newProduct.categoriesId.map { id -> EntityID(id, StoredImages) }
+        }
 
         val foundImages = StoredImage.find {
             StoredImages.id inList newProduct.imageIds.map { id -> EntityID(id, StoredImages) }
@@ -158,7 +163,9 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.upsertRequest(id: Lon
             StoredLabels.id inList newProduct.labelIds.map { id -> EntityID(id, StoredLabels) }
         }
 
-        if (foundCategory != null && foundImages.toList().size == newProduct.imageIds.size) {
+        if (foundCategories.toList().size == newProduct.categoriesId.size &&
+            foundImages.toList().size == newProduct.imageIds.size &&
+            foundLabels.toList().size == newProduct.labelIds.size) {
             val candidate = id?.let {
                 StoredProduct.findById(id)
             }
@@ -167,7 +174,7 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.upsertRequest(id: Lon
                 val newStoredProduct = StoredProduct.new {
                     name = newProduct.name
                     description = newProduct.description
-                    category = foundCategory
+                    categories = foundCategories
                     price = newProduct.price
                     active = newProduct.active
                     images = foundImages
@@ -187,24 +194,17 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.upsertRequest(id: Lon
                 candidate.labels = foundLabels
                 candidate.active = newProduct.active
                 candidate.images = foundImages
-                candidate.category = foundCategory
+                candidate.categories = foundCategories
                 candidate.quantity = newProduct.quantity
 
                 call.respond(HttpStatusCode.NoContent)
             }
         } else {
-        if(foundCategory == null) {
             call.respondText(
-                "category with id ${newProduct.categoryId} not found",
+                "Something wasn't found, idiot",
                 status = HttpStatusCode.NotFound
             )
-        }
-            else {
-            call.respondText(
-                "Not all images were found",
-                status = HttpStatusCode.NotFound
-            )
-            }
+
         }
 
     }
