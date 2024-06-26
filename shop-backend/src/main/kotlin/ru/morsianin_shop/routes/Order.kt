@@ -20,9 +20,12 @@ import ru.morsianin_shop.model.OrderStatus
 import ru.morsianin_shop.resources.OrderRequest
 import ru.morsianin_shop.storage.*
 import ru.morsianin_shop.storage.DatabaseStorage.dbQuery
+import java.time.LocalDateTime
 
 // TODO: авторизация
 fun Application.orderRoutes() {
+    val CANCEL_DURATION_KV_ID: Long = 4123;
+
     routing {
         authenticate("auth-jwt-user") {
             get<OrderRequest> { filter ->
@@ -128,16 +131,29 @@ fun Application.orderRoutes() {
 
             // TODO: проверка таймера отмены в часах
 
+
+
             dbQuery {
                 val candidate = StoredOrder.find {
                     StoredOrders.id eq EntityID(item.parent.id, StoredOrders)
                     StoredOrders.user eq userId
                 }.singleOrNull()
 
-                if (candidate != null) {
-                    candidate.status = OrderStatus.CANCELED
+                val cancelThreshold = StoredKV.findById(CANCEL_DURATION_KV_ID)?.value?.toLong() ?: 10
 
-                    call.respond(mapToResponse(candidate))
+                val now = LocalDateTime.now()
+                val tenHoursAgo = now.minusHours(cancelThreshold)
+
+
+                if (candidate != null) {
+                    if (candidate.shipmentDateTime?.isBefore(tenHoursAgo) ?: true) {
+                        candidate.status = OrderStatus.CANCELED
+                        call.respond(mapToResponse(candidate))
+                    }
+                    else {
+                        call.respond(HttpStatusCode.BadRequest, "Too late")
+                    }
+
                 }
                 else {
                     call.respond(HttpStatusCode.NotFound)
