@@ -14,6 +14,7 @@ import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.TransactionManager
+import ru.morsianin_shop.CANCEL_DURATION_KV_ID
 import ru.morsianin_shop.mapping.Mapper.mapToResponse
 import ru.morsianin_shop.model.OrderNew
 import ru.morsianin_shop.model.OrderStatus
@@ -24,7 +25,6 @@ import java.time.LocalDateTime
 
 // TODO: авторизация
 fun Application.orderRoutes() {
-    val CANCEL_DURATION_KV_ID: Long = 4123;
 
     routing {
         authenticate("auth-jwt-user") {

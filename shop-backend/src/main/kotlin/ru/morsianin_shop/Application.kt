@@ -7,6 +7,8 @@ import ru.morsianin_shop.plugins.*
 import ru.morsianin_shop.routes.*
 import ru.morsianin_shop.storage.configureStorage
 
+val CANCEL_DURATION_KV_ID: Long = 4123;
+
 fun main() {
     val ip = System.getenv("LISTEN_IP") ?: "127.0.0.1"
     val port = System.getenv("LISTEN_PORT")?.toIntOrNull() ?: 8080
@@ -44,6 +46,7 @@ fun Application.module() {
     orderRoutes()
     cartRoutes()
     labelRoutes()
+    KVRoutes()
     authRoutes()
 
     /*
