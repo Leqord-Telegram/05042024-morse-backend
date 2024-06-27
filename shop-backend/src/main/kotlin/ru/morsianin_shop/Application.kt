@@ -18,7 +18,8 @@ val CANCEL_DURATION_KV_ID: Long = 4123;
 
 @CommandHandler(["/start"])
 suspend fun start(user: User, bot: TelegramBot) {
-    message { "Hello, what's your name?" }.send(user, bot)
+    message { "Привет!" }.send(user, bot)
+    message { "Нажми кнопку 'Магазин', чтобы открыть приложение" }.send(user, bot)
     bot.inputListener[user] = "conversation"
 }
 
