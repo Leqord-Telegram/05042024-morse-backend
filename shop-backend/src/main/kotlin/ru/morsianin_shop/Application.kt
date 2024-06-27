@@ -23,11 +23,6 @@ suspend fun start(user: User, bot: TelegramBot) {
     bot.inputListener[user] = "conversation"
 }
 
-@CommonHandler.Regex("blue colo?r")
-suspend fun color(user: User, bot: TelegramBot) {
-    message { "Oh you also like blue color?" }.send(user, bot)
-}
-
 suspend fun main() {
     val ip = System.getenv("LISTEN_IP") ?: "127.0.0.1"
     val port = System.getenv("LISTEN_PORT")?.toIntOrNull() ?: 8080
