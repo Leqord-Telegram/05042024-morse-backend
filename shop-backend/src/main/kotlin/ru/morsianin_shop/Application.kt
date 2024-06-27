@@ -27,7 +27,7 @@ suspend fun color(user: User, bot: TelegramBot) {
     message { "Oh you also like blue color?" }.send(user, bot)
 }
 
-fun main() {
+suspend fun main() {
     val ip = System.getenv("LISTEN_IP") ?: "127.0.0.1"
     val port = System.getenv("LISTEN_PORT")?.toIntOrNull() ?: 8080
     val timeoutRequest = System.getenv("TIMEOUT_REQUEST")?.toIntOrNull() ?: 360
@@ -46,7 +46,9 @@ fun main() {
         shareWorkGroup = false
         requestReadTimeoutSeconds = timeoutRequest
         responseWriteTimeoutSeconds = timeoutResponse
-    }).start(wait = true)
+    }).start(wait = false)
+
+    bot.handleUpdates()
 }
 
 // TODO: вынести конфишурацию в файл
