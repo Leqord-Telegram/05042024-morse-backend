@@ -299,7 +299,7 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.upsertOrder() {
             if (productCandidate != null && productCandidate.quantity > 0) {
                 StoredOrderItem.new {
                     order = currentOrder
-                    product = productCandidate
+                    product = productCandidate!!
                     quantity = item.quantity
                 }
 
