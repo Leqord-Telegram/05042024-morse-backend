@@ -8,4 +8,7 @@ data class KVRequest (
 ) {
     @Resource("cancel_threshold")
     class cancelThreshold(val parent: KVRequest = KVRequest())
+
+    @Resource("description")
+    class description(val parent: KVRequest = KVRequest())
 }

@@ -17,11 +17,9 @@ import ru.morsianin_shop.model.CategoryNew
 import ru.morsianin_shop.model.UserPrivilege
 import ru.morsianin_shop.plugins.hasPrivilege
 import ru.morsianin_shop.resources.CategoryRequest
+import ru.morsianin_shop.storage.*
 import ru.morsianin_shop.storage.DatabaseStorage.dbQuery
-import ru.morsianin_shop.storage.StoredCategories
-import ru.morsianin_shop.storage.StoredCategory
-import ru.morsianin_shop.storage.StoredProduct
-import ru.morsianin_shop.storage.StoredProducts
+import ru.morsianin_shop.storage.StoredProductCategories.category
 
 fun Application.categoryRoutes() {
     routing {
@@ -81,8 +79,8 @@ fun Application.categoryRoutes() {
         }
         get<CategoryRequest.Id.Total> { total ->
             val products = dbQuery {
-                StoredProduct.find {
-                    (StoredProducts.enabled eq true) and (StoredProducts.active eq true) and (StoredProducts.category eq total.parent.id)
+                StoredProducts.innerJoin(StoredProductCategories).select(StoredProducts.columns).where {
+                    (StoredProducts.enabled eq true) and (StoredProducts.active eq true) and (category eq total.parent.id)
                 }.count()
             }
 
@@ -122,10 +120,6 @@ fun Application.categoryRoutes() {
                     val candidate = StoredCategory.findById(id.id)
                     if (candidate != null) {
                         candidate.enabled = false
-
-                        StoredProducts.update({ StoredProducts.category eq candidate.id }) {
-                            it[enabled] = false
-                        }
 
                         call.respond(HttpStatusCode.OK)
                     } else {

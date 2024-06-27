@@ -23,9 +23,10 @@ val tcnative_classifier = when {
 }
 
 plugins {
-    kotlin("jvm") version "1.9.23"
-    kotlin("plugin.serialization") version "1.9.10"
+    kotlin("jvm") version "2.0.0"
+    kotlin("plugin.serialization") version "2.0.0"
     id("io.ktor.plugin") version "2.3.10"
+    id("com.google.devtools.ksp") version "2.0.0-1.0.22"
 }
 
 group = "ru.morsianin_shop"
@@ -72,6 +73,8 @@ dependencies {
     implementation("aws.smithy.kotlin:http-auth-aws:$smithy_version")
     implementation("me.xdrop:fuzzywuzzy:$fuzzywuzzy_version")
     implementation("com.google.guava:guava:$guava_version")
+    implementation("eu.vendeli:telegram-bot:6.1.1")
+    ksp("eu.vendeli:ksp:6.1.1")
 
 
     if (tcnative_classifier != null) {
