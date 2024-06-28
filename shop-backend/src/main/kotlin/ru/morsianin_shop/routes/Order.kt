@@ -139,6 +139,7 @@ fun Application.orderRoutes() {
                     StoredOrders.user eq userId
                 }.singleOrNull()
 
+                //TODO: учитывает UTC+0, так себе решение
                 val cancelThreshold = (StoredKV.findById(CANCEL_DURATION_KV_ID)?.value?.toLong() ?: 10) - 10
 
                 val now = LocalDateTime.now()
