@@ -139,7 +139,7 @@ fun Application.orderRoutes() {
                     StoredOrders.user eq userId
                 }.singleOrNull()
 
-                val cancelThreshold = StoredKV.findById(CANCEL_DURATION_KV_ID)?.value?.toLong() ?: 10
+                val cancelThreshold = (StoredKV.findById(CANCEL_DURATION_KV_ID)?.value?.toLong() ?: 10) - 10
 
                 val now = LocalDateTime.now()
                 val tenHoursAgo = now.minusHours(cancelThreshold)
