@@ -71,8 +71,8 @@ suspend fun main() {
         responseWriteTimeoutSeconds = timeoutResponse
     }).start(wait = false)
 
-    message{ "Стартанул" }.inlineKeyboardMarkup {
-        "name" callback "cancel-5123"
+    message{ "Бот запущен" }.inlineKeyboardMarkup {
+        "Тест" callback "cancel-5123"
     }.send(ORDER_CHAT_ID, bot)
 
     bot.handleUpdates()
