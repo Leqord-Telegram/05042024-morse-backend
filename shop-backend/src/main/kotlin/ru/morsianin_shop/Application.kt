@@ -96,9 +96,27 @@ suspend fun approvedCancelOrder(update: CallbackQueryUpdate, user: User, bot: Te
             message { "Ошибка" }.send(ORDER_CHAT_ID, bot)
         }
     }
-
-
 }
+
+@CommonHandler.Regex("^shipped.*$", scope = [UpdateType.CALLBACK_QUERY])
+suspend fun shippedOrder(update: CallbackQueryUpdate, user: User, bot: TelegramBot) {
+    val id = update.callbackQuery.data!!.removePrefix("shipped").toLong()
+
+    dbQuery {
+        val order = StoredOrder.findById(id)
+
+        if (order != null) {
+            order.status = OrderStatus.FINISHED
+
+            editText(update.callbackQuery.message!!.messageId) {
+                "Заказ $id завершён"
+            }.send(ORDER_CHAT_ID, bot)
+        } else {
+            message { "Ошибка" }.send(ORDER_CHAT_ID, bot)
+        }
+    }
+}
+
 
 suspend fun main() {
     print("STARTUP AT: ${LocalDateTime.now().format(ISO_LOCAL_DATE_TIME)}")
@@ -129,7 +147,7 @@ suspend fun main() {
 
 
 fun Application.module() {
-    //configureStorage()
+    configureStorage()
     configureResources()
     configureAuth()
     configureRouting()
