@@ -7,6 +7,7 @@ import eu.vendeli.tgbot.annotations.InputHandler
 import eu.vendeli.tgbot.api.answer.answerCallbackQuery
 import eu.vendeli.tgbot.api.chat.getChat
 import eu.vendeli.tgbot.api.message.editMessageText
+import eu.vendeli.tgbot.api.message.editText
 import eu.vendeli.tgbot.api.message.message
 import eu.vendeli.tgbot.api.poll
 import eu.vendeli.tgbot.types.User
@@ -44,7 +45,9 @@ suspend fun test(update: CallbackQueryUpdate, user: User, bot: TelegramBot) {
 
     //update.callbackQuery.message?.messageId
 
-    editMessageText { "Балжеж" }.send(ORDER_CHAT_ID, bot)
+    editText(update.callbackQuery.message!!.messageId) {
+        "Балжеж"
+    }.send(ORDER_CHAT_ID, bot)
 
     val id = update.callbackQuery.data!!.removePrefix("cancel").toLong()
 
@@ -80,7 +83,7 @@ suspend fun main() {
 
 
 fun Application.module() {
-    configureStorage()
+    //configureStorage()
     configureResources()
     configureAuth()
     configureRouting()
