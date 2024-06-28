@@ -71,9 +71,9 @@ fun Application.productRoutes() {
 
             val found = dbQuery {
                 StoredProduct.wrapRows(
-                    StoredProducts.innerJoin(StoredProductCategories).select(StoredProducts.columns).where {
+                    StoredProducts.leftJoin(StoredProductCategories).select(StoredProducts.columns).where {
                         query
-                    }.distinct.orderBy(sortType)
+                    }.orderBy(sortType).withDistinct()
                         .limit(filter.limit, filter.offset)
                 ).toList().map { mapToResponse(it) }
             }

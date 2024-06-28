@@ -292,7 +292,7 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.upsertOrder() {
             shipmentAddress = newOrder.shipmentAddress
             description = newOrder.description
             userName = newOrder.userName
-
+            phone = newOrder.phone
         }
 
         var productCandidate: StoredProduct?

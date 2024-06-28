@@ -18,6 +18,7 @@ data class OrderResponse(
     val status: OrderStatus,
     val userName: String,
     val description: String,
+    val phone: String?,
     val shipment: OrderShipment,
     @Serializable(with = LocalDateTimeSerializer::class)
     val shipmentDateTime: LocalDateTime?,
@@ -36,6 +37,7 @@ data class OrderNew(
     val items: List<OrderItemNew>,
     val userName: String,
     val description: String,
+    val phone: String,
     val shipment: OrderShipment,
     @Serializable(with = LocalDateTimeSerializer::class)
     val shipmentDateTime: LocalDateTime,

@@ -21,6 +21,8 @@ import org.jetbrains.exposed.sql.statements.StatementType
 import ru.morsianin_shop.plugins.*
 import ru.morsianin_shop.routes.*
 import ru.morsianin_shop.storage.configureStorage
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME
 
 val CANCEL_DURATION_KV_ID: Long = 4123;
 val ORDER_CHAT_ID: Long = -4277372202;
@@ -45,11 +47,12 @@ suspend fun test(update: CallbackQueryUpdate, user: User, bot: TelegramBot) {
 }
 
 suspend fun main() {
+    print("STARTUP AT: ${LocalDateTime.now().format(ISO_LOCAL_DATE_TIME)}")
+
     val ip = System.getenv("LISTEN_IP") ?: "127.0.0.1"
     val port = System.getenv("LISTEN_PORT")?.toIntOrNull() ?: 8080
     val timeoutRequest = System.getenv("TIMEOUT_REQUEST")?.toIntOrNull() ?: 360
     val timeoutResponse = System.getenv("TIMEOUT_RESPONSE")?.toIntOrNull() ?: 36
-
 
     embeddedServer(Netty, port = port, host = ip, module = Application::module, configure = {
         connectionGroupSize = 8

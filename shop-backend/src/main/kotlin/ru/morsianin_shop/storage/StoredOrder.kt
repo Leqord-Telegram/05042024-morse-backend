@@ -17,6 +17,7 @@ object StoredOrders: LongIdTable("order") {
     val shipmentDateTime = datetime("shipment_date_time").nullable()
     val shipmentAddress = text("shipment_address").nullable()
     val description = text("description").nullable()
+    val phone = text("phone").nullable()
     val userName = text("user_name")
 }
 
@@ -24,6 +25,7 @@ class StoredOrder(id: EntityID<Long>) : LongEntity(id) {
     companion object : LongEntityClass<StoredOrder>(StoredOrders)
     var user by StoredUser referencedOn StoredOrders.user
     var status by StoredOrders.status
+    var phone by StoredOrders.phone
     val items by StoredOrderItem referrersOn StoredOrderItems.order
     var shipmentAddress by StoredOrders.shipmentAddress
     var shipment by StoredOrders.shipment
