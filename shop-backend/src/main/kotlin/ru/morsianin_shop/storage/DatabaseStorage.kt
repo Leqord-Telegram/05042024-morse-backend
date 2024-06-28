@@ -44,6 +44,8 @@ object DatabaseStorage {
             SchemaUtils.create(StoredUserPrivileges)
             SchemaUtils.create(StoredLabels)
             SchemaUtils.create(StoredProductLabels)
+            SchemaUtils.create(StoredKVs)
+            SchemaUtils.create(StoredProductCategories)
         }
     }
 
