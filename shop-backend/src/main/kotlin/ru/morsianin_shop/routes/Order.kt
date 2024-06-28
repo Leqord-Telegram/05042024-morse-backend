@@ -21,6 +21,7 @@ import ru.morsianin_shop.bot
 import ru.morsianin_shop.mapping.Mapper.mapToResponse
 import ru.morsianin_shop.model.OrderNew
 import ru.morsianin_shop.model.OrderStatus
+import ru.morsianin_shop.model.printOrderMessage
 import ru.morsianin_shop.resources.OrderRequest
 import ru.morsianin_shop.storage.*
 import ru.morsianin_shop.storage.DatabaseStorage.dbQuery
@@ -314,7 +315,7 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.upsertOrder() {
             }
         }
 
-        message{ "Создан заказ ${currentOrder.id}" }.inlineKeyboardMarkup {
+        message{ printOrderMessage(mapToResponse(currentOrder)) }.inlineKeyboardMarkup {
             "❌" callback "cancel${currentOrder.id.value}"
             "✓" callback "shipped${currentOrder.id.value}"
         }.send(ORDER_CHAT_ID, bot)

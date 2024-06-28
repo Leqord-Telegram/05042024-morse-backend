@@ -6,6 +6,9 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Serializer
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import org.jetbrains.exposed.sql.SortOrder
+import ru.morsianin_shop.storage.StoredOrder
+import ru.morsianin_shop.storage.StoredProducts
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -84,4 +87,22 @@ class LocalDateTimeSerializer : KSerializer<LocalDateTime> {
     override fun deserialize(decoder: Decoder): LocalDateTime {
         return LocalDateTime.parse(decoder.decodeString(), formatter)
     }
+}
+
+fun printOrderMessage(order: OrderResponse): String {
+    val shipname = when (order.shipment) {
+        OrderShipment.Pickup -> "САМОВЫВОЗ"
+        OrderShipment.Courier -> "КУРЬЕР"
+    }
+
+    val msgtext = """Создан заказ ${order.id}
+        |Заказчик: ${order.userName}
+        |Телефон: ${order.phone?: "НЕ УКАЗАН"}
+        |Доставка: $shipname
+        |Время доставки: ${order.shipmentDateTime}
+        |Адрес: ${order.shipmentAddress?: "НЕ УКАЗАН"}
+        |Комментарий: ${order.description}
+    """.trimMargin()
+
+    return msgtext
 }

@@ -20,8 +20,15 @@ import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import org.jetbrains.exposed.sql.statements.StatementType
+import ru.morsianin_shop.mapping.Mapper.mapToResponse
+import ru.morsianin_shop.model.OrderStatus
+import ru.morsianin_shop.model.printOrderMessage
 import ru.morsianin_shop.plugins.*
 import ru.morsianin_shop.routes.*
+import ru.morsianin_shop.storage.DatabaseStorage.dbQuery
+import ru.morsianin_shop.storage.StoredOrder
+import ru.morsianin_shop.storage.StoredOrderItems.order
+import ru.morsianin_shop.storage.StoredOrders
 import ru.morsianin_shop.storage.configureStorage
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME
@@ -32,6 +39,7 @@ val ORDER_CHAT_ID: Long = -4277372202;
 val bot = TelegramBot(System.getenv("TG_BOT_TOKEN"))
 
 
+
 @CommandHandler(["/start"])
 suspend fun start(user: User, bot: TelegramBot) {
     message { "Привет!" }.send(user, bot)
@@ -40,18 +48,56 @@ suspend fun start(user: User, bot: TelegramBot) {
 }
 
 @CommonHandler.Regex("^cancel.*$", scope = [UpdateType.CALLBACK_QUERY])
-suspend fun test(update: CallbackQueryUpdate, user: User, bot: TelegramBot) {
-    message { "Нажал!" }.send(ORDER_CHAT_ID, bot)
-
-    //update.callbackQuery.message?.messageId
-
-    editText(update.callbackQuery.message!!.messageId) {
-        "Балжеж"
-    }.send(ORDER_CHAT_ID, bot)
-
+suspend fun cancelOrder(update: CallbackQueryUpdate, user: User, bot: TelegramBot) {
     val id = update.callbackQuery.data!!.removePrefix("cancel").toLong()
 
-    message { "ID: $id" }.send(ORDER_CHAT_ID, bot)
+    editText(update.callbackQuery.message!!.messageId) {
+        "Отменить заказ ${id}?"
+    }.inlineKeyboardMarkup {
+        "Да" callback "approved_cancel${id}"
+        "Нет" callback "declined_cancel${id}"
+    }.send(ORDER_CHAT_ID, bot)
+}
+
+
+@CommonHandler.Regex("^declined_cancel.*$", scope = [UpdateType.CALLBACK_QUERY])
+suspend fun declinedCancelOrder(update: CallbackQueryUpdate, user: User, bot: TelegramBot) {
+    val id = update.callbackQuery.data!!.removePrefix("declined_cancel").toLong()
+
+    val order = dbQuery {
+        StoredOrder.findById(id)
+    }
+
+    if (order != null) {
+        editText(update.callbackQuery.message!!.messageId) {
+            printOrderMessage(mapToResponse(order))
+        }.send(ORDER_CHAT_ID, bot)
+    }
+    else {
+        message { "Ошибка" }.send(ORDER_CHAT_ID, bot)
+    }
+}
+
+@CommonHandler.Regex("^approved_cancel.*$", scope = [UpdateType.CALLBACK_QUERY])
+suspend fun approvedCancelOrder(update: CallbackQueryUpdate, user: User, bot: TelegramBot) {
+    val id = update.callbackQuery.data!!.removePrefix("approved_cancel").toLong()
+
+    dbQuery {
+        val order = StoredOrder.findById(id)
+
+        if (order != null) {
+            order.status = OrderStatus.CANCELED
+
+            editText(update.callbackQuery.message!!.messageId) {
+                "Заказ $id отменён"
+            }.send(ORDER_CHAT_ID, bot)
+        }
+        else {
+            message { "Ошибка" }.send(ORDER_CHAT_ID, bot)
+        }
+    }
+
+
 }
 
 suspend fun main() {
