@@ -315,6 +315,8 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.upsertOrder() {
         }
 
         message{ "Создан заказ ${currentOrder.id}" }.inlineKeyboardMarkup {
+            "❌" callback "cancel${currentOrder.id.value}"
+            "✓" callback "shipped${currentOrder.id.value}"
         }.send(ORDER_CHAT_ID, bot)
 
         call.respond(HttpStatusCode.Created)

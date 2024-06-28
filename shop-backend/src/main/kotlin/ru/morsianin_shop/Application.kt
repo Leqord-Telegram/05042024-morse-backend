@@ -6,6 +6,7 @@ import eu.vendeli.tgbot.annotations.CommonHandler
 import eu.vendeli.tgbot.annotations.InputHandler
 import eu.vendeli.tgbot.api.answer.answerCallbackQuery
 import eu.vendeli.tgbot.api.chat.getChat
+import eu.vendeli.tgbot.api.message.editMessageText
 import eu.vendeli.tgbot.api.message.message
 import eu.vendeli.tgbot.api.poll
 import eu.vendeli.tgbot.types.User
@@ -40,6 +41,10 @@ suspend fun start(user: User, bot: TelegramBot) {
 @CommonHandler.Regex("^cancel.*$", scope = [UpdateType.CALLBACK_QUERY])
 suspend fun test(update: CallbackQueryUpdate, user: User, bot: TelegramBot) {
     message { "Нажал!" }.send(ORDER_CHAT_ID, bot)
+
+    //update.callbackQuery.message?.messageId
+
+    editMessageText { "Балжеж" }
 
     val id = update.callbackQuery.data!!.removePrefix("cancel").toLong()
 
