@@ -73,7 +73,7 @@ fun Application.productRoutes() {
                 StoredProduct.wrapRows(
                     StoredProducts.innerJoin(StoredProductCategories).select(StoredProducts.columns).where {
                         query
-                    }.orderBy(sortType)
+                    }.distinct.orderBy(sortType)
                         .limit(filter.limit, filter.offset)
                 ).toList().map { mapToResponse(it) }
             }
