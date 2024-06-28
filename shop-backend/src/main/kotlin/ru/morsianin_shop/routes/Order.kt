@@ -1,5 +1,6 @@
 package ru.morsianin_shop.routes
 
+import eu.vendeli.tgbot.api.message.message
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -15,6 +16,8 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import ru.morsianin_shop.CANCEL_DURATION_KV_ID
+import ru.morsianin_shop.ORDER_CHAT_ID
+import ru.morsianin_shop.bot
 import ru.morsianin_shop.mapping.Mapper.mapToResponse
 import ru.morsianin_shop.model.OrderNew
 import ru.morsianin_shop.model.OrderStatus
@@ -129,10 +132,6 @@ fun Application.orderRoutes() {
         post<OrderRequest.Id.Cancel> { item ->
             val userId = call.principal<JWTPrincipal>()!!.payload.getClaim("user-id").asLong()
 
-            // TODO: проверка таймера отмены в часах
-
-
-
             dbQuery {
                 val candidate = StoredOrder.find {
                     StoredOrders.id eq EntityID(item.parent.id, StoredOrders)
@@ -148,6 +147,10 @@ fun Application.orderRoutes() {
                 if (candidate != null) {
                     if (candidate.shipmentDateTime?.isBefore(tenHoursAgo) ?: true) {
                         candidate.status = OrderStatus.CANCELED
+
+                        message{ "Отменён заказ ${candidate.id}" }.inlineKeyboardMarkup {
+                        }.send(ORDER_CHAT_ID, bot)
+
                         call.respond(mapToResponse(candidate))
                     }
                     else {
@@ -310,6 +313,10 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.upsertOrder() {
                 return@dbQuery
             }
         }
+
+        message{ "Создан заказ ${currentOrder.id}" }.inlineKeyboardMarkup {
+        }.send(ORDER_CHAT_ID, bot)
+
         call.respond(HttpStatusCode.Created)
 
     }
