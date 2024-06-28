@@ -44,7 +44,7 @@ suspend fun test(update: CallbackQueryUpdate, user: User, bot: TelegramBot) {
 
     //update.callbackQuery.message?.messageId
 
-    editMessageText { "Балжеж" }
+    editMessageText { "Балжеж" }.send(ORDER_CHAT_ID, bot)
 
     val id = update.callbackQuery.data!!.removePrefix("cancel").toLong()
 
