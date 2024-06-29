@@ -124,7 +124,7 @@ suspend fun declinedShippedOrder(update: CallbackQueryUpdate, user: User, bot: T
 
     if (order != null) {
         editText(update.callbackQuery.message!!.messageId) {
-        "вернулся после выдачи" //printOrderMessage(mapToResponse(order))
+        printOrderMessage(mapToResponse(order))
         }.inlineKeyboardMarkup {
             "❌" callback "cancel${id}"
             "✓" callback "shipped${id}"
