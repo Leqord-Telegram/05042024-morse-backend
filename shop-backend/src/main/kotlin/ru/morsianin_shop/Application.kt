@@ -140,7 +140,7 @@ suspend fun approvedShippedOrder(update: CallbackQueryUpdate, user: User, bot: T
             order.status = OrderStatus.FINISHED
 
             editText(update.callbackQuery.message!!.messageId) {
-                "Заказ $id отменён"
+                "Заказ $id выдан"
             }.send(ORDER_CHAT_ID, bot)
         }
         else {
