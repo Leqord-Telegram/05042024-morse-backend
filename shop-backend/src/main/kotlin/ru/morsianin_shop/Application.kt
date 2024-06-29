@@ -21,6 +21,7 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import org.jetbrains.exposed.sql.statements.StatementType
 import ru.morsianin_shop.mapping.Mapper.mapToResponse
+import ru.morsianin_shop.model.OrderShipment
 import ru.morsianin_shop.model.OrderStatus
 import ru.morsianin_shop.model.printOrderMessage
 import ru.morsianin_shop.plugins.*
@@ -118,20 +119,21 @@ suspend fun shippedOrder(update: CallbackQueryUpdate, user: User, bot: TelegramB
 suspend fun declinedShippedOrder(update: CallbackQueryUpdate, user: User, bot: TelegramBot) {
     val id = update.callbackQuery.data!!.removePrefix("declinedshipped").toLong()
 
-    val order = dbQuery {
-        StoredOrder.findById(id)
-    }
+    dbQuery {
+        val order = StoredOrder.findById(id)
 
-    if (order != null) {
-        editText(update.callbackQuery.message!!.messageId) {
-        printOrderMessage(mapToResponse(order))
-        }.inlineKeyboardMarkup {
-            "❌" callback "cancel${id}"
-            "✓" callback "shipped${id}"
-        }.send(ORDER_CHAT_ID, ru.morsianin_shop.bot)
-    }
-    else {
-        message { "Ошибка" }.send(ORDER_CHAT_ID, bot)
+        if (order != null) {
+
+            editText(update.callbackQuery.message!!.messageId) {
+                printOrderMessage(mapToResponse(order))
+            }.inlineKeyboardMarkup {
+                "❌" callback "cancel${id}"
+                "✓" callback "shipped${id}"
+            }.send(ORDER_CHAT_ID, ru.morsianin_shop.bot)
+        }
+        else {
+            message { "Ошибка" }.send(ORDER_CHAT_ID, bot)
+        }
     }
 }
 
