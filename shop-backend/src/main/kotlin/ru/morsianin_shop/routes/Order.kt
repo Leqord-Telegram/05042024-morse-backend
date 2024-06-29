@@ -316,7 +316,7 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.upsertOrder() {
             }
         }
 
-        message{ printOrderMessage(mapToResponse(currentOrder)) }.inlineKeyboardMarkup {
+        message{ printOrderMessage(mapToResponse(currentOrder), currentOrder.user.name) }.inlineKeyboardMarkup {
             "❌" callback "cancel${currentOrder.id.value}"
             "✓" callback "shipped${currentOrder.id.value}"
         }.send(ORDER_CHAT_ID, bot)

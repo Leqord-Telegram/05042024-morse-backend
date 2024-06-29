@@ -19,6 +19,7 @@ object StoredOrders: LongIdTable("order") {
     val description = text("description").nullable()
     val phone = text("phone").nullable()
     val userName = text("user_name")
+    //val messageId = long("message_id").nullable()
 }
 
 class StoredOrder(id: EntityID<Long>) : LongEntity(id) {
@@ -31,4 +32,6 @@ class StoredOrder(id: EntityID<Long>) : LongEntity(id) {
     var shipment by StoredOrders.shipment
     var shipmentDateTime by StoredOrders.shipmentDateTime
     var description by StoredOrders.description
-    var userName by StoredOrders.userName }
+    var userName by StoredOrders.userName
+    //var messageId by StoredOrders.messageId
+}

@@ -89,7 +89,7 @@ class LocalDateTimeSerializer : KSerializer<LocalDateTime> {
     }
 }
 
-fun printOrderMessage(order: OrderResponse): String {
+fun printOrderMessage(order: OrderResponse, userName: String): String {
     val shipname = when (order.shipment) {
         OrderShipment.Pickup -> "САМОВЫВОЗ"
         OrderShipment.Courier -> "КУРЬЕР"
@@ -102,6 +102,7 @@ fun printOrderMessage(order: OrderResponse): String {
         |Время доставки: ${order.shipmentDateTime?: "НЕ УКАЗАНО"}
         |Адрес: ${order.shipmentAddress?: "НЕ УКАЗАН"}
         |Комментарий: ${order.description}
+        |Telegram: @${userName}
     """.trimMargin()
 
     return msgtext
