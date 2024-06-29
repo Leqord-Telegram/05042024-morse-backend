@@ -150,7 +150,7 @@ fun Application.orderRoutes() {
                     if (candidate.shipmentDateTime?.isBefore(tenHoursAgo) ?: true) {
                         candidate.status = OrderStatus.CANCELED
 
-                        message{ "Отменён заказ ${candidate.id}" }.inlineKeyboardMarkup {
+                        message{ "Пользователь отменил заказ ${candidate.id}" }.inlineKeyboardMarkup {
                         }.send(ORDER_CHAT_ID, bot)
 
                         call.respond(mapToResponse(candidate))

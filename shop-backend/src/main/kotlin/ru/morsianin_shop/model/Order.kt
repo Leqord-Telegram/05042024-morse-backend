@@ -95,7 +95,7 @@ fun printOrderMessage(order: OrderResponse): String {
         OrderShipment.Courier -> "КУРЬЕР"
     }
 
-    val msgtext = """Создан заказ ${order.id}
+    val msgtext = """#Создан заказ ${order.id}
         |Заказчик: ${order.userName}
         |Телефон: ${order.phone?: "НЕ УКАЗАН"}
         |Доставка: $shipname
