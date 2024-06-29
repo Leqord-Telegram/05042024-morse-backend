@@ -130,12 +130,12 @@ fun Application.orderRoutes() {
             }
         }
     */
-        post<OrderRequest.Id.Cancel> { item ->
+        post<OrderRequest.Id.Cancel> { cancel ->
             val userId = call.principal<JWTPrincipal>()!!.payload.getClaim("user-id").asLong()
 
             dbQuery {
                 val candidate = StoredOrder.find {
-                    StoredOrders.id eq EntityID(item.parent.id, StoredOrders)
+                    StoredOrders.id eq EntityID(cancel.parent.id, StoredOrders)
                     StoredOrders.user eq userId
                 }.singleOrNull()
 
@@ -165,7 +165,7 @@ fun Application.orderRoutes() {
 
                 }
                 else {
-                    call.respond(HttpStatusCode.NotFound, "There is no ${item.parent.id} for ${userId}")
+                    call.respond(HttpStatusCode.NotFound, "There is no ${cancel.parent.id} for ${userId}")
                 }
             }
         }
