@@ -108,6 +108,8 @@ fun printOrderMessage(order: OrderResponse, userName: String): String {
         |Состав заказа:
     """.trimMargin())
 
+    sb.append("\n")
+
     for (item in order.items) {
         sb.append("✧ ${item.product.name} ${item.quantity}шт. на ${item.quantity * item.product.price}₽\n")
     }
