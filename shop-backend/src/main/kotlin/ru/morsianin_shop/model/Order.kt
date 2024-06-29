@@ -111,7 +111,7 @@ fun printOrderMessage(order: OrderResponse, userName: String): String {
     sb.append("\n")
 
     for (item in order.items) {
-        sb.append("✧ ${item.product.name} ${item.quantity}шт. на ${item.quantity * item.product.price}₽\n")
+        sb.append("✧ ${item.product.name} ${item.quantity}шт. на ${item.quantity * item.product.price/ 100.0}₽\n")
     }
 
     return sb.toString()

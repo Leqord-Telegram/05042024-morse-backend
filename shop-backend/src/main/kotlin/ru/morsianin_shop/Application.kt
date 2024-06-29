@@ -94,6 +94,10 @@ suspend fun approvedCancelOrder(update: CallbackQueryUpdate, user: User, bot: Te
         if (order != null) {
             order.status = OrderStatus.CANCELED
 
+            for (itemr in order.items) {
+                itemr.product.quantity += itemr.quantity
+            }
+
             editText(update.callbackQuery.message!!.messageId) {
                 "Заказ $id #отменён"
             }.send(ORDER_CHAT_ID, bot)
