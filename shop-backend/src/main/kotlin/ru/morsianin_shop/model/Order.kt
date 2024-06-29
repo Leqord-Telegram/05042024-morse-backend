@@ -91,8 +91,8 @@ class LocalDateTimeSerializer : KSerializer<LocalDateTime> {
 
 fun printOrderMessage(order: OrderResponse, userName: String): String {
     val shipname = when (order.shipment) {
-        OrderShipment.Pickup -> "САМОВЫВОЗ"
-        OrderShipment.Courier -> "КУРЬЕР"
+        OrderShipment.Pickup -> "#САМОВЫВОЗ"
+        OrderShipment.Courier -> "#КУРЬЕР"
     }
 
     val sb = StringBuilder()
