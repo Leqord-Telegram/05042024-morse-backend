@@ -165,7 +165,7 @@ fun Application.orderRoutes() {
 
                 }
                 else {
-                    call.respond(HttpStatusCode.NotFound)
+                    call.respond(HttpStatusCode.NotFound, "There is no ${item.parent.id} for ${userId}")
                 }
             }
         }
