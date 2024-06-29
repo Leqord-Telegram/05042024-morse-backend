@@ -139,12 +139,8 @@ fun Application.orderRoutes() {
                 //TODO: учитывает UTC+0, так себе решение
                 val cancelThreshold = (StoredKV.findById(CANCEL_DURATION_KV_ID)?.value?.toLong() ?: 10) - 10
 
-                val now = LocalDateTime.now()
-                val tenHoursAgo = now.minusHours(cancelThreshold)
-
-
                 if (candidate != null) {
-                    if (candidate.shipmentDateTime?.isBefore(tenHoursAgo) ?: true) {
+                    if (candidate.shipmentDateTime?.minusHours(cancelThreshold)?.isAfter(LocalDateTime.now()) ?: true) {
                         candidate.status = OrderStatus.CANCELED
 
                         for (itemr in candidate.items) {
