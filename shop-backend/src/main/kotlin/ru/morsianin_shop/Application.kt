@@ -102,6 +102,37 @@ suspend fun approvedCancelOrder(update: CallbackQueryUpdate, user: User, bot: Te
 suspend fun shippedOrder(update: CallbackQueryUpdate, user: User, bot: TelegramBot) {
     val id = update.callbackQuery.data!!.removePrefix("shipped").toLong()
 
+    editText(update.callbackQuery.message!!.messageId) {
+        "Выдать заказ ${id}?"
+    }.inlineKeyboardMarkup {
+        "Да" callback "approved_shipped${id}"
+        "Нет" callback "declined_shipped${id}"
+    }.send(ORDER_CHAT_ID, bot)
+}
+
+
+@CommonHandler.Regex("^declined_shipped.*$", scope = [UpdateType.CALLBACK_QUERY])
+suspend fun declinedShippedOrder(update: CallbackQueryUpdate, user: User, bot: TelegramBot) {
+    val id = update.callbackQuery.data!!.removePrefix("declined_shipped").toLong()
+
+    val order = dbQuery {
+        StoredOrder.findById(id)
+    }
+
+    if (order != null) {
+        editText(update.callbackQuery.message!!.messageId) {
+            printOrderMessage(mapToResponse(order))
+        }.send(ORDER_CHAT_ID, bot)
+    }
+    else {
+        message { "Ошибка" }.send(ORDER_CHAT_ID, bot)
+    }
+}
+
+@CommonHandler.Regex("^approved_shipped.*$", scope = [UpdateType.CALLBACK_QUERY])
+suspend fun approvedShippedOrder(update: CallbackQueryUpdate, user: User, bot: TelegramBot) {
+    val id = update.callbackQuery.data!!.removePrefix("approved_shipped").toLong()
+
     dbQuery {
         val order = StoredOrder.findById(id)
 
@@ -109,9 +140,10 @@ suspend fun shippedOrder(update: CallbackQueryUpdate, user: User, bot: TelegramB
             order.status = OrderStatus.FINISHED
 
             editText(update.callbackQuery.message!!.messageId) {
-                "Заказ $id завершён"
+                "Заказ $id отменён"
             }.send(ORDER_CHAT_ID, bot)
-        } else {
+        }
+        else {
             message { "Ошибка" }.send(ORDER_CHAT_ID, bot)
         }
     }
