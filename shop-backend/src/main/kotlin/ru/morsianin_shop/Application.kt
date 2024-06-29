@@ -54,15 +54,15 @@ suspend fun cancelOrder(update: CallbackQueryUpdate, user: User, bot: TelegramBo
     editText(update.callbackQuery.message!!.messageId) {
         "Отменить заказ ${id}?"
     }.inlineKeyboardMarkup {
-        "Да" callback "approved_cancel${id}"
-        "Нет" callback "declined_cancel${id}"
+        "Да" callback "approvedcancel${id}"
+        "Нет" callback "declinedcancel${id}"
     }.send(ORDER_CHAT_ID, bot)
 }
 
 
-@CommonHandler.Regex("^declined_cancel.*$", scope = [UpdateType.CALLBACK_QUERY])
+@CommonHandler.Regex("^declinedcancel.*$", scope = [UpdateType.CALLBACK_QUERY])
 suspend fun declinedCancelOrder(update: CallbackQueryUpdate, user: User, bot: TelegramBot) {
-    val id = update.callbackQuery.data!!.removePrefix("declined_cancel").toLong()
+    val id = update.callbackQuery.data!!.removePrefix("declinedcancel").toLong()
 
     val order = dbQuery {
         StoredOrder.findById(id)
@@ -71,16 +71,19 @@ suspend fun declinedCancelOrder(update: CallbackQueryUpdate, user: User, bot: Te
     if (order != null) {
         editText(update.callbackQuery.message!!.messageId) {
             printOrderMessage(mapToResponse(order))
-        }.send(ORDER_CHAT_ID, bot)
+        }.inlineKeyboardMarkup {
+            "❌" callback "cancel${id}"
+            "✓" callback "shipped${id}"
+        }.send(ORDER_CHAT_ID, ru.morsianin_shop.bot)
     }
     else {
         message { "Ошибка" }.send(ORDER_CHAT_ID, bot)
     }
 }
 
-@CommonHandler.Regex("^approved_cancel.*$", scope = [UpdateType.CALLBACK_QUERY])
+@CommonHandler.Regex("^approvedcancel.*$", scope = [UpdateType.CALLBACK_QUERY])
 suspend fun approvedCancelOrder(update: CallbackQueryUpdate, user: User, bot: TelegramBot) {
-    val id = update.callbackQuery.data!!.removePrefix("approved_cancel").toLong()
+    val id = update.callbackQuery.data!!.removePrefix("approvedcancel").toLong()
 
     dbQuery {
         val order = StoredOrder.findById(id)
@@ -105,15 +108,15 @@ suspend fun shippedOrder(update: CallbackQueryUpdate, user: User, bot: TelegramB
     editText(update.callbackQuery.message!!.messageId) {
         "Выдать заказ ${id}?"
     }.inlineKeyboardMarkup {
-        "Да" callback "approved_shipped${id}"
-        "Нет" callback "declined_shipped${id}"
+        "Да" callback "approvedshipped${id}"
+        "Нет" callback "declinedshipped${id}"
     }.send(ORDER_CHAT_ID, bot)
 }
 
 
-@CommonHandler.Regex("^declined_shipped.*$", scope = [UpdateType.CALLBACK_QUERY])
+@CommonHandler.Regex("^declinedshipped.*$", scope = [UpdateType.CALLBACK_QUERY])
 suspend fun declinedShippedOrder(update: CallbackQueryUpdate, user: User, bot: TelegramBot) {
-    val id = update.callbackQuery.data!!.removePrefix("declined_shipped").toLong()
+    val id = update.callbackQuery.data!!.removePrefix("declinedshipped").toLong()
 
     val order = dbQuery {
         StoredOrder.findById(id)
@@ -122,16 +125,19 @@ suspend fun declinedShippedOrder(update: CallbackQueryUpdate, user: User, bot: T
     if (order != null) {
         editText(update.callbackQuery.message!!.messageId) {
             printOrderMessage(mapToResponse(order))
-        }.send(ORDER_CHAT_ID, bot)
+        }.inlineKeyboardMarkup {
+            "❌" callback "cancel${id}"
+            "✓" callback "shipped${id}"
+        }.send(ORDER_CHAT_ID, ru.morsianin_shop.bot)
     }
     else {
         message { "Ошибка" }.send(ORDER_CHAT_ID, bot)
     }
 }
 
-@CommonHandler.Regex("^approved_shipped.*$", scope = [UpdateType.CALLBACK_QUERY])
+@CommonHandler.Regex("^approvedshipped.*$", scope = [UpdateType.CALLBACK_QUERY])
 suspend fun approvedShippedOrder(update: CallbackQueryUpdate, user: User, bot: TelegramBot) {
-    val id = update.callbackQuery.data!!.removePrefix("approved_shipped").toLong()
+    val id = update.callbackQuery.data!!.removePrefix("approvedshipped").toLong()
 
     dbQuery {
         val order = StoredOrder.findById(id)
