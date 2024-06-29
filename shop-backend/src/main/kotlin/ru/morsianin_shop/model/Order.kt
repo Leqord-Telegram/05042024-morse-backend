@@ -95,7 +95,9 @@ fun printOrderMessage(order: OrderResponse, userName: String): String {
         OrderShipment.Courier -> "КУРЬЕР"
     }
 
-    val msgtext = """#Создан заказ ${order.id}
+    val sb = StringBuilder()
+
+    sb.append("""#Создан заказ ${order.id}
         |Заказчик: ${order.userName}
         |Телефон: ${order.phone?: "НЕ УКАЗАН"}
         |Доставка: $shipname
@@ -103,7 +105,12 @@ fun printOrderMessage(order: OrderResponse, userName: String): String {
         |Адрес: ${order.shipmentAddress?: "НЕ УКАЗАН"}
         |Комментарий: ${order.description}
         |Telegram: @${userName}
-    """.trimMargin()
+        |Состав заказа:
+    """.trimMargin())
 
-    return msgtext
+    for (item in order.items) {
+        sb.append("✧ ${item.product.name} (${item.product.id}\n) ${item.quantity}шт. на ${item.quantity * item.product.price}₽\n")
+    }
+
+    return sb.toString()
 }
