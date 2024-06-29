@@ -45,7 +45,7 @@ val bot = TelegramBot(System.getenv("TG_BOT_TOKEN"))
 @CommandHandler(["/start"])
 suspend fun start(user: User, bot: TelegramBot) {
     message { "Привет!" }.send(user, bot)
-    message { "Нажми кнопку 'Магазин', чтобы открыть приложение" }.send(user, bot)
+    message { "Нажми кнопку 'Магазин', чтобы открыть \uD83D\uDC47 приложение" }.send(user, bot)
 
 }
 
