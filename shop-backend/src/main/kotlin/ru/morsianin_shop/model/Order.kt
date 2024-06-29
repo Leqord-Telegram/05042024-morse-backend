@@ -99,7 +99,7 @@ fun printOrderMessage(order: OrderResponse): String {
         |Заказчик: ${order.userName}
         |Телефон: ${order.phone?: "НЕ УКАЗАН"}
         |Доставка: $shipname
-        |Время доставки: ${order.shipmentDateTime}
+        |Время доставки: ${order.shipmentDateTime?: "НЕ УКАЗАНО"}
         |Адрес: ${order.shipmentAddress?: "НЕ УКАЗАН"}
         |Комментарий: ${order.description}
     """.trimMargin()

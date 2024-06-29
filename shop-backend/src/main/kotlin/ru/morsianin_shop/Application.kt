@@ -70,7 +70,7 @@ suspend fun declinedCancelOrder(update: CallbackQueryUpdate, user: User, bot: Te
 
     if (order != null) {
         editText(update.callbackQuery.message!!.messageId) {
-            "Вернулся" //printOrderMessage(mapToResponse(order))
+            "Вернулся после отмены" //printOrderMessage(mapToResponse(order))
         }.inlineKeyboardMarkup {
             "❌" callback "cancel${id}"
             "✓" callback "shipped${id}"
@@ -124,7 +124,7 @@ suspend fun declinedShippedOrder(update: CallbackQueryUpdate, user: User, bot: T
 
     if (order != null) {
         editText(update.callbackQuery.message!!.messageId) {
-            printOrderMessage(mapToResponse(order))
+        "вернулся после выдачи" //printOrderMessage(mapToResponse(order))
         }.inlineKeyboardMarkup {
             "❌" callback "cancel${id}"
             "✓" callback "shipped${id}"
