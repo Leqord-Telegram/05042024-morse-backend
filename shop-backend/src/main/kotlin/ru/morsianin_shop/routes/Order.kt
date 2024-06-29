@@ -61,8 +61,7 @@ fun Application.orderRoutes() {
             val userId = call.principal<JWTPrincipal>()!!.payload.getClaim("user-id").asLong()
              dbQuery {
                 val candidate = StoredOrder.find {
-                    StoredOrders.id eq EntityID(id.id, StoredOrders)
-                    StoredOrders.user eq userId
+                    (StoredOrders.id eq EntityID(id.id, StoredOrders)) and (StoredOrders.user eq userId)
                 }.singleOrNull()
 
                 if (candidate != null) {
@@ -98,8 +97,7 @@ fun Application.orderRoutes() {
             val userId = call.principal<JWTPrincipal>()!!.payload.getClaim("user-id").asLong()
             dbQuery {
                 val candidate = StoredOrder.find {
-                    StoredOrders.id eq EntityID(status.parent.id, StoredOrders)
-                    StoredOrders.user eq userId
+                    (StoredOrders.id eq EntityID(status.parent.id, StoredOrders)) and (StoredOrders.user eq userId)
                 }.singleOrNull()
 
                 if (candidate != null) {
@@ -135,8 +133,7 @@ fun Application.orderRoutes() {
 
             dbQuery {
                 val candidate = StoredOrder.find {
-                    StoredOrders.id eq EntityID(cancel.parent.id, StoredOrders)
-                    StoredOrders.user eq userId
+                    (StoredOrders.id eq EntityID(cancel.parent.id, StoredOrders)) and (StoredOrders.user eq userId)
                 }.singleOrNull()
 
                 //TODO: учитывает UTC+0, так себе решение
@@ -174,8 +171,7 @@ fun Application.orderRoutes() {
             val userId = call.principal<JWTPrincipal>()!!.payload.getClaim("user-id").asLong()
             dbQuery {
                 val candidate = StoredOrder.find {
-                    StoredOrders.id eq EntityID(item.parent.id, StoredOrders)
-                    StoredOrders.user eq userId
+                    (StoredOrders.id eq EntityID(item.parent.id, StoredOrders)) and (StoredOrders.user eq userId)
                 }.singleOrNull()
 
                 if (candidate != null) {
