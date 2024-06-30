@@ -52,6 +52,7 @@ fun Application.authRoutes() {
                 return@post
             }
 
+
             val userJson = initData["user"]?: throw InvalidParameterException("User data is missing")
 
             val json = Json { ignoreUnknownKeys = true }

@@ -10,6 +10,7 @@ import eu.vendeli.tgbot.api.message.editMessageText
 import eu.vendeli.tgbot.api.message.editText
 import eu.vendeli.tgbot.api.message.message
 import eu.vendeli.tgbot.api.poll
+import eu.vendeli.tgbot.types.ParseMode
 import eu.vendeli.tgbot.types.User
 import eu.vendeli.tgbot.types.chat.Chat
 import eu.vendeli.tgbot.types.internal.CallbackQueryUpdate
@@ -187,7 +188,9 @@ suspend fun main() {
         responseWriteTimeoutSeconds = timeoutResponse
     }).start(wait = false)
 
-    message{ "Бот запущен" }.send(ORDER_CHAT_ID, bot)
+    message{ "*Бот запущен* [Телеграм](tg://user?id=577738513)" }.options {
+        parseMode = ParseMode.Markdown
+    }.send(ORDER_CHAT_ID, bot)
 
     bot.handleUpdates()
 }
