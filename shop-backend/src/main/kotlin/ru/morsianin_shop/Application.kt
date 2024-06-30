@@ -73,7 +73,7 @@ suspend fun declinedCancelOrder(update: CallbackQueryUpdate, user: User, bot: Te
 
         if (order != null) {
             editText(update.callbackQuery.message!!.messageId) {
-                printOrderMessage(mapToResponse(order), order.user.tgId)
+                printOrderMessage(mapToResponse(order), order.user.tgId, order.user.name)
             }.inlineKeyboardMarkup {
                 "❌" callback "cancel${id}"
                 "✓" callback "shipped${id}"
@@ -144,7 +144,7 @@ suspend fun declinedShippedOrder(update: CallbackQueryUpdate, user: User, bot: T
         if (order != null) {
 
             editText(update.callbackQuery.message!!.messageId) {
-                printOrderMessage(mapToResponse(order), order.user.tgId)
+                printOrderMessage(mapToResponse(order), order.user.tgId, order.user.name)
             }.inlineKeyboardMarkup {
                 "❌" callback "cancel${id}"
                 "✓" callback "shipped${id}"

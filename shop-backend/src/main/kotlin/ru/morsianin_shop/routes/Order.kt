@@ -26,6 +26,7 @@ import ru.morsianin_shop.model.printOrderMessage
 import ru.morsianin_shop.resources.OrderRequest
 import ru.morsianin_shop.storage.*
 import ru.morsianin_shop.storage.DatabaseStorage.dbQuery
+import ru.morsianin_shop.storage.StoredOrderItems.order
 import java.time.LocalDateTime
 
 // TODO: авторизация
@@ -313,7 +314,7 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.upsertOrder() {
             }
         }
 
-        message{ printOrderMessage(mapToResponse(currentOrder), currentOrder.user.tgId) }.inlineKeyboardMarkup {
+        message{ printOrderMessage(mapToResponse(currentOrder), currentOrder.user.tgId, currentOrder.user.name) }.inlineKeyboardMarkup {
             "❌" callback "cancel${currentOrder.id.value}"
             "✓" callback "shipped${currentOrder.id.value}"
         }.options {
