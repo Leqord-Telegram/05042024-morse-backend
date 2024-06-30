@@ -51,8 +51,7 @@ object Mapper {
         shipment = stored.shipment,
         shipmentAddress = stored.shipmentAddress,
         shipmentDateTime = stored.shipmentDateTime,
-        phone = stored.phone,
-        userId = stored.user.id.value
+        phone = stored.phone
     )
 
     fun mapToResponse(stored: StoredUserCartItem): CartItemResponse = CartItemResponse(

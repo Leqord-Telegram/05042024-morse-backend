@@ -1,6 +1,7 @@
 package ru.morsianin_shop.routes
 
 import eu.vendeli.tgbot.api.message.message
+import eu.vendeli.tgbot.types.ParseMode
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -312,9 +313,11 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.upsertOrder() {
             }
         }
 
-        message{ printOrderMessage(mapToResponse(currentOrder), currentOrder.user.name) }.inlineKeyboardMarkup {
+        message{ printOrderMessage(mapToResponse(currentOrder), currentOrder.user.tgId) }.inlineKeyboardMarkup {
             "❌" callback "cancel${currentOrder.id.value}"
             "✓" callback "shipped${currentOrder.id.value}"
+        }.options {
+            parseMode = ParseMode.Markdown
         }.send(ORDER_CHAT_ID, bot)
 
         call.respond(HttpStatusCode.Created)

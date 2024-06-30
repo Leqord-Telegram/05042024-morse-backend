@@ -17,7 +17,6 @@ import java.time.format.DateTimeFormatter
 @Serializable
 data class OrderResponse(
     val id: Long,
-    val userId: Long,
     val items: List<OrderItemResponse>,
     val status: OrderStatus,
     val userName: String,
@@ -90,7 +89,7 @@ class LocalDateTimeSerializer : KSerializer<LocalDateTime> {
     }
 }
 
-fun printOrderMessage(order: OrderResponse, userName: String): String {
+fun printOrderMessage(order: OrderResponse, tgId: Long?): String {
     val shipname = when (order.shipment) {
         OrderShipment.Pickup -> "#САМОВЫВОЗ"
         OrderShipment.Courier -> "#КУРЬЕР"
@@ -105,7 +104,7 @@ fun printOrderMessage(order: OrderResponse, userName: String): String {
         |Время доставки: ${order.shipmentDateTime?: "НЕ УКАЗАНО"}
         |Адрес: ${order.shipmentAddress?: "НЕ УКАЗАН"}
         |Комментарий: ${order.description}
-        |Telegram: [Телеграм](tg://user?id=${order.userId})
+        |Telegram: [Телеграм](tg://user?id=${tgId?: "НЕ УКАЗАН"})
         |Состав заказа:
     """.trimMargin())
 

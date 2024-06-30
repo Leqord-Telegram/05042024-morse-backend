@@ -63,6 +63,8 @@ suspend fun cancelOrder(update: CallbackQueryUpdate, user: User, bot: TelegramBo
     }.inlineKeyboardMarkup {
         "Да" callback "approvedcancel${id}"
         "Нет" callback "declinedcancel${id}"
+    }.options {
+        parseMode = ParseMode.Markdown
     }.send(ORDER_CHAT_ID, bot)
 }
 
@@ -76,14 +78,18 @@ suspend fun declinedCancelOrder(update: CallbackQueryUpdate, user: User, bot: Te
 
         if (order != null) {
             editText(update.callbackQuery.message!!.messageId) {
-                printOrderMessage(mapToResponse(order), order.user.name)
+                printOrderMessage(mapToResponse(order), order.user.tgId)
             }.inlineKeyboardMarkup {
                 "❌" callback "cancel${id}"
                 "✓" callback "shipped${id}"
+            }.options {
+                parseMode = ParseMode.Markdown
             }.send(ORDER_CHAT_ID, ru.morsianin_shop.bot)
         }
         else {
-            message { "Ошибка" }.send(ORDER_CHAT_ID, bot)
+            message { "Ошибка" }.options {
+                parseMode = ParseMode.Markdown
+            }.send(ORDER_CHAT_ID, bot)
         }
     }
 
@@ -106,10 +112,14 @@ suspend fun approvedCancelOrder(update: CallbackQueryUpdate, user: User, bot: Te
 
             editText(update.callbackQuery.message!!.messageId) {
                 "Заказ $id #отменён"
+            }.options {
+                parseMode = ParseMode.Markdown
             }.send(ORDER_CHAT_ID, bot)
         }
         else {
-            message { "Ошибка" }.send(ORDER_CHAT_ID, bot)
+            message { "Ошибка" }.options {
+                parseMode = ParseMode.Markdown
+            }.send(ORDER_CHAT_ID, bot)
         }
     }
 }
@@ -123,6 +133,8 @@ suspend fun shippedOrder(update: CallbackQueryUpdate, user: User, bot: TelegramB
     }.inlineKeyboardMarkup {
         "Да" callback "approvedshipped${id}"
         "Нет" callback "declinedshipped${id}"
+    }.options {
+        parseMode = ParseMode.Markdown
     }.send(ORDER_CHAT_ID, bot)
 }
 
@@ -137,10 +149,12 @@ suspend fun declinedShippedOrder(update: CallbackQueryUpdate, user: User, bot: T
         if (order != null) {
 
             editText(update.callbackQuery.message!!.messageId) {
-                printOrderMessage(mapToResponse(order), order.user.name)
+                printOrderMessage(mapToResponse(order), order.user.tgId)
             }.inlineKeyboardMarkup {
                 "❌" callback "cancel${id}"
                 "✓" callback "shipped${id}"
+            }.options {
+                parseMode = ParseMode.Markdown
             }.send(ORDER_CHAT_ID, ru.morsianin_shop.bot)
         }
         else {
@@ -161,6 +175,8 @@ suspend fun approvedShippedOrder(update: CallbackQueryUpdate, user: User, bot: T
 
             editText(update.callbackQuery.message!!.messageId) {
                 "Заказ $id #выдан"
+            }.options {
+                parseMode = ParseMode.Markdown
             }.send(ORDER_CHAT_ID, bot)
         }
         else {
