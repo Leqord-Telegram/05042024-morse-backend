@@ -24,8 +24,8 @@ services:
       LISTEN_IP: 0.0.0.0
       LISTEN_PORT: 8160
       IMAGES_DIR: /app/images
-    depends_on:
-      myapp-postgres
+    links:
+      - myapp-postgres
     ports:
       - "8160:8160"
     volumes:
