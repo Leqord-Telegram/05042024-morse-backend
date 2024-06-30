@@ -40,7 +40,7 @@ fun Application.KVRoutes() {
 
                 dbQuery {
                     val candidate = StoredKV.findById(CANCEL_DURATION_KV_ID)
-                    val newsusp =  call.receive<Long>().toString()
+                    val newsusp =  call.receiveText()
 
                     if (candidate != null) {
                         candidate.value = newsusp
@@ -62,7 +62,7 @@ fun Application.KVRoutes() {
 
                 dbQuery {
                     val candidate = StoredKV.findById(ABOUT_US_KV_ID)
-                    val newsusp = call.receive<String>()
+                    val newsusp = call.receiveText()
 
                     if (candidate != null) {
                         candidate.value = newsusp
