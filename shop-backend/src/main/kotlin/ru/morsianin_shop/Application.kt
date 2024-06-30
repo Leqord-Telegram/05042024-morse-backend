@@ -46,7 +46,9 @@ val bot = TelegramBot(System.getenv("TG_BOT_TOKEN"))
 suspend fun start(user: User, bot: TelegramBot) {
     message { "Привет!" }.send(user, bot)
     message { "Нажми кнопку 'Магазин', чтобы открыть \uD83D\uDC47 приложение" }.send(user, bot)
-
+    message { "Важно: создай пожалуйста `имя пользователя` телеграм!" }.send(user, bot)
+    message { "Это позволит менеджерам связываться с тобой и обсуждать заказы" }.send(user, bot)
+    message { "Боковое меню -> Мой профиль -> Имя пользователя" }.send(user, bot)
 }
 
 @CommonHandler.Regex("^cancel.*$", scope = [UpdateType.CALLBACK_QUERY])
