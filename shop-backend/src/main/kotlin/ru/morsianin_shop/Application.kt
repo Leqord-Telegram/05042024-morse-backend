@@ -190,7 +190,7 @@ suspend fun main() {
         responseWriteTimeoutSeconds = timeoutResponse
     }).start(wait = false)
 
-    message{ "*Бот запущен* [Телеграм](tg://user?id=577738513)" }.options {
+    message{ "*Бот запущен*" }.options {
         parseMode = ParseMode.Markdown
     }.send(ORDER_CHAT_ID, bot)
 
