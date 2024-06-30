@@ -6,7 +6,7 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
 
 object StoredUsers: LongIdTable("user") {
-    val name = text("name")
+    val name = text("name").nullable().uniqueIndex()
     val tgId = long("tg_id").nullable().uniqueIndex()
     val fullName = text("full_name").nullable()
     val phone = text("phone").nullable()
