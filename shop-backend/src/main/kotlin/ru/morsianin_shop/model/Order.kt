@@ -104,7 +104,7 @@ fun printOrderMessage(order: OrderResponse, tgId: Long?): String {
         |Время доставки: ${order.shipmentDateTime?: "НЕ УКАЗАНО"}
         |Адрес: ${order.shipmentAddress?: "НЕ УКАЗАН"}
         |Комментарий: ${order.description}
-        |Контакты: [Tg](tg://user?id=${tgId?: "НЕ УКАЗАН"})
+        |Контакты: ${if (tgId == null) "[Tg](tg://user?id=$tgId" else "НЕ УКАЗАНЫ"})
         |Состав заказа:
     """.trimMargin())
 
