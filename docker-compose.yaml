@@ -26,7 +26,6 @@ services:
       IMAGES_DIR: /app/images
     depends_on:
       myapp-postgres:
-        condition: service_healthy
     ports:
       - "8160:8160"
     volumes:
