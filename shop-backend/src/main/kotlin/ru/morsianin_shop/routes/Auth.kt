@@ -71,7 +71,6 @@ fun Application.authRoutes() {
                 }
                 else if (candidate.isEmpty()) {
                     user = mapToResponse(StoredUser.new {
-                        name = tgUserData.username
                         tgId = tgUserData.id
                     })
                     return@dbQuery

@@ -5,7 +5,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class TelegramAuthUserData(
     val id: Long,
-    val username: String,
 )
 
 @Serializable
