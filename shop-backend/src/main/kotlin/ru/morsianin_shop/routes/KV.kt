@@ -50,6 +50,8 @@ fun Application.KVRoutes() {
                             value = newsusp
                         }
                     }
+
+                    call.respond(HttpStatusCode.OK)
                 }
 
             }
@@ -72,6 +74,8 @@ fun Application.KVRoutes() {
                             value = newsusp
                         }
                     }
+
+                    call.respond(HttpStatusCode.OK)
                 }
 
             }
