@@ -306,7 +306,7 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.upsertOrder() {
                     quantity = item.quantity
                 }
 
-                productCandidate.quantity -= 1
+                productCandidate.quantity -= item.quantity
             } else {
                 TransactionManager.current().rollback()
                 call.respond(HttpStatusCode.BadRequest)
