@@ -44,7 +44,7 @@ fun Application.cartRoutes() {
                     val productCandidate = StoredProduct.findById(newCartItem.productId)
                     val candidateUser = StoredUser.findById(userId)
 
-                    if (productCandidate != null && candidateUser != null) {
+                    if (productCandidate != null && candidateUser != null && newCartItem.quantity <= productCandidate.quantity) {
                         val newStoredItem = StoredUserCartItem.new {
                             user = candidateUser
                             product = productCandidate
@@ -85,7 +85,7 @@ fun Application.cartRoutes() {
 
                     val productCandidate = StoredProduct.findById(cartItem.productId)
 
-                    if (candidate != null && productCandidate != null) {
+                    if (candidate != null && productCandidate != null && cartItem.quantity <= productCandidate.quantity) {
                         candidate.quantity = cartItem.quantity
                         candidate.product = productCandidate
                         call.respond(HttpStatusCode.OK)
