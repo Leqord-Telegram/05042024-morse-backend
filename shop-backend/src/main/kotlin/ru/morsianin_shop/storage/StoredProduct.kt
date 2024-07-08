@@ -5,6 +5,8 @@ import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.javatime.date
+import ru.morsianin_shop.storage.StoredProducts.default
+import ru.morsianin_shop.storage.StoredProducts.text
 
 object StoredProducts: LongIdTable("product") {
     val name = text("name")
@@ -17,6 +19,7 @@ object StoredProducts: LongIdTable("product") {
     val shipmentScheduledAt = date("shipment_scheduled_at").nullable()
     val createdAt = date("created_date")
     val enabled = bool("enabled").default(true)
+    val unit = text("unit").default("")
 }
 
 class StoredProduct(id: EntityID<Long>) : LongEntity(id) {
@@ -34,4 +37,5 @@ class StoredProduct(id: EntityID<Long>) : LongEntity(id) {
     var labels by StoredLabel via StoredProductLabels
     var inStock by StoredProducts.inStock
     var shipmentScheduledAt by StoredProducts.shipmentScheduledAt
+    var unit by StoredProducts.unit
 }

@@ -181,6 +181,7 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.upsertRequest(id: Lon
                     labels = foundLabels
                     createdAt = LocalDate.now()
                     quantity = newProduct.quantity
+                    unit = newProduct.unit
                 }
 
                 call.response.status(HttpStatusCode.Created)
@@ -196,6 +197,7 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.upsertRequest(id: Lon
                 candidate.images = foundImages
                 candidate.categories = foundCategories
                 candidate.quantity = newProduct.quantity
+                candidate.unit = newProduct.unit
 
                 call.respond(HttpStatusCode.NoContent)
             }

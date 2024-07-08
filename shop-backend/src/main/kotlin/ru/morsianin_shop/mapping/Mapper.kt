@@ -35,6 +35,7 @@ object Mapper {
         createdAt = stored.createdAt,
         images = stored.images.map { mapToResponse(it) },
         labels = stored.labels.map { mapToResponse(it) },
+        unit = stored.unit
     )
 
     fun mapToResponse(stored: StoredOrderItem): OrderItemResponse = OrderItemResponse(

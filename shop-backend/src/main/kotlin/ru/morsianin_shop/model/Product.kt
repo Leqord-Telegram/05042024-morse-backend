@@ -23,6 +23,7 @@ data class ProductResponse(
     val active: Boolean,
     val images: List<ImageResponse>,
     val labels: List<LabelResponse>,
+    val unit: String,
 )
 
 @Serializable
@@ -35,6 +36,7 @@ data class ProductNew(
     val active: Boolean,
     val imageIds: List<Long>,
     val labelIds: List<Long>,
+    val unit: String,
 )
 
 @Serializable
