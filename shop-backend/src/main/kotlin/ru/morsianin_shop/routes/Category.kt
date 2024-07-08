@@ -9,6 +9,7 @@ import io.ktor.server.resources.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.routing
 import org.jetbrains.exposed.sql.Op
+import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.update
@@ -33,7 +34,7 @@ fun Application.categoryRoutes() {
             }
 
             val response = dbQuery {
-                    StoredCategory.find { query }.map { category -> mapToResponse(category) }
+                    StoredCategory.find { query }.orderBy(StoredCategories.orderPriority to SortOrder.ASC).map { category -> mapToResponse(category) }
                 }
 
             if(response.isNotEmpty()) {
@@ -56,6 +57,7 @@ fun Application.categoryRoutes() {
                 val newStoredCategory = dbQuery {
                     StoredCategory.new {
                         name = newCategory.name
+                        orderPriority = newCategory.orderPriority
                     }
                 }
                 call.response.status(HttpStatusCode.Created)
@@ -100,6 +102,8 @@ fun Application.categoryRoutes() {
 
                     if (candidate != null) {
                         candidate.name = newCategory.name
+                        candidate.orderPriority = newCategory.orderPriority
+
                         call.respond(HttpStatusCode.OK)
                     } else {
                         val createdCategory = StoredCategory.new(id.id) {

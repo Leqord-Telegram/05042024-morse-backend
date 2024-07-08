@@ -6,7 +6,8 @@ import ru.morsianin_shop.storage.*
 object Mapper {
     fun mapToResponse(stored: StoredCategory): CategoryResponse = CategoryResponse(
         id = stored.id.value,
-        name = stored.name
+        name = stored.name,
+        orderPriority = stored.orderPriority
     )
 
     fun mapToResponse(stored: StoredImage): ImageResponse = ImageResponse(
