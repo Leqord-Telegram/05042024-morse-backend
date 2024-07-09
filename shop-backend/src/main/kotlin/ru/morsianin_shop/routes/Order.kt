@@ -321,10 +321,11 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.upsertOrder() {
             parseMode = ParseMode.Markdown
         }.send(ORDER_CHAT_ID, bot)
 
+        //                |Контакты: ${if (currentOrder.user.name != null) "@$currentOrder.user.name" else if (currentOrder.user.tgId != null) "[Tg](tg://user?id=${currentOrder.user.tgId})" else "НЕ УКАЗАНЫ"}
+
         message {
                 """
                 |Дополнительно для заказа ${currentOrder.id}
-                |Контакты: ${if (currentOrder.user.name != null) "@$currentOrder.user.name" else if (currentOrder.user.tgId != null) "[Tg](tg://user?id=${currentOrder.user.tgId})" else "НЕ УКАЗАНЫ"}
             """.trimMargin()
         }.options {
                 parseMode = ParseMode.Markdown
