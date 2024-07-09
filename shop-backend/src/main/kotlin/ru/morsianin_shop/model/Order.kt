@@ -100,8 +100,7 @@ fun printOrderMessage(order: OrderResponse, tgId: Long?, userName: String?): Str
     sb.append("""#Создан заказ ${order.id}
         |Заказчик: ${order.userName}
         |Телефон: ${order.phone?: "НЕ УКАЗАН"}
-        |Доставка: $shipname
-        |Время доставки: ${order.shipmentDateTime?: "НЕ УКАЗАНО"}
+        |Доставка: $shipname ${order.shipmentDateTime?.format(DateTimeFormatter.ISO_LOCAL_DATE) ?: ""}
         |Адрес: ${order.shipmentAddress?: "НЕ УКАЗАН"}
         |Комментарий: ${order.description}
         |Контакты: ${if (tgId != null) "[Tg](tg://user?id=$tgId)" else ""} ${if (userName != null) "@$userName" else ""}
