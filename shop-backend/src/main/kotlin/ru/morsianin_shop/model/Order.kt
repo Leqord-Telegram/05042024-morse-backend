@@ -110,7 +110,7 @@ fun printOrderMessage(order: OrderResponse, tgId: Long?, userName: String?): Str
         sb.append(
             """
                 |Адрес: ${order.shipmentAddress ?: "НЕ УКАЗАН"}
-            """
+            """.trimIndent()
         )
     }
 
