@@ -103,8 +103,10 @@ fun printOrderMessage(order: OrderResponse, tgId: Long?, userName: String?): Str
             |Заказчик: ${order.userName}
             |Телефон: ${order.phone?: "НЕ УКАЗАН"}
             |Доставка: $shipname
-            |Дата вручения: ${order.shipmentDateTime?.format(DateTimeFormatter.ISO_LOCAL_DATE) ?: ""}
+            |Вручение: ${order.shipmentDateTime?.format(DateTimeFormatter.ISO_LOCAL_DATE) ?: ""}
     """.trimMargin())
+
+    sb.append("\n")
 
     if (order.shipment == OrderShipment.Courier) {
         sb.append(
@@ -112,6 +114,8 @@ fun printOrderMessage(order: OrderResponse, tgId: Long?, userName: String?): Str
                 |Адрес: ${order.shipmentAddress ?: "НЕ УКАЗАН"}
             """.trimMargin()
         )
+
+        sb.append("\n")
     }
 
     sb.append(
