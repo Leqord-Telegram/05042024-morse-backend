@@ -97,15 +97,29 @@ fun printOrderMessage(order: OrderResponse, tgId: Long?, userName: String?): Str
 
     val sb = StringBuilder()
 
-    sb.append("""#Создан заказ ${order.id}
-        |Заказчик: ${order.userName}
-        |Телефон: ${order.phone?: "НЕ УКАЗАН"}
-        |Доставка: $shipname ${order.shipmentDateTime?.format(DateTimeFormatter.ISO_LOCAL_DATE) ?: ""}
-        |Адрес: ${order.shipmentAddress?: "НЕ УКАЗАН"}
+    sb.append(
+        """
+            |#Создан заказ ${order.id}
+            |Заказчик: ${order.userName}
+            |Телефон: ${order.phone?: "НЕ УКАЗАН"}
+            |Доставка: $shipname
+            |Дата вручения: ${order.shipmentDateTime?.format(DateTimeFormatter.ISO_LOCAL_DATE) ?: ""}
+    """.trimMargin())
+
+    if (order.shipment == OrderShipment.Courier) {
+        sb.append(
+            """
+                |Адрес: ${order.shipmentAddress ?: "НЕ УКАЗАН"}
+            """
+        )
+    }
+
+    sb.append(
+    """
         |Комментарий: ${order.description}
         |Контакты: ${if (tgId != null) "[Tg](tg://user?id=$tgId)" else ""} ${if (userName != null) "@$userName" else ""}
         |Состав заказа:
-    """.trimMargin())
+    """.trimIndent())
 
     sb.append("\n")
 
