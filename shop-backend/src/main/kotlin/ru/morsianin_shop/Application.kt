@@ -22,6 +22,8 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.statements.StatementType
 import ru.morsianin_shop.mapping.Mapper.mapToResponse
 import ru.morsianin_shop.model.OrderShipment
@@ -183,7 +185,7 @@ suspend fun approvedShippedOrder(update: CallbackQueryUpdate, user: User, bot: T
 }
 
 
-suspend fun main() {
+fun main() {
     print("STARTUP AT: ${LocalDateTime.now().format(ISO_LOCAL_DATE_TIME)}")
 
     val ip = System.getenv("LISTEN_IP") ?: "127.0.0.1"
@@ -203,18 +205,20 @@ suspend fun main() {
         responseWriteTimeoutSeconds = timeoutResponse
     }).start(wait = false)
 
-    message{ "*Бот запущен*" }.options {
-        parseMode = ParseMode.Markdown
-    }.send(ORDER_CHAT_ID, bot)
+    runBlocking {
+        message { "*Бот запущен*" }.options {
+            parseMode = ParseMode.Markdown
+        }.send(ORDER_CHAT_ID, bot)
 
+        launch(Dispatchers.Unconfined) {
+            for (e in bot.update.caughtExceptions) {
+                message { "Ошибка: $e" }.send(ORDER_CHAT_ID, bot)
+                delay(100)
+            }
+        }
 
-    for (e in bot.update.caughtExceptions) {
-        message { "Ошибка: $e" }.send(ORDER_CHAT_ID, bot)
-        delay(100)
+        bot.handleUpdates()
     }
-
-
-    bot.handleUpdates()
 }
 
 
