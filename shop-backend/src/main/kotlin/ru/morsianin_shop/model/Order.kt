@@ -127,9 +127,18 @@ fun printOrderMessage(order: OrderResponse, tgId: Long?, userName: String?): Str
 
     sb.append("\n")
 
+    var total: Long = 0
+
     for (item in order.items) {
-        sb.append("✧ ${item.product.name} ${item.quantity}шт. на ${item.quantity * item.product.price/ 100.0}₽\n")
+        sb.append("✧ ${item.product.name} ${item.quantity}шт. на ${item.quantity * item.product.price}₽\n")
+
+        total += item.quantity * item.product.price
     }
+
+    sb.append(
+        """
+        |Всего ${order.items.size}шт. на ${total}₽
+    """.trimMargin())
 
     return sb.toString()
 }
