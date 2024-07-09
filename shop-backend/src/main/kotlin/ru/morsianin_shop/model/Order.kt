@@ -118,10 +118,12 @@ fun printOrderMessage(order: OrderResponse, tgId: Long?, userName: String?): Str
         sb.append("\n")
     }
 
+    //  |Контакты: ${if (tgId != null) "[Tg](tg://user?id=$tgId)" else ""} ${if (userName != null) "@$userName" else ""}
+
     sb.append(
     """
         |Комментарий: ${order.description}
-        |Контакты: ${if (tgId != null) "[Tg](tg://user?id=$tgId)" else ""} ${if (userName != null) "@$userName" else ""}
+       
         |Состав заказа:
     """.trimMargin())
 
