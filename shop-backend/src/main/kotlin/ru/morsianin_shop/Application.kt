@@ -20,6 +20,8 @@ import eu.vendeli.tgbot.types.internal.UpdateType
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import org.jetbrains.exposed.sql.statements.StatementType
 import ru.morsianin_shop.mapping.Mapper.mapToResponse
 import ru.morsianin_shop.model.OrderShipment
@@ -204,6 +206,13 @@ suspend fun main() {
     message{ "*Бот запущен*" }.options {
         parseMode = ParseMode.Markdown
     }.send(ORDER_CHAT_ID, bot)
+
+
+    for (e in bot.update.caughtExceptions) {
+        message { "Ошибка: $e" }.send(ORDER_CHAT_ID, bot)
+        delay(100)
+    }
+
 
     bot.handleUpdates()
 }
