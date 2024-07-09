@@ -110,7 +110,7 @@ fun printOrderMessage(order: OrderResponse, tgId: Long?, userName: String?): Str
         sb.append(
             """
                 |Адрес: ${order.shipmentAddress ?: "НЕ УКАЗАН"}
-            """.trimIndent()
+            """.trimMargin()
         )
     }
 
@@ -119,7 +119,7 @@ fun printOrderMessage(order: OrderResponse, tgId: Long?, userName: String?): Str
         |Комментарий: ${order.description}
         |Контакты: ${if (tgId != null) "[Tg](tg://user?id=$tgId)" else ""} ${if (userName != null) "@$userName" else ""}
         |Состав заказа:
-    """.trimIndent())
+    """.trimMargin())
 
     sb.append("\n")
 
