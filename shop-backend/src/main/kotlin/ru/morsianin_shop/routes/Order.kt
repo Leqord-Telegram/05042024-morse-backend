@@ -284,6 +284,8 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.upsertOrder() {
             return@dbQuery
         }
 
+
+
         val currentOrder: StoredOrder  = StoredOrder.new {
             user = userCandidate
             status = OrderStatus.PENDING
