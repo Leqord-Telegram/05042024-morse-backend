@@ -299,7 +299,7 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.upsertOrder() {
         for (item in newOrder.items) {
             productCandidate = StoredProduct.findById(item.productId)
 
-            if (productCandidate != null && productCandidate.quantity > 0) {
+            if (productCandidate != null && productCandidate.quantity > 0 && productCandidate.enabled) {
                 StoredOrderItem.new {
                     order = currentOrder
                     product = productCandidate!!
