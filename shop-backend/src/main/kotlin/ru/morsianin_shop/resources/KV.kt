@@ -11,4 +11,13 @@ data class KVRequest (
 
     @Resource("about_us")
     class aboutUs(val parent: KVRequest = KVRequest())
+
+    @Resource("phone")
+    class phone(val parent: KVRequest = KVRequest())
+
+    @Resource("whatsapp")
+    class whatsapp(val parent: KVRequest = KVRequest())
+
+    @Resource("telegram")
+    class telegram(val parent: KVRequest = KVRequest())
 }
