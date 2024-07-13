@@ -60,14 +60,20 @@ suspend fun start(user: User, bot: TelegramBot) {
 suspend fun cancelOrder(update: CallbackQueryUpdate, user: User, bot: TelegramBot) {
     val id = update.callbackQuery.data!!.removePrefix("cancel").toLong()
 
-    editText(update.callbackQuery.message!!.messageId) {
-        "Отменить заказ ${id}?"
-    }.inlineKeyboardMarkup {
-        "Да" callback "approvedcancel${id}"
-        "Нет" callback "declinedcancel${id}"
-    }.options {
-        parseMode = ParseMode.Markdown
-    }.send(ORDER_CHAT_ID, bot)
+    val order = dbQuery {
+        StoredOrder.findById(id)?.let { mapToResponse(it) }
+    }
+
+    if (order != null) {
+        editText(update.callbackQuery.message!!.messageId) {
+            "Отменить заказ ${order.shittyId}?"
+        }.inlineKeyboardMarkup {
+            "Да" callback "approvedcancel${id}"
+            "Нет" callback "declinedcancel${id}"
+        }.options {
+            parseMode = ParseMode.Markdown
+        }.send(ORDER_CHAT_ID, bot)
+    }
 }
 
 
@@ -113,7 +119,7 @@ suspend fun approvedCancelOrder(update: CallbackQueryUpdate, user: User, bot: Te
             }
 
             editText(update.callbackQuery.message!!.messageId) {
-                "Заказ $id #отменён"
+                "Заказ ${mapToResponse(order).shittyId} #отменён"
             }.options {
                 parseMode = ParseMode.Markdown
             }.send(ORDER_CHAT_ID, bot)
@@ -130,14 +136,20 @@ suspend fun approvedCancelOrder(update: CallbackQueryUpdate, user: User, bot: Te
 suspend fun shippedOrder(update: CallbackQueryUpdate, user: User, bot: TelegramBot) {
     val id = update.callbackQuery.data!!.removePrefix("shipped").toLong()
 
-    editText(update.callbackQuery.message!!.messageId) {
-        "Выдать заказ ${id}?"
-    }.inlineKeyboardMarkup {
-        "Да" callback "approvedshipped${id}"
-        "Нет" callback "declinedshipped${id}"
-    }.options {
-        parseMode = ParseMode.Markdown
-    }.send(ORDER_CHAT_ID, bot)
+    val order = dbQuery {
+        StoredOrder.findById(id)?.let { mapToResponse(it) }
+    }
+
+    if (order != null) {
+        editText(update.callbackQuery.message!!.messageId) {
+            "Выдать заказ ${order.shittyId}?"
+        }.inlineKeyboardMarkup {
+            "Да" callback "approvedshipped${id}"
+            "Нет" callback "declinedshipped${id}"
+        }.options {
+            parseMode = ParseMode.Markdown
+        }.send(ORDER_CHAT_ID, bot)
+    }
 }
 
 
@@ -176,7 +188,7 @@ suspend fun approvedShippedOrder(update: CallbackQueryUpdate, user: User, bot: T
             order.status = OrderStatus.FINISHED
 
             editText(update.callbackQuery.message!!.messageId) {
-                "Заказ $id #выдан"
+                "Заказ ${mapToResponse(order).shittyId} #выдан"
             }.options {
                 parseMode = ParseMode.Markdown
             }.send(ORDER_CHAT_ID, bot)

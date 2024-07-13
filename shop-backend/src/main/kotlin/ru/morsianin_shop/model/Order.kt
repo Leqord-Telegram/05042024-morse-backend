@@ -100,7 +100,7 @@ fun printOrderMessage(order: OrderResponse, tgId: Long?, userName: String?): Str
 
     sb.append(
         """
-            |#Создан заказ ${order.id}
+            |#Создан заказ ${order.shittyId}
             |Заказчик: ${order.userName}
             |Телефон: ${order.phone?: "НЕ УКАЗАН"}
             |Доставка: $shipname
