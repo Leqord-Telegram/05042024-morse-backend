@@ -1,12 +1,9 @@
 package ru.morsianin_shop.mapping
 
 import kotlinx.coroutines.runBlocking
-import org.jetbrains.exposed.sql.Op
-import org.jetbrains.exposed.sql.SqlExpressionBuilder
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.javatime.year
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.selectAll
 import ru.morsianin_shop.model.*
 import ru.morsianin_shop.storage.*
 import ru.morsianin_shop.storage.DatabaseStorage.dbQuery
@@ -54,12 +51,18 @@ object Mapper {
 
     suspend fun generateSpecificId(order: StoredOrder): String {
         val year = order.shipmentDateTime.year % 100 // последние две цифры года
-        val count = dbQuery {
-            StoredOrders
-                .selectAll().where { StoredOrders.shipmentDateTime.year() eq year }
-                .count()
+        val ordersInYear = dbQuery {
+            StoredOrder.find { StoredOrders.shipmentDateTime.year() eq order.shipmentDateTime.year }
+                .orderBy(StoredOrders.shipmentDateTime to SortOrder.ASC)
+                .toList()
         }
-        return "${count + 1}-$year"
+
+        val orderIndex = ordersInYear.indexOfFirst { it.id == order.id }
+        if (orderIndex == -1) {
+            throw IllegalStateException("Order not found in the list of orders for the year.")
+        }
+
+        return "${orderIndex + 1}-$year"
     }
 
     fun mapToResponse(stored: StoredOrder): OrderResponse {
