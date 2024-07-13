@@ -14,7 +14,7 @@ object StoredOrders: LongIdTable("order") {
     val user = reference("user_id", StoredUsers)
     val status = enumerationByName<OrderStatus>("status", 255)
     val shipment = enumerationByName<OrderShipment>("shipment", 255)
-    val shipmentDateTime = datetime("shipment_date_time").nullable()
+    val shipmentDateTime = datetime("shipment_date_time")
     val shipmentAddress = text("shipment_address").nullable()
     val description = text("description").nullable()
     val phone = text("phone").nullable()
