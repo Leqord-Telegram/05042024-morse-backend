@@ -59,7 +59,7 @@ object Mapper {
 
         val orderIndex = ordersInYear.indexOfFirst { it.id == order.id }
         if (orderIndex == -1) {
-            throw IllegalStateException("Order not found in the list of orders for the year.")
+            return "ID-${order.id}-BASE"
         }
 
         return "${orderIndex + 1}-$year"
