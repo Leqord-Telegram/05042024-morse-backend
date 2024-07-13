@@ -58,8 +58,11 @@ object Mapper {
         }
 
         val orderIndex = ordersInYear.indexOfFirst { it.id == order.id }
+
+
+
         if (orderIndex == -1) {
-            return "ID-${order.id}-BASE"
+            return "${ordersInYear.size + 1}-$year"
         }
 
         return "${orderIndex + 1}-$year"
