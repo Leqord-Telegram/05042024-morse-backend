@@ -315,8 +315,9 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.upsertOrder() {
                 return@dbQuery
             }
         }
+        val mappedOrder = mapToResponse(currentOrder)
 
-        message{ printOrderMessage(mapToResponse(currentOrder), currentOrder.user.tgId, currentOrder.user.name) }.inlineKeyboardMarkup {
+        message{ printOrderMessage(mappedOrder, currentOrder.user.tgId, currentOrder.user.name) }.inlineKeyboardMarkup {
             "❌" callback "cancel${currentOrder.id.value}"
             "✓" callback "shipped${currentOrder.id.value}"
         }.options {
@@ -326,7 +327,7 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.upsertOrder() {
 
         message {
                 """
-                |Дополнительно для заказа ${currentOrder.id.value}
+                |Дополнительно для заказа ${mappedOrder.shittyId}
                 |Контакты: ${if (currentOrder.user.name != null) "@${currentOrder.user.name}" else (if (currentOrder.user.tgId != null) "[Tg](tg://user?id=${currentOrder.user.tgId})" else "НЕ УКАЗАНЫ")}
             """.trimMargin()
         }.options {

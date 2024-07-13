@@ -53,7 +53,7 @@ object Mapper {
         val year = order.shipmentDateTime.year % 100 // последние две цифры года
         val ordersInYear = dbQuery {
             StoredOrder.find { StoredOrders.shipmentDateTime.year() eq order.shipmentDateTime.year }
-                .orderBy(StoredOrders.shipmentDateTime to SortOrder.ASC)
+                .orderBy(StoredOrders.id to SortOrder.ASC)
                 .toList()
         }
 
