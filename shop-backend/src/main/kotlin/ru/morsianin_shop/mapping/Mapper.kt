@@ -1,7 +1,15 @@
 package ru.morsianin_shop.mapping
 
+import kotlinx.coroutines.runBlocking
+import org.jetbrains.exposed.sql.Op
+import org.jetbrains.exposed.sql.SqlExpressionBuilder
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.javatime.year
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
 import ru.morsianin_shop.model.*
 import ru.morsianin_shop.storage.*
+import ru.morsianin_shop.storage.DatabaseStorage.dbQuery
 
 object Mapper {
     fun mapToResponse(stored: StoredCategory): CategoryResponse = CategoryResponse(
@@ -44,17 +52,31 @@ object Mapper {
         quantity = stored.quantity,
     )
 
-    fun mapToResponse(stored: StoredOrder): OrderResponse = OrderResponse(
-        id = stored.id.value,
-        items = stored.items.map { mapToResponse(it) },
-        status = stored.status,
-        userName = stored.userName,
-        description = stored.description?: "",
-        shipment = stored.shipment,
-        shipmentAddress = stored.shipmentAddress,
-        shipmentDateTime = stored.shipmentDateTime,
-        phone = stored.phone
-    )
+    suspend fun generateSpecificId(order: StoredOrder): String {
+        val year = order.shipmentDateTime.year % 100 // последние две цифры года
+        val count = dbQuery {
+            StoredOrders
+                .selectAll().where { StoredOrders.shipmentDateTime.year() eq year }
+                .count()
+        }
+        return "${count + 1}-$year"
+    }
+
+    fun mapToResponse(stored: StoredOrder): OrderResponse {
+
+        return OrderResponse(
+            id = stored.id.value,
+            items = stored.items.map { mapToResponse(it) },
+            status = stored.status,
+            userName = stored.userName,
+            description = stored.description?: "",
+            shipment = stored.shipment,
+            shipmentAddress = stored.shipmentAddress,
+            shipmentDateTime = stored.shipmentDateTime,
+            phone = stored.phone,
+            shittyId = runBlocking { generateSpecificId(stored) }
+        )
+    }
 
     fun mapToResponse(stored: StoredUserCartItem): CartItemResponse = CartItemResponse(
         id = stored.id.value,

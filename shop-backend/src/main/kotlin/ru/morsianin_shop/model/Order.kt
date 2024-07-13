@@ -17,6 +17,7 @@ import java.time.format.DateTimeFormatter
 @Serializable
 data class OrderResponse(
     val id: Long,
+    val shittyId: String,
     val items: List<OrderItemResponse>,
     val status: OrderStatus,
     val userName: String,
@@ -24,7 +25,7 @@ data class OrderResponse(
     val phone: String?,
     val shipment: OrderShipment,
     @Serializable(with = LocalDateTimeSerializer::class)
-    val shipmentDateTime: LocalDateTime?,
+    val shipmentDateTime: LocalDateTime,
     val shipmentAddress: String?,
 )
 
