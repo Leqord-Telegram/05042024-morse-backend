@@ -63,6 +63,7 @@ object Mapper {
     )
 
 
+
     fun mapToResponse(stored: StoredUser): UserResponse {
         return UserResponse(
             id = stored.id.value,
