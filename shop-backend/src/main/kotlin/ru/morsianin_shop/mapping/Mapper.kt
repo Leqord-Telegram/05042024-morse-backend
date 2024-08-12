@@ -42,9 +42,9 @@ object Mapper {
         images = stored.images.map { mapToResponse(it) },
         labels = stored.labels.map { mapToResponse(it) },
         unit = stored.unit,
-        priority = StoredProductCategory.find {
+        priority = runBlocking { dbQuery { StoredProductCategory.find {
             product eq stored.id
-        }.map { mapToResponse(it) }
+        }.map { mapToResponse(it) } } }
     )
 
     fun mapToResponse(stored: StoredProductCategory): ProductCategoryPriorityResponse = ProductCategoryPriorityResponse(
