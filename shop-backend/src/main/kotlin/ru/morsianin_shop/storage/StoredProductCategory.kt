@@ -9,10 +9,12 @@ import org.jetbrains.exposed.sql.ReferenceOption
 object StoredProductCategories: LongIdTable("product_category") {
     val product = reference("product_id", StoredProducts, onDelete = ReferenceOption.CASCADE)
     val category = reference("category_id", StoredCategories, onDelete = ReferenceOption.CASCADE)
+    val priority = long("priority")
 }
 
 class StoredProductCategory(id: EntityID<Long>) : LongEntity(id) {
     companion object : LongEntityClass<StoredProductCategory>(StoredProductCategories)
     var product by StoredProduct referencedOn StoredProductCategories.product
     var category by StoredCategory referencedOn StoredProductCategories.category
+    var priority by StoredProductCategories.priority
 }

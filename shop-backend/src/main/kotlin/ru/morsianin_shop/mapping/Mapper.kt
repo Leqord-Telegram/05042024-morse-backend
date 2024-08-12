@@ -7,6 +7,7 @@ import org.jetbrains.exposed.sql.javatime.year
 import ru.morsianin_shop.model.*
 import ru.morsianin_shop.storage.*
 import ru.morsianin_shop.storage.DatabaseStorage.dbQuery
+import ru.morsianin_shop.storage.StoredProductCategories.product
 
 object Mapper {
     fun mapToResponse(stored: StoredCategory): CategoryResponse = CategoryResponse(
@@ -40,7 +41,15 @@ object Mapper {
         createdAt = stored.createdAt,
         images = stored.images.map { mapToResponse(it) },
         labels = stored.labels.map { mapToResponse(it) },
-        unit = stored.unit
+        unit = stored.unit,
+        priority = StoredProductCategory.find {
+            product eq stored.id
+        }.map { mapToResponse(it) }
+    )
+
+    fun mapToResponse(stored: StoredProductCategory): ProductCategoryPriorityResponse = ProductCategoryPriorityResponse(
+        categoryId = stored.category.id.value,
+        priority = stored.priority
     )
 
     fun mapToResponse(stored: StoredOrderItem): OrderItemResponse = OrderItemResponse(

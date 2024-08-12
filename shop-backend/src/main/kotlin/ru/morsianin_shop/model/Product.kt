@@ -24,6 +24,13 @@ data class ProductResponse(
     val images: List<ImageResponse>,
     val labels: List<LabelResponse>,
     val unit: String,
+    val priority: List<ProductCategoryPriorityResponse>,
+)
+
+@Serializable
+data class ProductCategoryPriorityResponse(
+    val categoryId: Long,
+    val priority: Long?,
 )
 
 @Serializable
