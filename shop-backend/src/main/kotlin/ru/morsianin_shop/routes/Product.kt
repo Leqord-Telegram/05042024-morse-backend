@@ -67,6 +67,7 @@ fun Application.productRoutes() {
                 ProductSort.CreatedAsc -> StoredProducts.createdAt to SortOrder.ASC
                 ProductSort.CreatedDesc -> StoredProducts.createdAt to SortOrder.DESC
                 ProductSort.IdAsc -> StoredProducts.id to SortOrder.ASC
+                ProductSort.PriorityAsc -> StoredProductCategories.priority to SortOrder.ASC
             }
 
             val found = dbQuery {

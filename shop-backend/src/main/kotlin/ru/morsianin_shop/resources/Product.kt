@@ -11,7 +11,7 @@ class ProductRequest(
     val price: Long? = null,
     val quantity: Long? = null,
     val active: Boolean? = true,
-    val sort: ProductSort = ProductSort.IdAsc,
+    val sort: ProductSort = ProductSort.PriorityAsc,
     val offset: Long = 0,
     val limit: Int = 100,
 ) {

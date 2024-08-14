@@ -57,6 +57,7 @@ enum class ProductSort {
     CreatedAsc,
     CreatedDesc,
     IdAsc,
+    PriorityAsc,
 }
 
 @OptIn(ExperimentalSerializationApi::class)
