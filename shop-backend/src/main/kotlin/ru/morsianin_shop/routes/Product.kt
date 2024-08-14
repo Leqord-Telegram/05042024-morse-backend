@@ -31,7 +31,7 @@ fun Application.productRoutes() {
         get<ProductRequest> { filter ->
             var query: Op<Boolean> = Op.TRUE
 
-            query = query and (StoredProducts.enabled eq true)
+            query = query and (StoredProducts.enabled eq true) and (category eq filter.categoryId)
 
             filter.name?.let {
                 query = query and (StoredProducts.name eq it)
@@ -39,10 +39,6 @@ fun Application.productRoutes() {
 
             filter.description?.let {
                 query = query and (StoredProducts.name eq it)
-            }
-
-            filter.categoryId?.let {
-                query = query and (category eq it)
             }
 
             filter.price?.let {
@@ -74,7 +70,7 @@ fun Application.productRoutes() {
                 StoredProduct.wrapRows(
                     StoredProducts.leftJoin(StoredProductCategories).select(StoredProducts.columns).where {
                         query
-                    }.orderBy(sortType).withDistinct()
+                    }.orderBy(sortType)
                         .limit(filter.limit, filter.offset)
                 ).toList().map { mapToResponse(it) }
             }
