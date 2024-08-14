@@ -31,7 +31,7 @@ fun Application.productRoutes() {
         get<ProductRequest> { filter ->
             var query: Op<Boolean> = Op.TRUE
 
-            query = query and (StoredProducts.enabled eq true) and (category eq filter.categoryId)
+            query = query and (StoredProducts.enabled eq true)
 
             filter.name?.let {
                 query = query and (StoredProducts.name eq it)
@@ -63,17 +63,35 @@ fun Application.productRoutes() {
                 ProductSort.CreatedAsc -> StoredProducts.createdAt to SortOrder.ASC
                 ProductSort.CreatedDesc -> StoredProducts.createdAt to SortOrder.DESC
                 ProductSort.IdAsc -> StoredProducts.id to SortOrder.ASC
-                ProductSort.PriorityAsc -> StoredProductCategories.priority to SortOrder.ASC
+                ProductSort.PriorityAsc -> if (filter.categoryId != null) {
+                    StoredProductCategories.priority to SortOrder.ASC
+                }
+                else {
+                    StoredProducts.id to SortOrder.ASC // TODO: пока нет отдельной категории для всех, будет так
+                }
             }
 
-            val found = dbQuery {
-                StoredProduct.wrapRows(
-                    StoredProducts.leftJoin(StoredProductCategories).select(StoredProducts.columns).where {
-                        query
-                    }.orderBy(sortType)
-                        .limit(filter.limit, filter.offset)
-                ).toList().map { mapToResponse(it) }
-            }
+            val found =
+                if(filter.categoryId != null) {
+                    dbQuery {
+                        StoredProduct.wrapRows(
+                            StoredProducts.leftJoin(StoredProductCategories).select(StoredProducts.columns).where {
+                                query
+                            }.orderBy(sortType)
+                                .limit(filter.limit, filter.offset)
+                        ).toList().map { mapToResponse(it) }
+                    }
+                }
+            else {
+                    dbQuery {
+                        StoredProduct.wrapRows(
+                            StoredProducts.select(StoredProducts.columns).where {
+                                query
+                            }.orderBy(sortType)
+                                .limit(filter.limit, filter.offset)
+                        ).toList().map { mapToResponse(it) }
+                    }
+                }
 
             if (found.isNotEmpty()) {
                 call.respond(found)

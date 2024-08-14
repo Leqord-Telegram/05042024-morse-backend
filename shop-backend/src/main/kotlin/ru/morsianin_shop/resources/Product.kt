@@ -7,7 +7,7 @@ import ru.morsianin_shop.model.ProductSort
 class ProductRequest(
     val name: String? = null,
     val description: String? = null,
-    val categoryId: Long = 0,
+    val categoryId: Long? = null,
     val price: Long? = null,
     val quantity: Long? = null,
     val active: Boolean? = true,
