@@ -24,7 +24,7 @@ data class ProductResponse(
     val images: List<ImageResponse>,
     val labels: List<LabelResponse>,
     val unit: String,
-    val priority: List<ProductCategoryPriorityResponse>,
+    val priority: List<ProductCategoryPriorityResponse>, // TODO: не отдавать просто так, только с флагом
 )
 
 @Serializable
