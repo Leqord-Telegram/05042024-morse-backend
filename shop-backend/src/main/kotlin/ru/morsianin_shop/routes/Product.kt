@@ -38,7 +38,7 @@ fun Application.productRoutes() {
             }
 
             filter.description?.let {
-                query = query and (StoredProducts.name eq it)
+                query = query and (StoredProducts.description eq it)
             }
 
             filter.price?.let {
@@ -76,7 +76,7 @@ fun Application.productRoutes() {
                     dbQuery {
                         StoredProduct.wrapRows(
                             StoredProducts.leftJoin(StoredProductCategories).select(StoredProducts.columns).where {
-                                query
+                                query and (category eq filter.categoryId)
                             }.orderBy(sortType)
                                 .limit(filter.limit, filter.offset)
                         ).toList().map { mapToResponse(it) }
