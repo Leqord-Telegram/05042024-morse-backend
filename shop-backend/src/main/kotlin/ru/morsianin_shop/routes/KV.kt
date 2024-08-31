@@ -48,7 +48,37 @@ fun Application.KVRoutes() {
             }
         }
 
+        get<KVRequest.defaultCategory> {
+            dbQuery {
+                call.respond(StoredKV.findById(DEFAULT_CAT_KV_ID)?.value ?: "")
+            }
+        }
+
         authenticate("auth-jwt-user") {
+            put<KVRequest.defaultCategory> {
+                if (!hasPrivilege(call.principal<JWTPrincipal>()!!.payload, UserPrivilege.ADMIN)) {
+                    call.respond(HttpStatusCode.Forbidden)
+                    return@put
+                }
+
+                dbQuery {
+                    val candidate = StoredKV.findById(DEFAULT_CAT_KV_ID)
+                    val newsusp =  call.receiveText()
+
+                    if (candidate != null) {
+                        candidate.value = newsusp
+                    }
+                    else {
+                        StoredKV.new(DEFAULT_CAT_KV_ID) {
+                            value = newsusp
+                        }
+                    }
+
+                    call.respond(HttpStatusCode.OK)
+                }
+
+            }
+
             put<KVRequest.cancelThreshold> {
                 if (!hasPrivilege(call.principal<JWTPrincipal>()!!.payload, UserPrivilege.ADMIN)) {
                     call.respond(HttpStatusCode.Forbidden)

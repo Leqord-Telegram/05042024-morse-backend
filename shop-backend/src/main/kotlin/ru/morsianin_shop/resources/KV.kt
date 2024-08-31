@@ -20,4 +20,7 @@ data class KVRequest (
 
     @Resource("telegram")
     class telegram(val parent: KVRequest = KVRequest())
+
+    @Resource("default_category")
+    class defaultCategory(val parent: KVRequest = KVRequest())
 }

@@ -45,6 +45,7 @@ val ABOUT_US_KV_ID: Long = 5163;
 val WA_KV_ID: Long = 71562;
 val TG_KV_ID: Long = 82234;
 val PHONE_KV_ID: Long = 93245;
+val DEFAULT_CAT_KV_ID: Long = 82341;
 
 val bot = TelegramBot(System.getenv("TG_BOT_TOKEN"))
 
