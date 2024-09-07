@@ -15,12 +15,14 @@ import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.update
 import ru.morsianin_shop.mapping.Mapper.mapToResponse
 import ru.morsianin_shop.model.CategoryNew
+import ru.morsianin_shop.model.ProductCategoryPriorityUpdate
 import ru.morsianin_shop.model.UserPrivilege
 import ru.morsianin_shop.plugins.hasPrivilege
 import ru.morsianin_shop.resources.CategoryRequest
 import ru.morsianin_shop.storage.*
 import ru.morsianin_shop.storage.DatabaseStorage.dbQuery
 import ru.morsianin_shop.storage.StoredProductCategories.category
+import ru.morsianin_shop.storage.StoredProductCategories.product
 
 fun Application.categoryRoutes() {
     routing {
@@ -130,6 +132,29 @@ fun Application.categoryRoutes() {
                         call.respond(HttpStatusCode.NotFound)
                     }
 
+                }
+            }
+            put<CategoryRequest.Id.ProductOrder> { po ->
+                if (!hasPrivilege(call.principal<JWTPrincipal>()!!.payload, UserPrivilege.ADMIN)) {
+                    call.respond(HttpStatusCode.Forbidden)
+                    return@put
+                }
+
+                val priorityUpdate = call.receive<ProductCategoryPriorityUpdate>()
+
+                dbQuery {
+                    val candidate = StoredProductCategory.find {
+                        (product eq priorityUpdate.productId) and
+                                (category eq priorityUpdate.categoryId)
+                    }.firstOrNull()
+
+                    if (candidate != null) {
+                        candidate.priority = priorityUpdate.priority
+                        call.respond(HttpStatusCode.OK)
+                    }
+                    else {
+                        call.respond(HttpStatusCode.NotFound)
+                    }
                 }
             }
         }

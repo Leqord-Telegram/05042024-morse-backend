@@ -10,5 +10,8 @@ class CategoryRequest(
     class Id(val parent: CategoryRequest = CategoryRequest(), val id: Long) {
         @Resource("total")
         class Total(val parent: Id)
+
+        @Resource("product_order")
+        class ProductOrder(val parent: Id)
     }
 }
