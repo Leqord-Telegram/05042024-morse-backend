@@ -145,7 +145,7 @@ fun Application.categoryRoutes() {
                 dbQuery {
                     val candidate = StoredProductCategory.find {
                         (product eq priorityUpdate.productId) and
-                                (category eq priorityUpdate.categoryId)
+                                (category eq po.parent.id)
                     }.firstOrNull()
 
                     if (candidate != null) {

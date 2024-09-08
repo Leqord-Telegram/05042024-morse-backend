@@ -36,7 +36,6 @@ data class ProductCategoryPriorityResponse(
 @Serializable
 data class ProductCategoryPriorityUpdate(
     val productId: Long,
-    val categoryId: Long,
     val priority: Long?,
 )
 
