@@ -30,6 +30,7 @@ object Mapper {
         price = stored.price,
         quantity = stored.quantity,
         active = stored.active,
+        inStock = stored.inStock,
         priceOld = stored.priceOld?.let {
             if(stored.price < stored.priceOld!!) {
                 stored.priceOld

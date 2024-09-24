@@ -192,6 +192,7 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.upsertRequest(id: Lon
                     categories = foundCategories
                     price = newProduct.price
                     active = newProduct.active
+                    inStock = newProduct.inStock
                     images = foundImages
                     labels = foundLabels
                     createdAt = LocalDate.now()
@@ -209,6 +210,7 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.upsertRequest(id: Lon
                 candidate.price = newProduct.price
                 candidate.labels = foundLabels
                 candidate.active = newProduct.active
+                candidate.inStock = newProduct.inStock
                 candidate.images = foundImages
                 candidate.categories = foundCategories
                 candidate.quantity = newProduct.quantity
