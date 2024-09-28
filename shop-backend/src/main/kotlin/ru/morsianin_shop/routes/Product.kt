@@ -15,6 +15,7 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.inList
+import ru.morsianin_shop.NOTIFY_CHAT_ID
 import ru.morsianin_shop.ORDER_CHAT_ID
 import ru.morsianin_shop.bot
 import ru.morsianin_shop.mapping.Mapper.mapToResponse
@@ -183,7 +184,7 @@ fun Application.productRoutes() {
                     |""".trimMargin()
                     }.options {
                         parseMode = ParseMode.Markdown
-                    }.send(ORDER_CHAT_ID, bot)
+                    }.send(NOTIFY_CHAT_ID, bot)
                 }
 
                 call.respond(HttpStatusCode.Created)
@@ -289,7 +290,7 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.upsertRequest(id: Lon
             }
         } else {
             call.respondText(
-                "Something wasn't found, idiot",
+                "Nothing was found, idiot",
                 status = HttpStatusCode.NotFound
             )
 
