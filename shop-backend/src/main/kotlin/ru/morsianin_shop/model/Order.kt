@@ -104,7 +104,7 @@ fun printOrderMessage(order: OrderResponse, tgId: Long?, userName: String?): Str
             |Заказчик: ${order.userName}
             |Телефон: ${order.phone?: "НЕ УКАЗАН"}
             |Доставка: $shipname
-            |Вручение: ${order.shipmentDateTime?.format(DateTimeFormatter.ISO_LOCAL_DATE) ?: ""}
+            |Вручение: ${order.shipmentDateTime.format(DateTimeFormatter.ISO_LOCAL_DATE) ?: ""}
     """.trimMargin())
 
     sb.append("\n")

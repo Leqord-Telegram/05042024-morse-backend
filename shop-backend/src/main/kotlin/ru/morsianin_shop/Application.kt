@@ -41,6 +41,7 @@ import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME
 
 val CANCEL_DURATION_KV_ID: Long = 4123;
 val ORDER_CHAT_ID: Long = -1002172780422;
+val NOTIFY_CHAT_ID: Long = -4529741528;
 val ABOUT_US_KV_ID: Long = 5163;
 val WA_KV_ID: Long = 71562;
 val TG_KV_ID: Long = 82234;
@@ -49,7 +50,7 @@ val DEFAULT_CAT_KV_ID: Long = 82341;
 
 val bot = TelegramBot(System.getenv("TG_BOT_TOKEN"))
 
-
+//-4529741528
 
 @CommandHandler(["/start"])
 suspend fun start(user: User, bot: TelegramBot) {

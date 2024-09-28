@@ -41,6 +41,12 @@ data class ProductCategoryPriorityUpdate(
 )
 
 @Serializable
+data class ProductNotificationNew(
+    val phone: String?,
+    val name: String?,
+)
+
+@Serializable
 data class ProductNew(
     val name: String,
     val description: String,

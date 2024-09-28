@@ -1,5 +1,7 @@
 package ru.morsianin_shop.routes
 
+import eu.vendeli.tgbot.api.message.message
+import eu.vendeli.tgbot.types.ParseMode
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -10,15 +12,13 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.routing
 import io.ktor.util.pipeline.*
 import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.sql.Op
-import org.jetbrains.exposed.sql.SortOrder
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.inList
-import org.jetbrains.exposed.sql.and
+import ru.morsianin_shop.ORDER_CHAT_ID
+import ru.morsianin_shop.bot
 import ru.morsianin_shop.mapping.Mapper.mapToResponse
-import ru.morsianin_shop.model.ProductNew
-import ru.morsianin_shop.model.ProductSort
-import ru.morsianin_shop.model.UserPrivilege
+import ru.morsianin_shop.model.*
 import ru.morsianin_shop.plugins.hasPrivilege
 import ru.morsianin_shop.resources.ProductRequest
 import ru.morsianin_shop.storage.*
@@ -157,6 +157,73 @@ fun Application.productRoutes() {
                     }
                 }
             }
+
+            post<ProductRequest.Id.Notify> { notifyReq ->
+                val userId = call.principal<JWTPrincipal>()!!.payload.getClaim("user-id").asLong()
+
+                dbQuery {
+                    StoredUserProductNotifications.insertIgnore {
+                        it[user] = userId
+                        it[product] = notifyReq.parent.id
+                    }
+
+                }
+
+                val notReqInfo = call.receive<ProductNotificationNew>()
+
+                if (notReqInfo.phone != null) {
+                    val product = dbQuery {
+                        mapToResponse(StoredProduct.findById(notifyReq.parent.id)!!)
+                    }
+
+                    message {
+                        """
+                    |Пользователь ${notReqInfo.name ?: ""} просит уведомить его о поступлении товара ${product.name}
+                    |Телефон: ${notReqInfo.phone ?: "НЕ УКАЗАН"}
+                    |""".trimMargin()
+                    }.options {
+                        parseMode = ParseMode.Markdown
+                    }.send(ORDER_CHAT_ID, bot)
+                }
+
+                call.respond(HttpStatusCode.Created)
+            }
+
+            delete<ProductRequest.Id.Notify> { notifyReq ->
+                val userId = call.principal<JWTPrincipal>()!!.payload.getClaim("user-id").asLong()
+
+                dbQuery {
+                    StoredUserProductNotifications.deleteWhere {
+                        (user eq userId) and (product eq notifyReq.parent.id)
+                    }
+                }
+
+                call.respond(HttpStatusCode.NoContent)
+            }
+
+            get<ProductRequest.Notifications> { notreq ->
+                val userId = call.principal<JWTPrincipal>()!!.payload.getClaim("user-id").asLong()
+
+                var query: Op<Boolean> = Op.TRUE
+
+                query = query and (StoredUserProductNotifications.user eq userId)
+
+                notreq.inStock?.let {
+                    query = query and (StoredProducts.inStock eq notreq.inStock)
+                }
+
+                val products = dbQuery {
+                    StoredUserProductNotifications.leftJoin(StoredProducts).selectAll().where {
+                        query
+                    }.map {
+                        it[StoredUserProductNotifications.product].value
+                    }
+
+                }
+
+                call.respond(products)
+            }
+
         }
 
     }
@@ -204,6 +271,8 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.upsertRequest(id: Lon
                 call.respond(mapToResponse(newStoredProduct))
             }
             else {
+
+
                 candidate.name = newProduct.name
                 candidate.description = newProduct.description
                 candidate.priceOld = candidate.price
