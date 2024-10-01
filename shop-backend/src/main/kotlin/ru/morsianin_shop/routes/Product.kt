@@ -167,7 +167,6 @@ fun Application.productRoutes() {
                         it[user] = userId
                         it[product] = notifyReq.parent.id
                     }
-
                 }
 
                 val notReqInfo = call.receive<ProductNotificationNew>()

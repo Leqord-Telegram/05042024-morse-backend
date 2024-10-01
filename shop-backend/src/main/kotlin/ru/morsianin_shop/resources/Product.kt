@@ -17,7 +17,6 @@ class ProductRequest(
 ) {
     @Resource("{id}")
     class Id(val parent: ProductRequest = ProductRequest(), val id: Long) {
-
         @Resource("notify")
         class Notify(val parent: Id)
     }
