@@ -214,7 +214,9 @@ fun Application.productRoutes() {
                 }
 
                 val products = dbQuery {
-                    StoredUserProductNotifications.leftJoin(StoredProducts).selectAll().where {
+                    StoredUserProductNotifications.leftJoin(StoredProducts,
+                        {product},
+                        {StoredProducts.id}).selectAll().where {
                         query
                     }.map {
                         it[StoredUserProductNotifications.product].value
