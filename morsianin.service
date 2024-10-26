@@ -1,5 +1,5 @@
 [Unit]
-Description=MyApp Docker Compose Service
+Description=Morsianin Service
 Requires=docker.service
 After=docker.service
 
