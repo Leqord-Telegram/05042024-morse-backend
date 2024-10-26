@@ -13,6 +13,7 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatterBuilder
 
 @Serializable
 data class OrderResponse(
@@ -104,7 +105,9 @@ fun printOrderMessage(order: OrderResponse, tgId: Long?, userName: String?): Str
             |Заказчик: ${order.userName}
             |Телефон: ${order.phone?: "НЕ УКАЗАН"}
             |Доставка: $shipname
-            |Вручение: ${order.shipmentDateTime.format(DateTimeFormatter.ISO_LOCAL_DATE) ?: ""}
+            |Вручение: ${order.shipmentDateTime.format(
+            DateTimeFormatterBuilder()
+            .appendPattern("yyyy-MM-dd HH:mm").toFormatter()) ?: ""}
     """.trimMargin())
 
     sb.append("\n")
