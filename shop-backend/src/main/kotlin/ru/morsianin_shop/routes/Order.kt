@@ -149,7 +149,7 @@ fun Application.orderRoutes() {
                             itemr.product.quantity += itemr.quantity
                         }
 
-                        message{ "Пользователь отменил заказ ${candidate.id}" }.inlineKeyboardMarkup {
+                        message{ "Пользователь отменил заказ ${mapToResponse(candidate).shittyId}" }.inlineKeyboardMarkup {
                         }.send(ORDER_CHAT_ID, bot)
 
                         call.respond(mapToResponse(candidate))
