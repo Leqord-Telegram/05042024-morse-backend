@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   myapp:
+    restart: always
     build:
       context: ./shop-backend
       dockerfile: Dockerfile
@@ -32,6 +33,7 @@ services:
       - ./deploy/images:/app/images:z
 
   myapp-postgres:
+    restart: always
     image: postgres:16.2
     environment:
       POSTGRES_USER: ${POSTGRES_USER}

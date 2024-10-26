@@ -1,0 +1,13 @@
+[Unit]
+Description=MyApp Docker Compose Service
+Requires=docker.service
+After=docker.service
+
+[Service]
+Restart=always
+WorkingDirectory=/path/to/your/project
+ExecStart=/usr/local/bin/docker-compose up --build
+ExecStop=/usr/local/bin/docker-compose down
+
+[Install]
+WantedBy=multi-user.target
