@@ -2,6 +2,7 @@
 Description=Morsianin Service
 Requires=docker.service
 After=docker.service
+# тут нужно дождаться точки монтирования, иначе может быть перманетный блок загрузки, но пусть с этим ебутся другие
 
 [Service]
 Restart=always
